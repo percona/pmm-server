@@ -37,6 +37,8 @@ RUN git clone https://github.com/percona/grafana-dashboards.git && \
 	mkdir /var/lib/grafana/dashboards && \
 	cp grafana-dashboards/dashboards/* /var/lib/grafana/dashboards/ && \
 	rm -f /var/lib/grafana/dashboards/*InfluxDB*
+RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
+	cp grafana_mongodb_dashboards/dashboards/* /var/lib/grafana/dashboards/
 COPY grafana.ini /etc/grafana/grafana.ini
 COPY add-grafana-datasource.sh /opt
 RUN chgrp grafana /etc/grafana/grafana.ini && \
