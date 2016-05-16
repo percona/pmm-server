@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-EXPOSE 3000 9090 9001-9003 80
+EXPOSE 3000 9090 9001-9002 8500 80
 
 WORKDIR /opt
 
@@ -12,6 +12,7 @@ RUN apt-get -y update && apt-get install -y \
 	apt-transport-https \
 	curl \
 	git \
+	unzip \
 	mysql-server \
 	python \
 	supervisor
@@ -20,9 +21,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-ADD https://github.com/prometheus/prometheus/releases/download/0.17.0/prometheus-0.17.0.linux-amd64.tar.gz /opt/
+ADD https://github.com/prometheus/prometheus/releases/download/0.18.0/prometheus-0.18.0.linux-amd64.tar.gz /opt/
 RUN mkdir prometheus && \
-	tar xfz prometheus-0.17.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-0.18.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
@@ -35,14 +36,15 @@ RUN echo "deb https://packagecloud.io/grafana/stable/debian/ wheezy main" > /etc
 	apt-get -y install grafana
 RUN git clone https://github.com/percona/grafana-dashboards.git && \
 	mkdir /var/lib/grafana/dashboards && \
-	cp grafana-dashboards/dashboards/* /var/lib/grafana/dashboards/ && \
-	rm -f /var/lib/grafana/dashboards/*InfluxDB*
+	cp grafana-dashboards/dashboards/* /var/lib/grafana/dashboards/
+RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
+	cp grafana_mongodb_dashboards/dashboards/* /var/lib/grafana/dashboards/
 COPY grafana.ini /etc/grafana/grafana.ini
 COPY add-grafana-datasource.sh /opt
 RUN chgrp grafana /etc/grafana/grafana.ini && \
-	sed -i 's/step_input:""/step_input:c.target.step/; s/ HH:MM/ HH:mm/; s/,function(c)/,"templateSrv",function(c,g)/; s/expr:c.target.expr/expr:g.replace(c.target.expr,c.panel.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/query_ctrl.js && \
-	sed -i 's/h=a.interval/h=g.replace(a.interval, c.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js && \
-	/opt/add-grafana-datasource.sh
+	/opt/add-grafana-datasource.sh && \
+	sed -i 's/h=b.interval/h=i.replace(b.interval, a.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js && \
+	sed -i 's/,range_input/.replace(\/"{\/g,"\\"").replace(\/}"\/g,"\\""),range_input/; s/step_input:""/step_input:this.target.step/' /usr/share/grafana/public/app/plugins/datasource/prometheus/query_ctrl.js
 
 # ####################### #
 # Percona Query Analytics #
@@ -62,12 +64,13 @@ COPY pt-archiver /usr/bin/
 COPY purge-qan-data /etc/cron.daily
 RUN rm /etc/cron.daily/apt
 
-# ################ #
-# prom-config-api  #
-# ################ #
+# ###### #
+# Consul #
+# ###### #
 
-COPY prom-config-api /opt/prometheus
-RUN mkdir /opt/prometheus/targets
+ADD https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip /opt/
+RUN unzip consul_0.6.4_linux_amd64.zip && \
+	mkdir -p /opt/consul-data
 
 # ############ #
 # Landing page # 

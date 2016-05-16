@@ -1,25 +1,29 @@
 version: '2'
 
 services:
-  pmm_data:
+  pmm-data:
+    build: .
     image: percona/pmm-server
-    container_name: pmm_data
+    container_name: pmm-data
     volumes:
       - /var/lib/mysql
       - /opt/prometheus/data
-      - /opt/prometheus/targets
+      - /opt/consul-data
     entrypoint: /bin/true
 
-  pmm:
+  pmm-server:
     build: .
-    container_name: pmm 
+    container_name: pmm-server
     image: percona/pmm-server
-    environment:
-      - ADDRESS=192.168.56.107
     ports:
-      - "9001-9003:9001-9003"
+      - "9001-9002:9001-9002"
       - "3000:3000"
       - "9090:9090"
+      - "8500:8500"
       - "80:80"
     volumes_from:
-      - pmm_data
+      - pmm-data
+    ### EDIT WITH YOUR IP ###
+    environment:
+      - ADDRESS=192.168.56.107
+
