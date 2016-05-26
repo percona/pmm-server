@@ -12,7 +12,7 @@ scrape_configs:
   - job_name: override 
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['linux', 'mysql-hr', 'mongodb']
+      services: ['linux', 'mongodb']
 
     relabel_configs:
     - source_labels: ['__meta_consul_service']
@@ -33,6 +33,20 @@ scrape_configs:
       replacement:   '$1'
 
 
+  - job_name: mysql-hr
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['mysql-hr']
+
+    relabel_configs:
+    - target_label:  'job'
+      replacement:   'mysql'
+    - source_labels: ['__meta_consul_node']
+      regex:         '(.*)'
+      target_label:  'alias'
+      replacement:   '$1'
+
+
   - job_name: mysql-mr
     scrape_interval:    5s
     scrape_timeout:     1s
@@ -41,6 +55,8 @@ scrape_configs:
       services: ['mysql-mr']
 
     relabel_configs:
+    - target_label:  'job'
+      replacement:   'mysql'
     - source_labels: ['__meta_consul_node']
       regex:         '(.*)'
       target_label:  'alias'
@@ -56,6 +72,8 @@ scrape_configs:
       services: ['mysql-lr']
 
     relabel_configs:
+    - target_label:  'job'
+      replacement:   'mysql'
     - source_labels: ['__meta_consul_node']
       regex:         '(.*)'
       target_label:  'alias'
