@@ -21,9 +21,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-ADD https://github.com/prometheus/prometheus/releases/download/0.18.0/prometheus-0.18.0.linux-amd64.tar.gz /opt/
+ADD https://github.com/prometheus/prometheus/releases/download/0.19.1/prometheus-0.19.1.linux-amd64.tar.gz /opt/
 RUN mkdir prometheus && \
-	tar xfz prometheus-0.18.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-0.19.1.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
@@ -43,7 +43,7 @@ COPY grafana.ini /etc/grafana/grafana.ini
 COPY add-grafana-datasource.sh /opt
 RUN chgrp grafana /etc/grafana/grafana.ini && \
 	/opt/add-grafana-datasource.sh && \
-	sed -i 's/h=b.interval/h=i.replace(b.interval, a.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js && \
+	sed -i 's/expr=\(.\)\.replace(\(.\)\.expr,\(.\)\.scopedVars\(.*\)var \(.\)=\(.\)\.interval/expr=\1.replace(\2.expr,\3.scopedVars\4var \5=\1.replace(\6.interval, \3.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js && \
 	sed -i 's/,range_input/.replace(\/"{\/g,"\\"").replace(\/}"\/g,"\\""),range_input/; s/step_input:""/step_input:this.target.step/' /usr/share/grafana/public/app/plugins/datasource/prometheus/query_ctrl.js
 
 # ####################### #
