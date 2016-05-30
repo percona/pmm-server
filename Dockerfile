@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-EXPOSE 3000 9090 9001-9002 8500 80
+EXPOSE 80 9001
 
 WORKDIR /opt
 
@@ -13,6 +13,7 @@ RUN apt-get -y update && apt-get install -y \
 	curl \
 	git \
 	unzip \
+	nginx \
 	mysql-server \
 	python \
 	supervisor
@@ -21,9 +22,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-ADD https://github.com/prometheus/prometheus/releases/download/0.19.1/prometheus-0.19.1.linux-amd64.tar.gz /opt/
+ADD https://github.com/prometheus/prometheus/releases/download/0.19.2/prometheus-0.19.2.linux-amd64.tar.gz /opt/
 RUN mkdir prometheus && \
-	tar xfz prometheus-0.19.1.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-0.19.2.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
@@ -50,13 +51,13 @@ RUN chgrp grafana /etc/grafana/grafana.ini && \
 # Percona Query Analytics #
 # ####################### #
 
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app.tar.gz \
     /opt/
 RUN mkdir qan-api && \
-	tar zxf percona-qan-api-1.0.0-x86_64.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-api.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
-	tar zxf percona-qan-app-1.0.0.tar.gz --strip-components=1 -C qan-app
+	tar zxf percona-qan-app.tar.gz --strip-components=1 -C qan-app
 COPY install-qan.sh /opt
 RUN /opt/install-qan.sh
 
@@ -71,6 +72,12 @@ RUN rm /etc/cron.daily/apt
 ADD https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip /opt/
 RUN unzip consul_0.6.4_linux_amd64.zip && \
 	mkdir -p /opt/consul-data
+
+# ##### #
+# Nginx #
+# ##### #
+
+COPY nginx.conf /etc/nginx
 
 # ############ #
 # Landing page # 

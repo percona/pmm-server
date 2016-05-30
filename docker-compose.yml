@@ -16,10 +16,7 @@ services:
     container_name: pmm-server
     image: percona/pmm-server
     ports:
-      - "9001-9002:9001-9002"
-      - "3000:3000"
-      - "9090:9090"
-      - "8500:8500"
+      - "9001:9001"
       - "80:80"
     volumes_from:
       - pmm-data
