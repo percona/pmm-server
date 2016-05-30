@@ -81,14 +81,8 @@
     <script src="js/jquery-2.2.2.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			var hostname = window.location.hostname;
-			if (hostname) {
-				$("#qanURL").attr("href", "http://"+hostname+":9002");
-				$("#grafURL").attr("href", "http://"+hostname+":3000");
-			} else {
-				$("#qanURL").attr("href", "http://localhost:9002");
-				$("#grafURL").attr("href", "http://localhost:3000");
-			}
+			$("#qanURL").attr("href", "/qan/");
+			$("#grafURL").attr("href", "/graph");
 		});
 	</script>
 

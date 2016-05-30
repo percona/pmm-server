@@ -5,26 +5,82 @@ global:
  
 scrape_configs:
   - job_name: prometheus
+    metrics_path: /prometheus/metrics
     target_groups:
       - targets: ['localhost:9090']
 
-  - job_name: linux
-    file_sd_configs:
-    - names: ['/opt/prometheus/targets/9100.yml']
+
+  - job_name: override 
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['linux', 'mongodb']
+
+    relabel_configs:
+    - source_labels: ['__meta_consul_service']
+      regex:         '(.*)'
+      target_label:  'job'
+      replacement:   '$1'
+    - source_labels: ['__meta_consul_node']
+      regex:         '(.*)'
+      target_label:  'alias'
+      replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,replset_(\w+),.*'
+      target_label:  'replset'
+      replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,cluster_(\w+),.*'
+      target_label:  'cluster'
+      replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,nodetype_(\w+),.*'
+      target_label:  'nodetype'
+      replacement:   '$1'
+
 
   - job_name: mysql-hr
-    file_sd_configs:
-    - names: ['/opt/prometheus/targets/9104.yml']
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['mysql-hr']
+
+    relabel_configs:
+    - target_label:  'job'
+      replacement:   'mysql'
+    - source_labels: ['__meta_consul_node']
+      regex:         '(.*)'
+      target_label:  'alias'
+      replacement:   '$1'
+
 
   - job_name: mysql-mr
     scrape_interval:    5s
     scrape_timeout:     1s
-    file_sd_configs:
-    - names: ['/opt/prometheus/targets/9105.yml']
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['mysql-mr']
+
+    relabel_configs:
+    - target_label:  'job'
+      replacement:   'mysql'
+    - source_labels: ['__meta_consul_node']
+      regex:         '(.*)'
+      target_label:  'alias'
+      replacement:   '$1'
+
 
   - job_name: mysql-lr
     scrape_interval:   60s
     scrape_timeout:     5s
-    file_sd_configs:
-    - names: ['/opt/prometheus/targets/9106.yml']
+
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['mysql-lr']
+
+    relabel_configs:
+    - target_label:  'job'
+      replacement:   'mysql'
+    - source_labels: ['__meta_consul_node']
+      regex:         '(.*)'
+      target_label:  'alias'
+      replacement:   '$1'
 
