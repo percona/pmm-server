@@ -23,4 +23,5 @@ services:
     ### EDIT WITH YOUR IP ###
     environment:
       - ADDRESS=192.168.56.107
-
+      #- RETENTION=192h
+      #- MEMORY=262144
