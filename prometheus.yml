@@ -25,15 +25,15 @@ scrape_configs:
       target_label:  'alias'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,replset_(\w+),.*'
+      regex:         '.*,replset_([\w-]+),.*'
       target_label:  'replset'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,cluster_(\w+),.*'
+      regex:         '.*,cluster_([\w-]+),.*'
       target_label:  'cluster'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,nodetype_(\w+),.*'
+      regex:         '.*,nodetype_([\w-]+),.*'
       target_label:  'nodetype'
       replacement:   '$1'
 
