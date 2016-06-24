@@ -1,5 +1,11 @@
 Percona Monitoring and Management (PMM) Server
 
+unreleased 2016-06-24
+
+* Prometheus 0.20.0
+* Various updates for MongoDB dashboards
+* Minor updates to the landing page
+
 v1.0.1 released 2016-06-09
 
 * Grafana 3.0.4

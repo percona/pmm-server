@@ -22,9 +22,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-ADD https://github.com/prometheus/prometheus/releases/download/0.19.2/prometheus-0.19.2.linux-amd64.tar.gz /opt/
+ADD https://github.com/prometheus/prometheus/releases/download/0.20.0/prometheus-0.20.0.linux-amd64.tar.gz /opt/
 RUN mkdir prometheus && \
-	tar xfz prometheus-0.19.2.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-0.20.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
