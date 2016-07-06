@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-EXPOSE 80 9001
+EXPOSE 80
 
 WORKDIR /opt
 
@@ -22,9 +22,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-ADD https://github.com/prometheus/prometheus/releases/download/0.20.0/prometheus-0.20.0.linux-amd64.tar.gz /opt/
+ADD https://github.com/prometheus/prometheus/releases/download/v1.0.0/prometheus-1.0.0.linux-amd64.tar.gz /opt/
 RUN mkdir prometheus && \
-	tar xfz prometheus-0.20.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-1.0.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
@@ -51,13 +51,13 @@ RUN chgrp grafana /etc/grafana/grafana.ini && \
 # Percona Query Analytics #
 # ####################### #
 
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160607.067b82c-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0-20160610.f450c8e.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160706.9f5c394-x86_64.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0-20160706.2df9671.tar.gz \
     /opt/
 RUN mkdir qan-api && \
-	tar zxf percona-qan-api-1.0.0-20160607.067b82c-x86_64.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-api-1.0.0-20160706.9f5c394-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
-	tar zxf percona-qan-app-1.0.0-20160610.f450c8e.tar.gz --strip-components=1 -C qan-app
+	tar zxf percona-qan-app-1.0.0-20160706.2df9671.tar.gz --strip-components=1 -C qan-app
 COPY install-qan.sh /opt
 RUN /opt/install-qan.sh
 
