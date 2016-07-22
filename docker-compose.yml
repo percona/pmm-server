@@ -15,6 +15,7 @@ services:
     build: .
     container_name: pmm-server
     image: percona/pmm-server
+    restart: always
     ports:
       - "80:80"
     volumes_from:

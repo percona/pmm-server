@@ -1,6 +1,6 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.2 unreleased 2016-07-21
+v1.0.2 unreleased 2016-07-22
 
 * Grafana 3.1.0.
 * Prometheus 1.0.0.
@@ -8,8 +8,12 @@ v1.0.2 unreleased 2016-07-21
 * Eliminated port 9001. Now the container uses only one configurable port, 80 by default.
 * Eliminated the need to specify ADDRESS variable when creating docker container.
 * Added support to name instances using the new pmm-admin.
-* Redesigned query profile table on Query Analytics App.
-* Added sparkline charts to Query Analytics App.
+* Query Analytics App:
+  * Redesigned queries profile table
+  * Redesigned metrics table
+  * Redesigned instance settings page
+  * Added sparkline charts
+  * Added ability to show more than 10 queries
 * Various updates for MongoDB dashboards.
 
 v1.0.1 released 2016-06-09
