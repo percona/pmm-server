@@ -1,9 +1,9 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.2 unreleased 2016-07-22
+v1.0.2 released 2016-07-28
 
 * Grafana 3.1.0.
-* Prometheus 1.0.0.
+* Prometheus 1.0.1.
 * Set default metrics retention to 30 days.
 * Eliminated port 9001. Now the container uses only one configurable port, 80 by default.
 * Eliminated the need to specify ADDRESS variable when creating docker container.
