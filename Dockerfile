@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-EXPOSE 80 9001
+EXPOSE 80
 
 WORKDIR /opt
 
@@ -22,9 +22,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-ADD https://github.com/prometheus/prometheus/releases/download/0.20.0/prometheus-0.20.0.linux-amd64.tar.gz /opt/
+ADD https://github.com/prometheus/prometheus/releases/download/v1.0.1/prometheus-1.0.1.linux-amd64.tar.gz /opt/
 RUN mkdir prometheus && \
-	tar xfz prometheus-0.20.0.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-1.0.1.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
@@ -43,21 +43,19 @@ RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
 COPY grafana.ini /etc/grafana/grafana.ini
 COPY add-grafana-datasource.sh /opt
 RUN chgrp grafana /etc/grafana/grafana.ini && \
-	/opt/add-grafana-datasource.sh && \
-	sed -i 's/expr=\(.\)\.replace(\(.\)\.expr,\(.\)\.scopedVars\(.*\)var \(.\)=\(.\)\.interval/expr=\1.replace(\2.expr,\3.scopedVars\4var \5=\1.replace(\6.interval, \3.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js && \
-	sed -i 's/,range_input/.replace(\/"{\/g,"\\"").replace(\/}"\/g,"\\""),range_input/; s/step_input:""/step_input:this.target.step/' /usr/share/grafana/public/app/plugins/datasource/prometheus/query_ctrl.js
+	/opt/add-grafana-datasource.sh
 
 # ####################### #
 # Percona Query Analytics #
 # ####################### #
 
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160607.067b82c-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0-20160610.f450c8e.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160727.fc1a822-x86_64.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0-20160727.2df9671.tar.gz \
     /opt/
 RUN mkdir qan-api && \
-	tar zxf percona-qan-api-1.0.0-20160607.067b82c-x86_64.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-api-1.0.0-20160727.fc1a822-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
-	tar zxf percona-qan-app-1.0.0-20160610.f450c8e.tar.gz --strip-components=1 -C qan-app
+	tar zxf percona-qan-app-1.0.0-20160727.2df9671.tar.gz --strip-components=1 -C qan-app
 COPY install-qan.sh /opt
 RUN /opt/install-qan.sh
 
@@ -89,5 +87,5 @@ COPY landing-page/ /opt/landing-page/
 # Run everything with supervisor #
 # ############################## #
 
-COPY supervisord.conf /etc/supervisor/conf.d/pmm.conf
-CMD ["supervisord"]
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]

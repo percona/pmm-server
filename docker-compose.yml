@@ -15,13 +15,12 @@ services:
     build: .
     container_name: pmm-server
     image: percona/pmm-server
+    restart: always
     ports:
-      - "9001:9001"
       - "80:80"
     volumes_from:
       - pmm-data
-    ### EDIT WITH YOUR IP ###
-    environment:
-      - ADDRESS=192.168.56.107
-      #- METRICS_RETENTION=192h
-      #- METRICS_MEMORY=262144
+#    environment:
+#      - METRICS_RETENTION=720h
+#      - METRICS_MEMORY=262144
+#      - METRICS_RESOLUTION=1s

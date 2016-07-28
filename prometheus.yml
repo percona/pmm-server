@@ -6,7 +6,7 @@ global:
 scrape_configs:
   - job_name: prometheus
     metrics_path: /prometheus/metrics
-    target_groups:
+    static_configs:
       - targets: ['localhost:9090']
 
 
@@ -20,20 +20,20 @@ scrape_configs:
       regex:         '(.*)'
       target_label:  'job'
       replacement:   '$1'
-    - source_labels: ['__meta_consul_node']
-      regex:         '(.*)'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([\w-:\.]+),.*'
       target_label:  'alias'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,replset_([\w-]+),.*'
+      regex:         '.*,replset_([\w-\.]+),.*'
       target_label:  'replset'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,cluster_([\w-]+),.*'
+      regex:         '.*,cluster_([\w-\.]+),.*'
       target_label:  'cluster'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,nodetype_([\w-]+),.*'
+      regex:         '.*,nodetype_([\w-\.]+),.*'
       target_label:  'nodetype'
       replacement:   '$1'
 
@@ -46,8 +46,8 @@ scrape_configs:
     relabel_configs:
     - target_label:  'job'
       replacement:   'mysql'
-    - source_labels: ['__meta_consul_node']
-      regex:         '(.*)'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([\w-:\.]+),.*'
       target_label:  'alias'
       replacement:   '$1'
 
@@ -62,8 +62,8 @@ scrape_configs:
     relabel_configs:
     - target_label:  'job'
       replacement:   'mysql'
-    - source_labels: ['__meta_consul_node']
-      regex:         '(.*)'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([\w-:\.]+),.*'
       target_label:  'alias'
       replacement:   '$1'
 
@@ -79,8 +79,8 @@ scrape_configs:
     relabel_configs:
     - target_label:  'job'
       replacement:   'mysql'
-    - source_labels: ['__meta_consul_node']
-      regex:         '(.*)'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([\w-:\.]+),.*'
       target_label:  'alias'
       replacement:   '$1'
 
