@@ -14,7 +14,7 @@ v1.0.2 released 2016-07-28
   * Redesigned instance settings page
   * Added sparkline charts
   * Added ability to show more than 10 queries
-* Various updates for MongoDB dashboards.
+* Various updates for the dashboards.
 
 v1.0.1 released 2016-06-09
 

@@ -50,12 +50,12 @@ RUN chgrp grafana /etc/grafana/grafana.ini && \
 # ####################### #
 
 ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160727.fc1a822-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0-20160727.2df9671.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.0-20160728.f450028.tar.gz \
     /opt/
 RUN mkdir qan-api && \
 	tar zxf percona-qan-api-1.0.0-20160727.fc1a822-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
-	tar zxf percona-qan-app-1.0.0-20160727.2df9671.tar.gz --strip-components=1 -C qan-app
+	tar zxf percona-qan-app-1.0.0-20160728.f450028.tar.gz --strip-components=1 -C qan-app
 COPY install-qan.sh /opt
 RUN /opt/install-qan.sh
 
