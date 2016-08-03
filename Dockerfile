@@ -41,9 +41,9 @@ RUN git clone https://github.com/percona/grafana-dashboards.git && \
 RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
 	cp grafana_mongodb_dashboards/dashboards/* /var/lib/grafana/dashboards/
 COPY grafana.ini /etc/grafana/grafana.ini
-COPY add-grafana-datasource.sh /opt
+COPY grafana-postinstall.sh /opt
 RUN chgrp grafana /etc/grafana/grafana.ini && \
-	/opt/add-grafana-datasource.sh
+	/opt/grafana-postinstall.sh
 
 # ####################### #
 # Percona Query Analytics #
@@ -56,8 +56,8 @@ RUN mkdir qan-api && \
 	tar zxf percona-qan-api-1.0.0-20160727.fc1a822-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
 	tar zxf percona-qan-app-1.0.0-20160728.f450028.tar.gz --strip-components=1 -C qan-app
-COPY install-qan.sh /opt
-RUN /opt/install-qan.sh
+COPY qan-install.sh /opt
+RUN /opt/qan-install.sh
 
 COPY pt-archiver /usr/bin/
 COPY purge-qan-data /etc/cron.daily
