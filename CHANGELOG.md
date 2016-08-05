@@ -1,5 +1,9 @@
 Percona Monitoring and Management (PMM) Server
 
+v1.0.3 released 2016-08-05
+
+* Fixed math for query metrics on QAN App.
+
 v1.0.2 released 2016-07-28
 
 * Grafana 3.1.0.
