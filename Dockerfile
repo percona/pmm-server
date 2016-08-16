@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-EXPOSE 80
+EXPOSE 80 443
 
 WORKDIR /opt
 
@@ -42,20 +42,19 @@ RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
 	cp grafana_mongodb_dashboards/dashboards/* /var/lib/grafana/dashboards/
 COPY grafana.ini /etc/grafana/grafana.ini
 COPY grafana-postinstall.sh /opt
-RUN chgrp grafana /etc/grafana/grafana.ini && \
-	/opt/grafana-postinstall.sh
+RUN /opt/grafana-postinstall.sh
 
 # ####################### #
 # Percona Query Analytics #
 # ####################### #
 
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160805.fc1a822-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.3-20160805.00641f9.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160811.d7d95f1-x86_64.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.3-20160811.7ef1760.tar.gz \
     /opt/
 RUN mkdir qan-api && \
-	tar zxf percona-qan-api-1.0.0-20160805.fc1a822-x86_64.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-api-1.0.0-20160811.d7d95f1-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
-	tar zxf percona-qan-app-1.0.3-20160805.00641f9.tar.gz --strip-components=1 -C qan-app
+	tar zxf percona-qan-app-1.0.3-20160811.7ef1760.tar.gz --strip-components=1 -C qan-app
 COPY qan-install.sh /opt
 RUN /opt/qan-install.sh
 
@@ -76,6 +75,8 @@ RUN unzip consul_0.6.4_linux_amd64.zip && \
 # ##### #
 
 COPY nginx.conf /etc/nginx
+COPY nginx-ssl.conf /etc/nginx
+RUN touch /etc/nginx/.htpasswd
 
 # ############ #
 # Landing page # 
@@ -88,4 +89,5 @@ COPY landing-page/ /opt/landing-page/
 # ############################## #
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+COPY entrypoint.sh /opt
+CMD ["/opt/entrypoint.sh"]

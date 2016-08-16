@@ -13,11 +13,11 @@ scrape_configs:
   - job_name: override 
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['os', 'mongodb']
+      services: ['linux:metrics', 'mongodb:metrics']
 
     relabel_configs:
     - source_labels: ['__meta_consul_service']
-      regex:         '(.*)'
+      regex:         '(.+):metrics'
       target_label:  'job'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
@@ -39,9 +39,11 @@ scrape_configs:
 
 
   - job_name: mysql-hr
+    metrics_path: /metrics-hr
+
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['mysql-hr']
+      services: ['mysql:metrics']
 
     relabel_configs:
     - target_label:  'job'
@@ -53,11 +55,13 @@ scrape_configs:
 
 
   - job_name: mysql-mr
+    metrics_path: /metrics-mr
     scrape_interval:    5s
     scrape_timeout:     1s
+
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['mysql-mr']
+      services: ['mysql:metrics']
 
     relabel_configs:
     - target_label:  'job'
@@ -69,12 +73,13 @@ scrape_configs:
 
 
   - job_name: mysql-lr
+    metrics_path: /metrics-lr
     scrape_interval:   60s
     scrape_timeout:     5s
 
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['mysql-lr']
+      services: ['mysql:metrics']
 
     relabel_configs:
     - target_label:  'job'

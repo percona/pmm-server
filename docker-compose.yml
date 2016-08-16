@@ -18,9 +18,14 @@ services:
     restart: always
     ports:
       - "80:80"
+      - "443:443"
     volumes_from:
       - pmm-data
-#    environment:
-#      - METRICS_RETENTION=720h
-#      - METRICS_MEMORY=262144
-#      - METRICS_RESOLUTION=1s
+#    volumes:
+#      - /root/docker_shared_volumes/ssl:/etc/nginx/ssl
+    environment:
+      - METRICS_RETENTION=720h
+      - METRICS_MEMORY=262144
+      - METRICS_RESOLUTION=1s
+#      - HTTP_USER=pmm
+#      - HTTP_PASSWORD=abc123

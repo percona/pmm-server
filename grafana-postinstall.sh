@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
+chgrp grafana /etc/grafana/grafana.ini
 service grafana-server start
 
 for i in `seq 30`; do
