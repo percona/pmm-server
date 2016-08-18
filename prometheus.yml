@@ -8,6 +8,8 @@ scrape_configs:
     metrics_path: /prometheus/metrics
     static_configs:
       - targets: ['localhost:9090']
+        labels:
+          instance: prometheus
 
 
   - job_name: override 
@@ -22,7 +24,7 @@ scrape_configs:
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,replset_([\w-\.]+),.*'
@@ -50,7 +52,7 @@ scrape_configs:
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      target_label:  'instance'
       replacement:   '$1'
 
 
@@ -68,7 +70,7 @@ scrape_configs:
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      target_label:  'instance'
       replacement:   '$1'
 
 
@@ -86,6 +88,6 @@ scrape_configs:
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      target_label:  'instance'
       replacement:   '$1'
 
