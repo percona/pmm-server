@@ -35,11 +35,13 @@ RUN echo "deb https://packagecloud.io/grafana/stable/debian/ wheezy main" > /etc
 	curl https://packagecloud.io/gpg.key | apt-key add - && \
 	apt-get -y update && \
 	apt-get -y install grafana
-RUN git clone https://github.com/percona/grafana-dashboards.git && \
-	mkdir /var/lib/grafana/dashboards && \
-	cp grafana-dashboards/dashboards/* /var/lib/grafana/dashboards/
-RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
-	cp grafana_mongodb_dashboards/dashboards/* /var/lib/grafana/dashboards/
+#RUN git clone https://github.com/percona/grafana-dashboards.git && \
+#	mkdir /var/lib/grafana/dashboards && \
+#	cp grafana-dashboards/dashboards/* /var/lib/grafana/dashboards/
+#RUN git clone https://github.com/Percona-Lab/grafana_mongodb_dashboards.git && \
+#	cp grafana_mongodb_dashboards/dashboards/* /var/lib/grafana/dashboards/
+RUN mkdir /var/lib/grafana/dashboards
+COPY dashboards/*.json /var/lib/grafana/dashboards/
 COPY grafana.ini /etc/grafana/grafana.ini
 COPY grafana-postinstall.sh /opt
 RUN /opt/grafana-postinstall.sh
@@ -48,13 +50,13 @@ RUN /opt/grafana-postinstall.sh
 # Percona Query Analytics #
 # ####################### #
 
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.0-20160811.d7d95f1-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.3-20160811.7ef1760.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.4-20160819.83525f0-x86_64.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.4-20160819.815ca21.tar.gz \
     /opt/
 RUN mkdir qan-api && \
-	tar zxf percona-qan-api-1.0.0-20160811.d7d95f1-x86_64.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-api-1.0.4-20160819.83525f0-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	mkdir qan-app && \
-	tar zxf percona-qan-app-1.0.3-20160811.7ef1760.tar.gz --strip-components=1 -C qan-app
+	tar zxf percona-qan-app-1.0.4-20160819.815ca21.tar.gz --strip-components=1 -C qan-app
 COPY qan-install.sh /opt
 RUN /opt/qan-install.sh
 
@@ -90,4 +92,5 @@ COPY landing-page/ /opt/landing-page/
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /opt
+
 CMD ["/opt/entrypoint.sh"]
