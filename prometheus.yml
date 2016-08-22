@@ -12,30 +12,38 @@ scrape_configs:
           instance: prometheus
 
 
-  - job_name: override 
+  - job_name: linux
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['linux:metrics', 'mongodb:metrics']
+      services: ['linux:metrics']
 
     relabel_configs:
-    - source_labels: ['__meta_consul_service']
-      regex:         '(.+):metrics'
-      target_label:  'job'
-      replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
+      replacement:   '$1'
+
+
+  - job_name: mongodb
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['mongodb:metrics']
+
+    relabel_configs:
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,replset_([\w-\.]+),.*'
+      regex:         '.*,replset_([-\w:\.]+),.*'
       target_label:  'replset'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,cluster_([\w-\.]+),.*'
+      regex:         '.*,cluster_([-\w:\.]+),.*'
       target_label:  'cluster'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,nodetype_([\w-\.]+),.*'
+      regex:         '.*,nodetype_([-\w:\.]+),.*'
       target_label:  'nodetype'
       replacement:   '$1'
 
@@ -51,7 +59,7 @@ scrape_configs:
     - target_label:  'job'
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
+      regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
 
@@ -69,7 +77,7 @@ scrape_configs:
     - target_label:  'job'
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
+      regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
 
@@ -87,7 +95,7 @@ scrape_configs:
     - target_label:  'job'
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
+      regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
 
