@@ -10,6 +10,7 @@ v1.0.4 unreleased 2016-08-19
   * added search by query fingerprint
   * various fixes and improvements
 * Added "MongoDB RocksDB" dashboard.
+* Now you can save the predefined dashboards in-place.
 
 v1.0.3 released 2016-08-05
 

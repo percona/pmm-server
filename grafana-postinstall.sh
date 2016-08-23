@@ -1,18 +1,8 @@
 #!/bin/bash
 
-chgrp grafana /etc/grafana/grafana.ini
 service grafana-server start
 
-for i in `seq 30`; do
-	if curl -s http://admin:admin@localhost:3000/api/datasources; then
-		curl http://admin:admin@localhost:3000/api/datasources -X POST -H 'Content-Type: application/json' --data-binary '{"name":"Prometheus","type":"prometheus","url":"http://localhost:9090/prometheus/","access":"proxy","isDefault":true}'
-		echo "Added Prometheus data source to Grafana"
-		break
-	else
-		echo "Waiting for Grafana..."
-		sleep 1
-	fi
-done
+python /opt/import-dashboards.py
 
 # Apply interval fix
 sed -i 's/expr=\(.\)\.replace(\(.\)\.expr,\(.\)\.scopedVars\(.*\)var \(.\)=\(.\)\.interval/expr=\1.replace(\2.expr,\3.scopedVars\4var \5=\1.replace(\6.interval, \3.scopedVars)/' /usr/share/grafana/public/app/plugins/datasource/prometheus/datasource.js
