@@ -24,9 +24,9 @@ RUN apt-get -y update && apt-get install -y \
 # Prometheus #
 # ########## #
 
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.0.1/prometheus-1.0.1.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.0.2/prometheus-1.0.2.linux-amd64.tar.gz && \
 	mkdir prometheus && \
-	tar xfz prometheus-1.0.1.linux-amd64.tar.gz --strip-components=1 -C prometheus
+	tar xfz prometheus-1.0.2.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
 # ####### #
@@ -75,12 +75,12 @@ COPY pt-archiver /usr/bin/
 COPY purge-qan-data /etc/cron.daily
 COPY qan-install.sh /opt
 ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.4-20160819.83525f0-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.4-20160819.815ca21.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.4-20160902.93ee1f2.tar.gz \
     /opt/
 RUN mkdir qan-api && \
         tar zxf percona-qan-api-1.0.4-20160819.83525f0-x86_64.tar.gz --strip-components=1 -C qan-api && \
         mkdir qan-app && \
-        tar zxf percona-qan-app-1.0.4-20160819.815ca21.tar.gz --strip-components=1 -C qan-app && \
+        tar zxf percona-qan-app-1.0.4-20160902.93ee1f2.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh
 
 # ##### #

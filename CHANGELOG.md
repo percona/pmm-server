@@ -1,16 +1,18 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.4 unreleased 2016-08-19
+v1.0.4 unreleased 2016-09-02
 
 * Grafana 3.1.1.
+* Prometheus 1.0.2.
 * Added SSL and HTTP password support. Currently, only Prometheus, Consul APIs and QAN app are protected.
 * No extra `alias` label for Prometheus.
 * Query Analytics App:
   * added sparkline charts to metrics
   * added search by query fingerprint
   * various fixes and improvements
-* Added "MongoDB RocksDB" dashboard.
-* Now you can save the predefined dashboards in-place.
+* Added "MongoDB RocksDB", "PXC/Galera Cluster overview" dashboards.
+* Visual amendments to the dashboards.
+* Now you can save the predefined dashboards in place.
 
 v1.0.3 released 2016-08-05
 
