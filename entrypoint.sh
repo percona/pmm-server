@@ -9,8 +9,8 @@ if [ -e /etc/nginx/ssl/server.crt ] && [ -e /etc/nginx/ssl/server.key ]; then
     fi
 fi
 
-if [ -n "$HTTP_PASSWORD" ]; then
-    echo "${HTTP_USER:-pmm}:$(openssl passwd -apr1 $HTTP_PASSWORD)" > /etc/nginx/.htpasswd
+if [ -n "$SERVER_PASSWORD" ]; then
+    echo "${SERVER_USER:-pmm}:$(openssl passwd -apr1 $SERVER_PASSWORD)" > /etc/nginx/.htpasswd
     sed -i 's/auth_basic off/auth_basic "PMM Server"/' /etc/nginx/nginx.conf
 
     # Disable Grafana HTTP auth

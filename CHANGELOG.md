@@ -1,11 +1,11 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.4 unreleased 2016-09-02
+v1.0.4 unreleased 2016-09-08
 
 * Grafana 3.1.1.
 * Prometheus 1.0.2.
-* Added SSL and HTTP password support. Currently, only Prometheus, Consul APIs and QAN app are protected.
-* No extra `alias` label for Prometheus.
+* Added SSL and HTTP password protection.
+* No extra `alias` label on Prometheus.
 * Query Analytics App:
   * added sparkline charts to metrics
   * added search by query fingerprint

@@ -27,5 +27,5 @@ services:
       - METRICS_RETENTION=720h
       - METRICS_MEMORY=262144
       - METRICS_RESOLUTION=1s
-#      - HTTP_USER=pmm
-#      - HTTP_PASSWORD=abc123
+#      - SERVER_USER=pmm
+#      - SERVER_PASSWORD=abc123
