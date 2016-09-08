@@ -48,6 +48,11 @@ def main():
         dash = json.load(f)
         f.close()
 
+        # Set time options.
+        dash['time']['from'] = 'now-1h'
+        dash['time']['to'] = 'now'
+        dash['refresh'] = '1m'
+
         data = json.dumps({'dashboard': dash, 'overwrite': True})
         r = requests.post('%s/api/dashboards/db' % (HOST,), data=data, headers=headers)
         if r.status_code != 200:
