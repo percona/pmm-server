@@ -18,14 +18,16 @@ RUN apt-get -y update && apt-get install -y \
 	python \
 	python-requests \
 	supervisor && \
-	rm -f /etc/cron.daily/apt
+	rm -f /etc/cron.daily/apt && \
+	useradd -s /bin/false pmm
 
 # ########## #
 # Prometheus #
 # ########## #
 
 RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.0.2/prometheus-1.0.2.linux-amd64.tar.gz && \
-	mkdir prometheus && \
+	mkdir -p prometheus/data && \
+	chown -R pmm:pmm /opt/prometheus/data && \
 	tar xfz prometheus-1.0.2.linux-amd64.tar.gz --strip-components=1 -C prometheus
 COPY prometheus.yml /opt/prometheus/
 
@@ -49,7 +51,8 @@ RUN /opt/grafana-postinstall.sh
 
 RUN curl -s -LO https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_amd64.zip && \
 	unzip consul_0.6.4_linux_amd64.zip && \
-	mkdir -p /opt/consul-data
+	mkdir -p /opt/consul-data && \
+	chown -R pmm:pmm /opt/consul-data
 
 # ##### #
 # Nginx #
@@ -57,7 +60,10 @@ RUN curl -s -LO https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_a
 
 COPY nginx.conf /etc/nginx
 COPY nginx-ssl.conf /etc/nginx
-RUN touch /etc/nginx/.htpasswd
+RUN touch /etc/nginx/.htpasswd && \
+	touch /run/nginx.pid && \
+	chown -R www-data:www-data /var/lib/nginx /run/nginx.pid && \
+	setcap cap_net_bind_service=+ep /usr/sbin/nginx
 
 # ########################### #
 # Supervisor and landing page # 
