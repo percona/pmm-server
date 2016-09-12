@@ -58,10 +58,7 @@ RUN curl -s -LO https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_a
 # ##### #
 
 COPY nginx.conf nginx-ssl.conf /etc/nginx/
-RUN touch /etc/nginx/.htpasswd && \
-	touch /run/nginx.pid && \
-	chown -R www-data:www-data /var/lib/nginx /run/nginx.pid && \
-	setcap cap_net_bind_service=+ep /usr/sbin/nginx
+RUN touch /etc/nginx/.htpasswd
 
 # ########################### #
 # Supervisor and landing page # 
