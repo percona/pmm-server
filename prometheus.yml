@@ -8,79 +8,94 @@ scrape_configs:
     metrics_path: /prometheus/metrics
     static_configs:
       - targets: ['localhost:9090']
+        labels:
+          instance: prometheus
 
 
-  - job_name: override 
+  - job_name: linux
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['os', 'mongodb']
+      services: ['linux:metrics']
 
     relabel_configs:
-    - source_labels: ['__meta_consul_service']
-      regex:         '(.*)'
-      target_label:  'job'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
+      replacement:   '$1'
+
+
+  - job_name: mongodb
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      services: ['mongodb:metrics']
+
+    relabel_configs:
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
-      replacement:   '$1'
-    - source_labels: ['__meta_consul_tags']
-      regex:         '.*,replset_([\w-\.]+),.*'
+      regex:         '.*,replset_([-\w:\.]+),.*'
       target_label:  'replset'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,cluster_([\w-\.]+),.*'
+      regex:         '.*,cluster_([-\w:\.]+),.*'
       target_label:  'cluster'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,nodetype_([\w-\.]+),.*'
+      regex:         '.*,nodetype_([-\w:\.]+),.*'
       target_label:  'nodetype'
       replacement:   '$1'
 
 
   - job_name: mysql-hr
+    metrics_path: /metrics-hr
+
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['mysql-hr']
+      services: ['mysql:metrics']
 
     relabel_configs:
     - target_label:  'job'
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
       replacement:   '$1'
 
 
   - job_name: mysql-mr
+    metrics_path: /metrics-mr
     scrape_interval:    5s
     scrape_timeout:     1s
+
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['mysql-mr']
+      services: ['mysql:metrics']
 
     relabel_configs:
     - target_label:  'job'
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
       replacement:   '$1'
 
 
   - job_name: mysql-lr
+    metrics_path: /metrics-lr
     scrape_interval:   60s
     scrape_timeout:     5s
 
     consul_sd_configs:
     - server:   'localhost:8500'
-      services: ['mysql-lr']
+      services: ['mysql:metrics']
 
     relabel_configs:
     - target_label:  'job'
       replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,alias_([\w-:\.]+),.*'
-      target_label:  'alias'
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
       replacement:   '$1'
 

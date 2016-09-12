@@ -1,5 +1,20 @@
 Percona Monitoring and Management (PMM) Server
 
+v1.0.4 released 2016-09-13
+
+* Grafana 3.1.1.
+* Prometheus 1.0.2.
+* Added SSL and HTTP password protection.
+* No extra `alias` label on Prometheus.
+* Query Analytics App:
+  * added sparkline charts to metrics
+  * added search by query fingerprint
+  * various fixes and improvements
+* Added "MongoDB RocksDB", "PXC/Galera Cluster overview" dashboards.
+* Visual amendments to the dashboards.
+* Now you can save the predefined dashboards in place.
+* Switched processes to non-root user inside the container.
+
 v1.0.3 released 2016-08-05
 
 * Fixed math for query metrics on QAN App.
@@ -13,11 +28,11 @@ v1.0.2 released 2016-07-28
 * Eliminated the need to specify ADDRESS variable when creating docker container.
 * Added support to name instances using the new pmm-admin.
 * Query Analytics App:
-  * Redesigned queries profile table
-  * Redesigned metrics table
-  * Redesigned instance settings page
-  * Added sparkline charts
-  * Added ability to show more than 10 queries
+  * redesigned queries profile table
+  * redesigned metrics table
+  * redesigned instance settings page
+  * added sparkline charts
+  * added ability to show more than 10 queries
 * Various updates for the dashboards.
 
 v1.0.1 released 2016-06-09
