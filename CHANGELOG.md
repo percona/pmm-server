@@ -1,6 +1,6 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.4 unreleased 2016-09-08
+v1.0.4 released 2016-09-13
 
 * Grafana 3.1.1.
 * Prometheus 1.0.2.
@@ -13,6 +13,7 @@ v1.0.4 unreleased 2016-09-08
 * Added "MongoDB RocksDB", "PXC/Galera Cluster overview" dashboards.
 * Visual amendments to the dashboards.
 * Now you can save the predefined dashboards in place.
+* Switched processes to non-root user inside the container.
 
 v1.0.3 released 2016-08-05
 

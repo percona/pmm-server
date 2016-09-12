@@ -41,8 +41,7 @@ RUN echo "deb https://packagecloud.io/grafana/stable/debian/ wheezy main" > /etc
 	apt-get -y install grafana && \
 	git clone https://github.com/percona/grafana-dashboards.git && \
 	git clone -b alias2instance https://github.com/roman-vynar/grafana_mongodb_dashboards.git
-COPY import-dashboards.py /opt
-COPY grafana-postinstall.sh /opt
+COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
 RUN /opt/grafana-postinstall.sh
 
 # ###### #
@@ -58,8 +57,7 @@ RUN curl -s -LO https://releases.hashicorp.com/consul/0.6.4/consul_0.6.4_linux_a
 # Nginx #
 # ##### #
 
-COPY nginx.conf /etc/nginx
-COPY nginx-ssl.conf /etc/nginx
+COPY nginx.conf nginx-ssl.conf /etc/nginx/
 RUN touch /etc/nginx/.htpasswd && \
 	touch /run/nginx.pid && \
 	chown -R www-data:www-data /var/lib/nginx /run/nginx.pid && \
@@ -80,13 +78,13 @@ COPY entrypoint.sh /opt
 COPY pt-archiver /usr/bin/
 COPY purge-qan-data /etc/cron.daily
 COPY qan-install.sh /opt
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.4-20160819.83525f0-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.4-20160902.93ee1f2.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.4-20160912.d11c56c-x86_64.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.4.tar.gz \
     /opt/
 RUN mkdir qan-api && \
-        tar zxf percona-qan-api-1.0.4-20160819.83525f0-x86_64.tar.gz --strip-components=1 -C qan-api && \
+        tar zxf percona-qan-api-1.0.4-20160912.d11c56c-x86_64.tar.gz --strip-components=1 -C qan-api && \
         mkdir qan-app && \
-        tar zxf percona-qan-app-1.0.4-20160902.93ee1f2.tar.gz --strip-components=1 -C qan-app && \
+        tar zxf percona-qan-app-1.0.4.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh
 
 # ##### #
