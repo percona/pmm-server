@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 service grafana-server start
 
 python /opt/import-dashboards.py
