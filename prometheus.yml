@@ -15,7 +15,21 @@ scrape_configs:
   - job_name: linux
     consul_sd_configs:
     - server:   'localhost:8500'
+      datacenter: dc1
       services: ['linux:metrics']
+
+    relabel_configs:
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
+      replacement:   '$1'
+
+
+  - job_name: proxysql
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      datacenter: dc1
+      services: ['proxysql:metrics']
 
     relabel_configs:
     - source_labels: ['__meta_consul_tags']
@@ -27,6 +41,7 @@ scrape_configs:
   - job_name: mongodb
     consul_sd_configs:
     - server:   'localhost:8500'
+      datacenter: dc1
       services: ['mongodb:metrics']
 
     relabel_configs:
@@ -53,6 +68,7 @@ scrape_configs:
 
     consul_sd_configs:
     - server:   'localhost:8500'
+      datacenter: dc1
       services: ['mysql:metrics']
 
     relabel_configs:
@@ -71,6 +87,7 @@ scrape_configs:
 
     consul_sd_configs:
     - server:   'localhost:8500'
+      datacenter: dc1
       services: ['mysql:metrics']
 
     relabel_configs:
@@ -89,6 +106,7 @@ scrape_configs:
 
     consul_sd_configs:
     - server:   'localhost:8500'
+      datacenter: dc1
       services: ['mysql:metrics']
 
     relabel_configs:
