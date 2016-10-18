@@ -15,11 +15,11 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.1.3/prometheus-1.1.3.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.2.1/prometheus-1.2.1.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar xfz prometheus-1.1.3.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
-	rm -f prometheus-1.1.3.linux-amd64.tar.gz
+	tar zxf prometheus-1.2.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	rm -f prometheus-1.2.1.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
@@ -32,7 +32,7 @@ RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_3.1.1-1470047
 	git clone -b alias2instance https://github.com/roman-vynar/grafana_mongodb_dashboards.git && \
 	/opt/grafana-postinstall.sh && \
 	cp /opt/VERSION /var/lib/grafana/ && \
-	rm -rf grafana_3.1.1-1470047149_amd64.deb grafana-dashboards grafana_mongodb_dashboards
+	rm -rf grafana_3.1.1-1470047149_amd64.deb grafana-dashboards/.git grafana_mongodb_dashboards/.git
 
 # ###### #
 # Consul #

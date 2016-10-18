@@ -1,5 +1,10 @@
 Percona Monitoring and Management (PMM) Server
 
+v1.0.6 unreleased 2016-10-18
+
+* Prometheus 1.2.1.
+* Added "Amazon RDS OS Metrics" dashboard and CloudWatch datasource.
+
 v1.0.5 released 2016-10-14
 
 * New tool: Orchestrator - a MySQL replication topology management and visualization tool. Available by /orchestrator URL.
