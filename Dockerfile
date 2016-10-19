@@ -16,10 +16,12 @@ RUN apt-get -y update && \
 # Prometheus #
 # ########## #
 RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.2.1/prometheus-1.2.1.linux-amd64.tar.gz && \
-	mkdir -p prometheus/data && \
+	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
 	tar zxf prometheus-1.2.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
-	rm -f prometheus-1.2.1.linux-amd64.tar.gz
+	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz && \
+	tar zxf node_exporter-0.12.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
+	rm -f prometheus-1.2.1.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #

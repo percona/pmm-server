@@ -24,6 +24,11 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
 
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          instance: pmm-server
+
 
   - job_name: proxysql
     consul_sd_configs:
