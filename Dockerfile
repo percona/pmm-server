@@ -71,16 +71,16 @@ COPY landing-page/ /opt/landing-page/
 # ####################### #
 # Percona Query Analytics #
 # ####################### #
-COPY pt-archiver /usr/bin/
-COPY purge-qan-data /etc/cron.daily
-COPY qan-install.sh /opt
+COPY purge-qan-data /etc/cron.daily/
+COPY qan-install.sh /opt/
 ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.5-x86_64.tar.gz \
     https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.5.tar.gz \
     /opt/
-RUN mkdir qan-api && \
-        tar zxf percona-qan-api-1.0.5-x86_64.tar.gz --strip-components=1 -C qan-api && \
-        mkdir qan-app && \
-        tar zxf percona-qan-app-1.0.5.tar.gz --strip-components=1 -C qan-app && \
+RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona/percona-toolkit/2.2/bin/pt-archiver && \
+	chmod 755 /usr/bin/pt-archiver && \
+	mkdir qan-api qan-app && \
+	tar zxf percona-qan-api-1.0.5-x86_64.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-app-1.0.5.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh && \
 	rm -rf percona-qan-api-1.0.5-x86_64.tar.gz percona-qan-app-1.0.5.tar.gz qan-api
 

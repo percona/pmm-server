@@ -19,7 +19,7 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "443:443"
+#      - "443:443"
     volumes_from:
       - pmm-data
 #    volumes:
@@ -28,7 +28,8 @@ services:
       - METRICS_RETENTION=720h
       - METRICS_MEMORY=262144
       - METRICS_RESOLUTION=1s
+      - QUERIES_RETENTION=8
       - ORCHESTRATOR_USER=orc_client_user
       - ORCHESTRATOR_PASSWORD=orc_client_password
-#      - SERVER_USER=pmm
-#      - SERVER_PASSWORD=abc123
+      - SERVER_USER=pmm
+      - SERVER_PASSWORD=

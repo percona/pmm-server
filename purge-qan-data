@@ -1,3 +1,46 @@
-#!/bin/sh
-cd /opt/qan-api
-./percona-qan-purge ./templates/percona.my.cnf 'NOW() - INTERVAL 8 DAY' >> /var/log/purge-qan-data.log 2>&1
+#!/bin/bash
+
+# Logging to console and log file.
+exec > >(tee -a /var/log/purge-qan-data.log)
+exec 2>&1
+
+if [ -z "$(pt-archiver --version)" ]; then
+   echo "pt-archiver is not in PATH" >&2
+   exit 1
+fi
+
+MYCNF="${MYCNF}"
+DB="${DB:-pmm}"
+INTERVAL="${QUERIES_RETENTION:-8}"
+
+set -eu
+
+ts() {
+   echo -n "$(date +'%Y-%m-%dT%T') "
+   echo "$*"
+}
+
+do_table() {
+   local tbl="$1"
+   local where="$2"
+   ts "Purging $tbl..."
+   pt-archiver                         \
+      --source "F=$MYCNF,D=$DB,t=$tbl" \
+      --purge                          \
+      --limit 1000                     \
+      --no-check-charset               \
+      --why-quit                       \
+      --statistics                     \
+      --commit-each                    \
+      --no-version-check               \
+      --where "$where"
+}
+
+ts "Starting to purge $DB data older than $INTERVAL days."
+
+do_table "agent_log" "FROM_UNIXTIME(sec) < NOW() - INTERVAL $INTERVAL DAY"
+do_table "query_examples" "period < NOW() - INTERVAL $INTERVAL DAY"
+do_table "query_global_metrics" "start_ts < NOW() - INTERVAL $INTERVAL DAY"
+do_table "query_class_metrics" "start_ts < NOW() - INTERVAL $INTERVAL DAY"
+
+ts "Done purging data."
