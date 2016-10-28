@@ -1,6 +1,6 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.6 unreleased 2016-10-19
+v1.0.6 unreleased 2016-10-28
 
 * Prometheus 1.2.1.
 * Added "Amazon RDS OS Metrics" dashboard and CloudWatch datasource.
@@ -8,6 +8,9 @@ v1.0.6 unreleased 2016-10-19
 * Query analytics data is now purged correctly: it was broken in 1.0.5 and keeping retention 1 day in 1.0.4.
 * Query analytics data retention is made configurable with `QUERIES_RETENTION` option. Default: 8 days.
 * Made the external static files local for PMM home page.
+* Improvements and fixes to Query Analytics.
+* Refactored MongoDB dashboards.
+* Added "File Descriptors" graph to System Overview dashboard.
 
 v1.0.5 released 2016-10-14
 

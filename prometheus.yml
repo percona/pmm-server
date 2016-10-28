@@ -55,16 +55,8 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,replset_([-\w:\.]+),.*'
-      target_label:  'replset'
-      replacement:   '$1'
-    - source_labels: ['__meta_consul_tags']
       regex:         '.*,cluster_([-\w:\.]+),.*'
       target_label:  'cluster'
-      replacement:   '$1'
-    - source_labels: ['__meta_consul_tags']
-      regex:         '.*,nodetype_([-\w:\.]+),.*'
-      target_label:  'nodetype'
       replacement:   '$1'
 
 

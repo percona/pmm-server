@@ -10,7 +10,7 @@ import sqlite3
 import sys
 import time
 
-DIRS = ['/opt/grafana-dashboards/dashboards/', '/opt/grafana_mongodb_dashboards/dashboards/']
+DIR = '/opt/grafana-dashboards/dashboards/'
 
 
 def main():
@@ -72,12 +72,11 @@ def main():
 
     # Import dashboards with overwrite.
     files = []
-    for d in DIRS:
-        for f in os.listdir(d):
-            if not f.endswith('.json'):
-                continue
+    for f in os.listdir(DIR):
+        if not f.endswith('.json'):
+            continue
 
-            files.append(d + f)
+        files.append(DIR + f)
 
     for file_ in files:
         print file_
