@@ -15,13 +15,13 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.2.1/prometheus-1.2.1.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.2.2/prometheus-1.2.2.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus-1.2.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	tar zxf prometheus-1.2.2.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
 	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz && \
 	tar zxf node_exporter-0.12.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus-1.2.1.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
+	rm -f prometheus-1.2.2.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
@@ -73,15 +73,15 @@ COPY landing-page/ /opt/landing-page/
 COPY purge-qan-data /etc/cron.daily/
 COPY qan-install.sh /opt/
 ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.6-20161024.6d92a38.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.6.tar.gz \
     /opt/
 RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona/percona-toolkit/2.2/bin/pt-archiver && \
 	chmod 755 /usr/bin/pt-archiver && \
 	mkdir qan-api qan-app && \
 	tar zxf percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz --strip-components=1 -C qan-api && \
-	tar zxf percona-qan-app-1.0.6-20161024.6d92a38.tar.gz --strip-components=1 -C qan-app && \
+	tar zxf percona-qan-app-1.0.6.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh && \
-	rm -rf percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz percona-qan-app-1.0.6-20161024.6d92a38.tar.gz qan-api
+	rm -rf percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz percona-qan-app-1.0.6.tar.gz qan-api
 
 # ##### #
 # Start #

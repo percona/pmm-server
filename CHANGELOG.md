@@ -1,8 +1,8 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.6 unreleased 2016-10-28
+v1.0.6 released 2016-11-03
 
-* Prometheus 1.2.1.
+* Prometheus 1.2.2.
 * Added "Amazon RDS OS Metrics" dashboard and CloudWatch datasource.
 * Added PMM Server to metrics monitoring: the underlying host appears on system and disk dashboards as "pmm-server".
 * Query analytics data is now purged correctly: it was broken in 1.0.5 and keeping retention 1 day in 1.0.4.
