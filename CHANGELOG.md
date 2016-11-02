@@ -1,6 +1,6 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.6 released 2016-11-03
+v1.0.6 released 2016-11-04
 
 * Prometheus 1.2.2.
 * Added "Amazon RDS OS Metrics" dashboard and CloudWatch datasource.
