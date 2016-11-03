@@ -10,7 +10,7 @@ import sqlite3
 import sys
 import time
 
-DIRS = ['/opt/grafana-dashboards/dashboards/', '/opt/grafana_mongodb_dashboards/dashboards/']
+DIR = '/opt/grafana-dashboards/dashboards/'
 
 
 def main():
@@ -44,7 +44,7 @@ def main():
                 "VALUES (1, 'PMM Dashboard Import', '%s', 'Admin', datetime('now'), datetime('now'))" % (db_key,))
     con.commit()
 
-    # Wait for Grafana to start.
+    # Wait for Grafana to start and get datasources.
     for _ in xrange(30):
         try:
             r = requests.get('%s/api/datasources' % (host,), headers=headers)
@@ -54,9 +54,17 @@ def main():
         else:
             break
 
-    # Add datasource initially.
-    if not upgrade:
+    # Add datasources.
+    ds = [x['name'] for x in json.loads(r.content)]
+    if 'Prometheus' not in ds:
         data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
+        r = requests.post('%s/api/datasources' % (host,), data=data, headers=headers)
+        print r.status_code, r.content
+        if r.status_code != 200:
+            sys.exit(-1)
+
+    if 'CloudWatch' not in ds:
+        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': '{"defaultRegion":"us-west-2"}', 'access': 'proxy', 'isDefault': False})
         r = requests.post('%s/api/datasources' % (host,), data=data, headers=headers)
         print r.status_code, r.content
         if r.status_code != 200:
@@ -64,12 +72,11 @@ def main():
 
     # Import dashboards with overwrite.
     files = []
-    for d in DIRS:
-        for f in os.listdir(d):
-            if not f.endswith('.json'):
-                continue
+    for f in os.listdir(DIR):
+        if not f.endswith('.json'):
+            continue
 
-            files.append(d + f)
+        files.append(DIR + f)
 
     for file_ in files:
         print file_
@@ -90,10 +97,10 @@ def main():
 
     # Set home dashboard.
     if not upgrade:
-        cur.execute("INSERT INTO star (user_id, dashboard_id) "
+        cur.execute("REPLACE INTO star (user_id, dashboard_id) "
                     "SELECT 1, id from dashboard WHERE slug='cross-server-graphs'")
-        cur.execute("INSERT INTO preferences (org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
-                    "SELECT 1, 1, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
+        cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
+                    "SELECT 1, 1, 1, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
 
     # Delete key.
     cur.execute("DELETE FROM api_key WHERE key='%s'" % (db_key,))
