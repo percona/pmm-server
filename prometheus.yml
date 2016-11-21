@@ -13,6 +13,10 @@ scrape_configs:
 
 
   - job_name: linux
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -31,6 +35,10 @@ scrape_configs:
 
 
   - job_name: proxysql
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -44,6 +52,10 @@ scrape_configs:
 
 
   - job_name: mongodb
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -62,6 +74,9 @@ scrape_configs:
 
   - job_name: mysql-hr
     metrics_path: /metrics-hr
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
 
     consul_sd_configs:
     - server:   'localhost:8500'
@@ -81,6 +96,9 @@ scrape_configs:
     metrics_path: /metrics-mr
     scrape_interval:    5s
     scrape_timeout:     1s
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
 
     consul_sd_configs:
     - server:   'localhost:8500'
@@ -100,6 +118,9 @@ scrape_configs:
     metrics_path: /metrics-lr
     scrape_interval:   60s
     scrape_timeout:     5s
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
 
     consul_sd_configs:
     - server:   'localhost:8500'
