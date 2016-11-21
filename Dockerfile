@@ -15,13 +15,13 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.2.2/prometheus-1.2.2.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.3.1/prometheus-1.3.1.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus-1.2.2.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	tar zxf prometheus-1.3.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
 	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz && \
 	tar zxf node_exporter-0.12.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus-1.2.2.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
+	rm -f prometheus-1.3.1.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
@@ -38,11 +38,11 @@ RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_3.1.1-1470047
 # ###### #
 # Consul #
 # ###### #
-RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip && \
-	unzip consul_0.7.0_linux_amd64.zip && \
+RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.1/consul_0.7.1_linux_amd64.zip && \
+	unzip consul_0.7.1_linux_amd64.zip && \
 	mkdir -p /opt/consul-data && \
 	chown -R pmm:pmm /opt/consul-data && \
-	rm -f consul_0.7.0_linux_amd64.zip
+	rm -f consul_0.7.1_linux_amd64.zip
 
 # ##### #
 # Nginx #
