@@ -17,6 +17,9 @@ scrape_configs:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
 
+    tls_config:
+      insecure_skip_verify: true
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -27,6 +30,10 @@ scrape_configs:
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
 
     static_configs:
       - targets: ['localhost:9100']
@@ -39,6 +46,9 @@ scrape_configs:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
 
+    tls_config:
+      insecure_skip_verify: true
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -49,12 +59,19 @@ scrape_configs:
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
 
 
   - job_name: mongodb
     basic_auth:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
+
+    tls_config:
+      insecure_skip_verify: true
 
     consul_sd_configs:
     - server:   'localhost:8500'
@@ -67,6 +84,10 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
+    - source_labels: ['__meta_consul_tags']
       regex:         '.*,cluster_([-\w:\.]+),.*'
       target_label:  'cluster'
       replacement:   '$1'
@@ -78,6 +99,9 @@ scrape_configs:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
 
+    tls_config:
+      insecure_skip_verify: true
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -90,6 +114,10 @@ scrape_configs:
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
 
 
   - job_name: mysql-mr
@@ -100,6 +128,9 @@ scrape_configs:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
 
+    tls_config:
+      insecure_skip_verify: true
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -112,6 +143,10 @@ scrape_configs:
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
 
 
   - job_name: mysql-lr
@@ -122,6 +157,9 @@ scrape_configs:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
 
+    tls_config:
+      insecure_skip_verify: true
+
     consul_sd_configs:
     - server:   'localhost:8500'
       datacenter: dc1
@@ -134,4 +172,8 @@ scrape_configs:
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
       replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
 
