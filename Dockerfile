@@ -15,13 +15,13 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.3.1/prometheus-1.3.1.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.4.0/prometheus-1.4.0.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus-1.3.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
-	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz && \
-	tar zxf node_exporter-0.12.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus-1.3.1.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
+	tar zxf prometheus-1.4.0.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/v0.13.0/node_exporter-0.13.0.linux-amd64.tar.gz && \
+	tar zxf node_exporter-0.13.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
+	rm -f prometheus-1.4.0.linux-amd64.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
@@ -54,11 +54,8 @@ RUN touch /etc/nginx/.htpasswd
 # Orchestrator #
 # ############ #
 COPY orchestrator.conf.json /etc/
-RUN curl -s -LO https://github.com/outbrain/orchestrator/releases/download/v1.5.6/orchestrator_1.5.6_amd64.deb && \
-	dpkg -i orchestrator_1.5.6_amd64.deb && \
-	curl -s -LO https://www.percona.com/downloads/TESTING/pmm/orchestrator-1.5.6-patch.tgz && \
-	tar zxf orchestrator-1.5.6-patch.tgz -C /usr/local/orchestrator/ && \
-	rm -f orchestrator_1.5.6_amd64.deb orchestrator-1.5.6-patch.tgz
+RUN curl -s -LO https://github.com/outbrain/orchestrator/releases/download/v1.5.7/orchestrator_1.5.7_amd64.deb && \
+	dpkg -i orchestrator_1.5.7_amd64.deb
 
 # ########################### #
 # Supervisor and landing page # 
