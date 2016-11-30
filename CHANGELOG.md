@@ -1,11 +1,12 @@
 Percona Monitoring and Management (PMM) Server
 
-v1.0.7 unreleased 2016-11-29
+v1.0.7 unreleased 2016-11-30
 
 * Added new widgets and graphs to "PXC/Galera Graphs" dashboard.
 * Fixed hostgroup filtering for ProxySQL dashboard.
 * Various fixes to MongoDB dashboards.
 * Enabled HTTPS/TLS and basic authentication support on Prometheus targets.
+* Grafana 4.0 with alerting engine.
 * Prometheus 1.4.0.
 * Consul 0.7.1 with snapshot/restore feature.
 * Orchestrator 1.5.7.
