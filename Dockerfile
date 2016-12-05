@@ -15,25 +15,25 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.4.0/prometheus-1.4.0.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.4.1/prometheus-1.4.1.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus-1.4.0.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	tar zxf prometheus-1.4.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
 	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/v0.13.0/node_exporter-0.13.0.linux-amd64.tar.gz && \
 	tar zxf node_exporter-0.13.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus-1.4.0.linux-amd64.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
+	rm -f prometheus-1.4.1.linux-amd64.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
 # Grafana and dashboards #
 # ###################### #
 COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
-RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.0-1480439068_amd64.deb && \
-	dpkg -i grafana_4.0.0-1480439068_amd64.deb && \
+RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.1-1480694114_amd64.deb && \
+	dpkg -i grafana_4.0.1-1480694114_amd64.deb && \
 	git clone https://github.com/percona/grafana-dashboards.git && \
 	/opt/grafana-postinstall.sh && \
 	cp /opt/VERSION /var/lib/grafana/ && \
-	rm -rf grafana_4.0.0-1480439068_amd64.deb grafana-dashboards/.git
+	rm -rf grafana_4.0.1-1480694114_amd64.deb grafana-dashboards/.git
 
 # ###### #
 # Consul #
