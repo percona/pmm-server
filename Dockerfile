@@ -55,7 +55,8 @@ RUN touch /etc/nginx/.htpasswd
 # ############ #
 COPY orchestrator.conf.json /etc/
 RUN curl -s -LO https://github.com/outbrain/orchestrator/releases/download/v1.5.7/orchestrator_1.5.7_amd64.deb && \
-	dpkg -i orchestrator_1.5.7_amd64.deb
+	dpkg -i orchestrator_1.5.7_amd64.deb && \
+	rm -f orchestrator_1.5.7_amd64.deb
 
 # ########################### #
 # Supervisor and landing page # 
