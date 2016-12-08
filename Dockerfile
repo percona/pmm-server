@@ -15,34 +15,34 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.2.2/prometheus-1.2.2.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.4.1/prometheus-1.4.1.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus-1.2.2.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
-	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz && \
-	tar zxf node_exporter-0.12.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus-1.2.2.linux-amd64.tar.gz node_exporter-0.12.0.linux-amd64.tar.gz
+	tar zxf prometheus-1.4.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/v0.13.0/node_exporter-0.13.0.linux-amd64.tar.gz && \
+	tar zxf node_exporter-0.13.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
+	rm -f prometheus-1.4.1.linux-amd64.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
 # Grafana and dashboards #
 # ###################### #
 COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
-RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_3.1.1-1470047149_amd64.deb && \
-	dpkg -i grafana_3.1.1-1470047149_amd64.deb && \
+RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.1-1480694114_amd64.deb && \
+	dpkg -i grafana_4.0.1-1480694114_amd64.deb && \
 	git clone https://github.com/percona/grafana-dashboards.git && \
 	/opt/grafana-postinstall.sh && \
 	cp /opt/VERSION /var/lib/grafana/ && \
-	rm -rf grafana_3.1.1-1470047149_amd64.deb grafana-dashboards/.git
+	rm -rf grafana_4.0.1-1480694114_amd64.deb grafana-dashboards/.git
 
 # ###### #
 # Consul #
 # ###### #
-RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip && \
-	unzip consul_0.7.0_linux_amd64.zip && \
+RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.1/consul_0.7.1_linux_amd64.zip && \
+	unzip consul_0.7.1_linux_amd64.zip && \
 	mkdir -p /opt/consul-data && \
 	chown -R pmm:pmm /opt/consul-data && \
-	rm -f consul_0.7.0_linux_amd64.zip
+	rm -f consul_0.7.1_linux_amd64.zip
 
 # ##### #
 # Nginx #
@@ -54,11 +54,9 @@ RUN touch /etc/nginx/.htpasswd
 # Orchestrator #
 # ############ #
 COPY orchestrator.conf.json /etc/
-RUN curl -s -LO https://github.com/outbrain/orchestrator/releases/download/v1.5.6/orchestrator_1.5.6_amd64.deb && \
-	dpkg -i orchestrator_1.5.6_amd64.deb && \
-	curl -s -LO https://www.percona.com/downloads/TESTING/pmm/orchestrator-1.5.6-patch.tgz && \
-	tar zxf orchestrator-1.5.6-patch.tgz -C /usr/local/orchestrator/ && \
-	rm -f orchestrator_1.5.6_amd64.deb orchestrator-1.5.6-patch.tgz
+RUN curl -s -LO https://github.com/outbrain/orchestrator/releases/download/v1.5.7/orchestrator_1.5.7_amd64.deb && \
+	dpkg -i orchestrator_1.5.7_amd64.deb && \
+	rm -f orchestrator_1.5.7_amd64.deb
 
 # ########################### #
 # Supervisor and landing page # 
