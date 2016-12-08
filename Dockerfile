@@ -81,7 +81,8 @@ RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona
 	tar zxf percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz --strip-components=1 -C qan-api && \
 	tar zxf percona-qan-app-1.0.6.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh && \
-	rm -rf percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz percona-qan-app-1.0.6.tar.gz qan-api
+	rm -rf percona-qan-api-1.0.6-20161024.2cbdd01-x86_64.tar.gz percona-qan-app-1.0.6.tar.gz qan-api && \
+	sed -i 's/1.0.6/1.0.7/g' qan-app/index.html
 
 # ##### #
 # Start #
