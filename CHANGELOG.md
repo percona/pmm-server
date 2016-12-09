@@ -6,10 +6,11 @@ v1.0.7 unreleased 2016-12-12
 * Fixed hostgroup filtering for ProxySQL dashboard.
 * Various fixes to MongoDB dashboards.
 * Enabled HTTPS/TLS and basic authentication support on Prometheus targets.
+* Fixed potential error with too many connections on Query Analytics API.
 * Grafana 4.0.2 with alerting engine.
 * Prometheus 1.4.1.
 * Consul 0.7.1 with snapshot/restore feature.
-* Orchestrator 1.5.7.
+* Orchestrator 2.0.1.
 
 v1.0.6 released 2016-11-15
 
