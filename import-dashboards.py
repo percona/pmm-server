@@ -10,7 +10,10 @@ import sqlite3
 import sys
 import time
 
-DIR = '/opt/grafana-dashboards/dashboards/'
+SCRIPT_DIR    = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_DIR = SCRIPT_DIR + '/dashboards/'
+NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
+OLD_VERSION_FILE = '/var/lib/grafana/PERCONA_DASHBOARDS_VERSION'
 
 
 def main():
@@ -26,11 +29,11 @@ def main():
     # On upgrade - check versions whether to re-import dashboards.
     if upgrade:
         ver1 = 'N/A'
-        if os.path.exists('/var/lib/grafana/VERSION'):
-            with open('/var/lib/grafana/VERSION', 'r') as f:
+        if os.path.exists(OLD_VERSION_FILE):
+            with open(OLD_VERSION_FILE, 'r') as f:
                 ver1 = f.read().strip()
 
-        with open('/opt/VERSION', 'r') as f:
+        with open(NEW_VERSION_FILE, 'r') as f:
             ver2 = f.read().strip()
 
         if ver1 == ver2:
@@ -72,11 +75,11 @@ def main():
 
     # Import dashboards with overwrite.
     files = []
-    for f in os.listdir(DIR):
+    for f in os.listdir(DASHBOARD_DIR):
         if not f.endswith('.json'):
             continue
 
-        files.append(DIR + f)
+        files.append(DASHBOARD_DIR + f)
 
     for file_ in files:
         print file_
@@ -108,9 +111,9 @@ def main():
     con.commit()
     con.close()
 
-    # On upgrade - update VERSION file.
+    # update VERSION file.
+    shutil.copyfile(NEW_VERSION_FILE, OLD_VERSION_FILE)
     if upgrade:
-        shutil.copyfile('/opt/VERSION', '/var/lib/grafana/VERSION')
         print '* Dashboards upgraded successfully from version %s to %s.' % (ver1, ver2)
 
 
