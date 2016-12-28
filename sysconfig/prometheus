@@ -1,0 +1,1 @@
+OPTIONS="-storage.local.retention=720h -storage.local.memory-chunks=262144 -storage.local.chunk-encoding-version=2 -web.external-url=http://localhost:9090/prometheus/"
