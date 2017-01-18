@@ -10,10 +10,11 @@ import sqlite3
 import sys
 import time
 
-SCRIPT_DIR    = os.path.dirname(os.path.abspath(__file__))
-DASHBOARD_DIR = SCRIPT_DIR + '/dashboards/'
+GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
+SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
-OLD_VERSION_FILE = '/var/lib/grafana/PERCONA_DASHBOARDS_VERSION'
+OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 
 
 def main():
@@ -41,7 +42,7 @@ def main():
             sys.exit(0)
 
     # Insert key into Grafana sqlite db.
-    con = sqlite3.connect('/var/lib/grafana/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
     cur = con.cursor()
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
                 "VALUES (1, 'PMM Dashboard Import', '%s', 'Admin', datetime('now'), datetime('now'))" % (db_key,))
