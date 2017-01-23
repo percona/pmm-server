@@ -39,6 +39,7 @@ def main():
 
     # Insert key into Grafana sqlite db.
     con = sqlite3.connect('/var/lib/grafana/grafana.db')
+    con.execute("PRAGMA busy_timeout = 30000")
     cur = con.cursor()
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
                 "VALUES (1, 'PMM Dashboard Import', '%s', 'Admin', datetime('now'), datetime('now'))" % (db_key,))
