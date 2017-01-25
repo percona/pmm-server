@@ -4,11 +4,13 @@
 
 import json
 import os
-import requests
 import shutil
 import sqlite3
 import sys
 import time
+import requests
+from urllib3.util import Retry
+from requests.adapters import HTTPAdapter
 
 GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
@@ -42,18 +44,17 @@ def check_dashboards_version():
     return upgrade
 
 def wait_for_grafana_start():
+    print 'Waiting for Grafana to start...'
     s = requests.Session()
     retries = Retry(total=10,
                     backoff_factor=1,
                     status_forcelist=[ 500, 502, 503, 504 ])
     s.mount('http://', HTTPAdapter(max_retries=retries))
     try:
-        requests.get('%s/api/datasources' % HOST, timeout=0.1)
+        s.get('%s/api/datasources' % HOST, timeout=0.1)
     except:
-        print 'Waiting for Grafana to start...'
-        time.sleep(1)
         print '* Grafana is unable to start correctly'
-        sys.exit(1)
+        sys.exit(-1)
 
 def add_api_key():
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
@@ -76,7 +77,7 @@ def delete_api_key(upgrade):
         cur.execute("REPLACE INTO star (user_id, dashboard_id) "
                     "SELECT 1, id from dashboard WHERE slug='cross-server-graphs'")
         cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
-                    "SELECT 1, 1, 1, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
+                    "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
 
     # Delete key.
     cur.execute("DELETE FROM api_key WHERE key='%s'" % (DB_KEY,))
@@ -93,6 +94,7 @@ def add_datasources():
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
+            print '* Cannot add Prometheus Data Source'
             sys.exit(-1)
 
     if 'CloudWatch' not in ds:
@@ -100,6 +102,7 @@ def add_datasources():
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
+            print '* Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
 def import_dashboards():
@@ -126,14 +129,15 @@ def import_dashboards():
         r = requests.post('%s/api/dashboards/db' % HOST, data=data, headers=HEADERS)
         if r.status_code != 200:
             print r.status_code, r.content
+            print '* Cannot add %s Dashboard' % file_
             sys.exit(-1)
 
 def main():
-    upgrade = check_dashboards_version
-    wait_for_grafana_start
-    add_api_key
-    add_datasources
-    import_dashboards
+    upgrade = check_dashboards_version()
+    wait_for_grafana_start()
+    add_api_key()
+    add_datasources()
+    import_dashboards()
     delete_api_key(upgrade)
 
     shutil.copyfile(NEW_VERSION_FILE, OLD_VERSION_FILE)
