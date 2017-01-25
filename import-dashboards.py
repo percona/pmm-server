@@ -7,7 +7,6 @@ import os
 import shutil
 import sqlite3
 import sys
-import time
 import requests
 from urllib3.util import Retry
 from requests.adapters import HTTPAdapter
@@ -43,18 +42,20 @@ def check_dashboards_version():
 
     return upgrade
 
+
 def wait_for_grafana_start():
     print 'Waiting for Grafana to start...'
     s = requests.Session()
     retries = Retry(total=10,
                     backoff_factor=1,
-                    status_forcelist=[ 500, 502, 503, 504 ])
+                    status_forcelist=[500, 502, 503, 504])
     s.mount('http://', HTTPAdapter(max_retries=retries))
     try:
         s.get('%s/api/datasources' % HOST, timeout=0.1)
     except:
         print '* Grafana is unable to start correctly'
         sys.exit(-1)
+
 
 def add_api_key():
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
@@ -66,6 +67,7 @@ def add_api_key():
 
     con.commit()
     con.close()
+
 
 def delete_api_key(upgrade):
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
@@ -84,6 +86,7 @@ def delete_api_key(upgrade):
 
     con.commit()
     con.close()
+
 
 def add_datasources():
     r = requests.get('%s/api/datasources' % (HOST,), headers=HEADERS)
@@ -104,6 +107,7 @@ def add_datasources():
         if r.status_code != 200:
             print '* Cannot add CloudWatch Data Source'
             sys.exit(-1)
+
 
 def import_dashboards():
     # Import dashboards with overwrite.
@@ -131,6 +135,7 @@ def import_dashboards():
             print r.status_code, r.content
             print '* Cannot add %s Dashboard' % file_
             sys.exit(-1)
+
 
 def main():
     upgrade = check_dashboards_version()
