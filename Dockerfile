@@ -30,10 +30,9 @@ COPY prometheus.yml /opt/prometheus/
 COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
 RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.2-1481203731_amd64.deb && \
 	dpkg -i grafana_4.0.2-1481203731_amd64.deb && \
-	git clone https://github.com/percona/grafana-dashboards.git && \
+	git clone https://github.com/percona/grafana-dashboards.git dashboards && \
 	/opt/grafana-postinstall.sh && \
-	cp /opt/VERSION /var/lib/grafana/ && \
-	rm -rf grafana_4.0.2-1481203731_amd64.deb grafana-dashboards/.git
+	rm -rf grafana_4.0.2-1481203731_amd64.deb dashboards/.git
 
 # ###### #
 # Consul #
