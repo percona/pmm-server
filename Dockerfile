@@ -32,10 +32,10 @@ RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.2-1481203
 	dpkg -i grafana_4.0.2-1481203731_amd64.deb && \
 	pip install -U urllib3 && \
 	git clone https://github.com/percona/grafana-dashboards.git && \
-	mv /opt/import-dashboards.py /opt/VERSION /opt/grafana-dashboards/ && \
+	mv import-dashboards.py VERSION grafana-dashboards/ && \
 	service grafana-server start && \
 	/opt/grafana-dashboards/import-dashboards.py && \
-	rm -rf grafana_4.0.2-1481203731_amd64.deb dashboards/.git
+	rm -rf grafana_4.0.2-1481203731_amd64.deb grafana-dashboards/.git
 
 # ###### #
 # Consul #
