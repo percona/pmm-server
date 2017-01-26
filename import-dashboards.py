@@ -4,11 +4,12 @@
 
 import json
 import os
-import requests
 import shutil
 import sqlite3
 import sys
-import time
+import requests
+from urllib3.util import Retry
+from requests.adapters import HTTPAdapter
 
 GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
@@ -16,64 +17,99 @@ DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 
+HOST    = 'http://127.0.0.1:3000'
+API_KEY = 'eyJrIjoiSjZXMmM0cUpQdFp0djJRUThWMlJzNlVXQmhwRjJvVm0iLCJuIjoiUE1NIERhc2hib2FyZCBJbXBvcnQiLCJpZCI6MX0='
+DB_KEY  = '6176c9bca5590c39fc29d54b4a72e9fac5e4e8fdb75965123668d420f7b07a2d9443ad60cb8d36a1084c0fc73f3c387c0415'
+HEADERS = {'Authorization': 'Bearer %s' % (API_KEY,), 'Content-Type': 'application/json'}
 
-def main():
-    host = 'http://127.0.0.1:3000'
-    api_key = 'eyJrIjoiSjZXMmM0cUpQdFp0djJRUThWMlJzNlVXQmhwRjJvVm0iLCJuIjoiUE1NIERhc2hib2FyZCBJbXBvcnQiLCJpZCI6MX0='
-    db_key = '6176c9bca5590c39fc29d54b4a72e9fac5e4e8fdb75965123668d420f7b07a2d9443ad60cb8d36a1084c0fc73f3c387c0415'
-    headers = {'Authorization': 'Bearer %s' % (api_key,), 'Content-Type': 'application/json'}
 
+def check_dashboards_version():
     upgrade = False
-    if len(sys.argv) > 1 and sys.argv[1] == 'upgrade':
+
+    with open(NEW_VERSION_FILE, 'r') as f:
+        new_ver = f.read().strip()
+
+    old_ver = 'N/A'
+    if os.path.exists(OLD_VERSION_FILE):
         upgrade = True
+        with open(OLD_VERSION_FILE, 'r') as f:
+            old_ver = f.read().strip()
+            print '* Dashboards upgrade from version %s to %s.' % (old_ver, new_ver)
 
-    # On upgrade - check versions whether to re-import dashboards.
-    if upgrade:
-        ver1 = 'N/A'
-        if os.path.exists(OLD_VERSION_FILE):
-            with open(OLD_VERSION_FILE, 'r') as f:
-                ver1 = f.read().strip()
+    if old_ver == new_ver:
+        print '* The dashboards are up-to-date (%s).' % (old_ver,)
+        sys.exit(0)
 
-        with open(NEW_VERSION_FILE, 'r') as f:
-            ver2 = f.read().strip()
+    return upgrade
 
-        if ver1 == ver2:
-            print '* The dashboards are up-to-date (%s).' % (ver1,)
-            sys.exit(0)
 
-    # Insert key into Grafana sqlite db.
+def wait_for_grafana_start():
+    print 'Waiting for Grafana to start...'
+    s = requests.Session()
+    retries = Retry(total=10,
+                    backoff_factor=1,
+                    status_forcelist=[500, 502, 503, 504])
+    s.mount('http://', HTTPAdapter(max_retries=retries))
+    try:
+        s.get('%s/api/datasources' % HOST, timeout=0.1)
+    except:
+        print '* Grafana is unable to start correctly'
+        sys.exit(-1)
+
+
+def add_api_key():
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con.execute("PRAGMA busy_timeout = 60000")
     cur = con.cursor()
+
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
-                "VALUES (1, 'PMM Dashboard Import', '%s', 'Admin', datetime('now'), datetime('now'))" % (db_key,))
+                "VALUES (1, 'PMM Dashboard Import', '%s', 'Admin', datetime('now'), datetime('now'))" % (DB_KEY,))
+
     con.commit()
+    con.close()
 
-    # Wait for Grafana to start and get datasources.
-    for _ in xrange(30):
-        try:
-            r = requests.get('%s/api/datasources' % (host,), headers=headers)
-        except requests.exceptions.ConnectionError:
-            print 'Waiting for Grafana to start...'
-            time.sleep(1)
-        else:
-            break
 
-    # Add datasources.
+def delete_api_key(upgrade):
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con.execute("PRAGMA busy_timeout = 60000")
+    cur = con.cursor()
+
+    # Set home dashboard.
+    if not upgrade:
+        cur.execute("REPLACE INTO star (user_id, dashboard_id) "
+                    "SELECT 1, id from dashboard WHERE slug='cross-server-graphs'")
+        cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
+                    "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
+
+    # Delete key.
+    cur.execute("DELETE FROM api_key WHERE key='%s'" % (DB_KEY,))
+
+    con.commit()
+    con.close()
+
+
+def add_datasources():
+    r = requests.get('%s/api/datasources' % (HOST,), headers=HEADERS)
+    print r.status_code, r.content
     ds = [x['name'] for x in json.loads(r.content)]
     if 'Prometheus' not in ds:
         data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
-        r = requests.post('%s/api/datasources' % (host,), data=data, headers=headers)
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
+            print '* Cannot add Prometheus Data Source'
             sys.exit(-1)
 
     if 'CloudWatch' not in ds:
-        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': '{"defaultRegion":"us-west-2"}', 'access': 'proxy', 'isDefault': False})
-        r = requests.post('%s/api/datasources' % (host,), data=data, headers=headers)
+        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': '{"defaultRegion":"us-east-1"}', 'access': 'proxy', 'isDefault': False})
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
+            print '* Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
+
+def import_dashboards():
     # Import dashboards with overwrite.
     files = []
     for f in os.listdir(DASHBOARD_DIR):
@@ -94,28 +130,22 @@ def main():
         dash['refresh'] = '1m'
 
         data = json.dumps({'dashboard': dash, 'overwrite': True})
-        r = requests.post('%s/api/dashboards/db' % (host,), data=data, headers=headers)
+        r = requests.post('%s/api/dashboards/db' % HOST, data=data, headers=HEADERS)
         if r.status_code != 200:
             print r.status_code, r.content
+            print '* Cannot add %s Dashboard' % file_
             sys.exit(-1)
 
-    # Set home dashboard.
-    if not upgrade:
-        cur.execute("REPLACE INTO star (user_id, dashboard_id) "
-                    "SELECT 1, id from dashboard WHERE slug='cross-server-graphs'")
-        cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
-                    "SELECT 1, 1, 1, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
 
-    # Delete key.
-    cur.execute("DELETE FROM api_key WHERE key='%s'" % (db_key,))
+def main():
+    upgrade = check_dashboards_version()
+    wait_for_grafana_start()
+    add_api_key()
+    add_datasources()
+    import_dashboards()
+    delete_api_key(upgrade)
 
-    con.commit()
-    con.close()
-
-    # update VERSION file.
     shutil.copyfile(NEW_VERSION_FILE, OLD_VERSION_FILE)
-    if upgrade:
-        print '* Dashboards upgraded successfully from version %s to %s.' % (ver1, ver2)
 
 
 if __name__ == '__main__':
