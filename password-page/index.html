@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>PMM - Set Password</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="assets/favicon.ico" type="image/png">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="jumbotron">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <img src="assets/pmm-logo-color.svg">
+                        </div>
+                        <div class="col-md-offset-1 col-md-6">
+                            <h3 class="text-justify">
+                                Welcome to the simplest installation process in the world. Just fill in the information and you will be able to use the most
+                                modern and powerful solution for managing and mnitoring performance on MySQL and MongoDB.
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <form action="http://127.0.0.1:7777/configurator/v1/users" method="POST">
+                    <div class="form-group form-group-lg">
+                        <label for="InputUsername1">Username</label>
+                        <input type="email" name="Username" class="form-control" id="InputUsername1" placeholder="Username">
+                    </div>
+                    <div class="form-group form-group-lg">
+                        <label for="InputPassword1">Password, twice</label>
+                        <input type="password" name="Password" class="form-control" id="InputPassword1" placeholder="Password">
+                    </div>
+                    <div class="form-group form-group-lg">
+                        <input type="password" name="Password2" class="form-control" id="InputPassword2" placeholder="Repeat Password">
+                    </div>
+                    <div class="pull-right">
+                        <button type="reset" class="btn btn-default btn-lg">
+                            <i class="glyphicon glyphicon-remove"></i>
+                            Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="glyphicon glyphicon-ok"></i>
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
