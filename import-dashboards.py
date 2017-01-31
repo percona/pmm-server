@@ -33,17 +33,17 @@ def check_dashboards_version():
         upgrade = True
         with open(OLD_VERSION_FILE, 'r') as f:
             old_ver = f.read().strip()
-            print '* Dashboards upgrade from version %s to %s.' % (old_ver, new_ver)
+            print ' * Dashboards upgrade from version %s to %s.' % (old_ver, new_ver)
 
     if old_ver == new_ver:
-        print '* The dashboards are up-to-date (%s).' % (old_ver,)
+        print ' * The dashboards are up-to-date (%s).' % (old_ver,)
         sys.exit(0)
 
     return upgrade
 
 
 def wait_for_grafana_start():
-    sys.stdout.write('* Waiting for Grafana to start')
+    sys.stdout.write(' * Waiting for Grafana to start')
     sys.stdout.flush()
     for _ in xrange(60):
         try:
@@ -55,7 +55,7 @@ def wait_for_grafana_start():
         else:
             print
             return
-    print "\n* Grafana is unable to start correctly"
+    print "\n * Grafana is unable to start correctly"
     sys.exit(-1)
 
 
@@ -99,7 +99,7 @@ def add_datasources():
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
-            print '* Cannot add Prometheus Data Source'
+            print ' * Cannot add Prometheus Data Source'
             sys.exit(-1)
 
     if 'CloudWatch' not in ds:
@@ -107,7 +107,7 @@ def add_datasources():
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
-            print '* Cannot add CloudWatch Data Source'
+            print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
 
@@ -135,7 +135,7 @@ def import_dashboards():
         r = requests.post('%s/api/dashboards/db' % HOST, data=data, headers=HEADERS)
         if r.status_code != 200:
             print r.status_code, r.content
-            print '* Cannot add %s Dashboard' % file_
+            print ' * Cannot add %s Dashboard' % file_
             sys.exit(-1)
 
 
