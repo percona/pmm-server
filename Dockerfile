@@ -8,7 +8,7 @@ WORKDIR /opt
 # System packages #
 # ############### #
 RUN apt-get -y update && \
-	apt-get install -y apt-transport-https curl git unzip nginx mysql-server-5.5 python python-requests supervisor python-pip && \
+	apt-get install -y apt-transport-https curl git unzip nginx mysql-server-5.5 python python-requests supervisor && \
 	rm -f /etc/cron.daily/apt && \
 	useradd -s /bin/false pmm
 
@@ -30,7 +30,6 @@ COPY prometheus.yml /opt/prometheus/
 COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
 RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.2-1481203731_amd64.deb && \
 	dpkg -i grafana_4.0.2-1481203731_amd64.deb && \
-	pip install -U urllib3 && \
 	git clone https://github.com/percona/grafana-dashboards.git && \
 	mv import-dashboards.py VERSION grafana-dashboards/ && \
 	service grafana-server start && \
