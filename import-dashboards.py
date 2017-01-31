@@ -8,8 +8,7 @@ import shutil
 import sqlite3
 import sys
 import requests
-from urllib3.util import Retry
-from requests.adapters import HTTPAdapter
+import time
 
 GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
@@ -44,17 +43,20 @@ def check_dashboards_version():
 
 
 def wait_for_grafana_start():
-    print 'Waiting for Grafana to start...'
-    s = requests.Session()
-    retries = Retry(total=10,
-                    backoff_factor=1,
-                    status_forcelist=[500, 502, 503, 504])
-    s.mount('http://', HTTPAdapter(max_retries=retries))
-    try:
-        s.get('%s/api/datasources' % HOST, timeout=0.1)
-    except:
-        print '* Grafana is unable to start correctly'
-        sys.exit(-1)
+    sys.stdout.write('* Waiting for Grafana to start')
+    sys.stdout.flush()
+    for _ in xrange(60):
+        try:
+            requests.get('%s/api/datasources' % HOST, timeout=0.1)
+        except requests.exceptions.ConnectionError:
+            sys.stdout.write('.')
+            sys.stdout.flush()
+            time.sleep(1)
+        else:
+            print
+            return
+    print "\n* Grafana is unable to start correctly"
+    sys.exit(-1)
 
 
 def add_api_key():
