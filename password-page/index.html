@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="assets/favicon.ico" type="image/png">
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 
@@ -15,13 +16,12 @@
             <div class="col-md-12">
                 <div class="jumbotron">
                     <div class="row">
-                        <div class="col-md-5">
-                            <img src="assets/pmm-logo-color.svg">
+                        <div class="col-md-4">
+                            <img src="assets/pmm-logo-color.svg" style="width: 90%; max-width: 430px; margin-left: auto; margin-right: auto; display: block;">
                         </div>
-                        <div class="col-md-offset-1 col-md-6">
-                            <h3 class="text-justify">
-                                Welcome to the simplest installation process in the world. Just fill in the information and you will be able to use the most
-                                modern and powerful solution for managing and mnitoring performance on MySQL and MongoDB.
+                        <div class="col-md-offset-2 col-md-6">
+                            <h3 class="text-justify" style="font-size: 16px;">
+                                Welcome to the simplest installation process in the world. Just fill in the information and you will be able to use the most modern and powerful solution for managing and monitoring performance on MySQL and MongoDB.
                             </h3>
                         </div>
                     </div>
@@ -30,24 +30,35 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <form action="http://127.0.0.1:7777/configurator/v1/users" method="POST">
-                    <div class="form-group form-group-lg">
-                        <label for="InputUsername1">Username</label>
-                        <input type="email" name="Username" class="form-control" id="InputUsername1" placeholder="Username">
+                <form id="form">
+
+                    <div class="col-md-12 form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input type="login" name="Username" class="form-control" id="login" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" name="Password" class="form-control" id="password" placeholder="Password" required>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" name="ConfirmPassword" class="form-control" id="confirmPassword" placeholder="Repeat Password" required>
+                        </div>
                     </div>
-                    <div class="form-group form-group-lg">
-                        <label for="InputPassword1">Password, twice</label>
-                        <input type="password" name="Password" class="form-control" id="InputPassword1" placeholder="Password">
+                    <div class="col-md-12 form-group">
+                        <div class="input-group ssh">
+                            <span class="input-group-addon">SSH Public Key</span>
+                            <input id="sshkey" type="text" class="form-control" placeholder="(Optional) ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...">
+                        </div>
                     </div>
-                    <div class="form-group form-group-lg">
-                        <input type="password" name="Password2" class="form-control" id="InputPassword2" placeholder="Repeat Password">
-                    </div>
+
                     <div class="pull-right">
-                        <button type="reset" class="btn btn-default btn-lg">
+                        <button type="reset" class="btn btn-default">
                             <i class="glyphicon glyphicon-remove"></i>
                             Reset
                         </button>
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="btn btn-primary">
                             <i class="glyphicon glyphicon-ok"></i>
                             Submit
                         </button>
@@ -57,5 +68,117 @@
         </div>
     </div>
 </body>
+
+<script>
+    function isErrorExists() {
+        errorCounter = 0;
+
+        // login validation
+        if ($("#login").val().length <= 255 && !$("#login").val().includes(":")) {
+            $("#login").parent().removeClass("has-error").addClass("has-success has-feedback");
+        } else {
+            $("#login").parent().removeClass("has-success").addClass("has-error has-feedback");
+            if ($("#login").val().includes(":")) {
+                $("#login").tooltip({
+                    "trigger": "focus",
+                    "title": "Username should not contain colon"
+                });
+            } else {
+                $("#login").tooltip({
+                    "trigger": "focus",
+                    "title": "Username is too long, maximum allowed length 255 characters"
+                });
+            }
+            errorCounter++;
+        }
+
+        // password validation
+        if ($("#password").val().length <= 255) {
+            $("#password").parent().removeClass("has-error").addClass("has-success has-feedback");
+        } else {
+            $("#password").parent().removeClass("has-success").addClass("has-error has-feedback");
+            $("#password").tooltip({
+                "trigger": "focus",
+                "title": "Password is too long, maximum allowed length 255 characters"
+            });
+            errorCounter++;
+        }
+
+        // confirmPassword validation
+        if ($("#confirmPassword").val() === $("#password").val()) {
+            $("#confirmPassword").parent().removeClass("has-error").addClass("has-success has-feedback");
+        } else {
+            $("#confirmPassword").parent().removeClass("has-success").addClass("has-error has-feedback");
+            $("#confirmPassword").tooltip({
+                "trigger": "focus",
+                "title": "The password and its confirm are not the same"
+            });
+            errorCounter++;
+        }
+
+        return errorCounter > 0 ? true : false;
+    }
+
+    function resetValidation() {
+        $("#login").parent().removeClass("has-error has-success").addClass("has-feedback");
+        $("#login").data('bs.tooltip', false);
+        $("#password").parent().removeClass("has-error has-success").addClass("has-feedback");
+        $("#password").data('bs.tooltip', false);
+        $("#confirmPassword").parent().removeClass("has-error has-success").addClass("has-feedback");
+        $("#confirmPassword").data('bs.tooltip', false);
+        $("#sshkey").parent().removeClass("has-error has-success").addClass("has-feedback");
+        $("#sshkey").data('bs.tooltip', false);
+    }
+
+    function addUser() {
+        if (isErrorExists()) {
+            return;
+        }
+
+        var postUser = $.post("/configurator/v1/users", JSON.stringify({
+            "Username": $("#login").val(),
+            "Password": $("#password").val()
+        }), null, "json");
+
+        postUser.done(function() {
+            location.reload(true);
+        });
+
+        postUser.fail(function(jqXHR) {
+            resetValidation();
+            $("#login").parent().removeClass("has-success").addClass("has-error has-feedback");
+            $("#login").tooltip({
+                "trigger": "focus",
+                "title": jqXHR.responseJSON.title
+            });
+        });
+    }
+
+    $(function() {
+        $("#form").submit(function(event) {
+            event.preventDefault();
+            resetValidation();
+
+            if ($("#sshkey").val().length > 0) {
+                var postSSHKey = $.post("/configurator/v1/sshkey", JSON.stringify({
+                    "key": $("#sshkey").val()
+                }), null, "json");
+                postSSHKey.done(function() {
+                    $("#sshkey").parent().removeClass("has-error").addClass("has-success has-feedback");
+                    addUser();
+                });
+                postSSHKey.fail(function(jqXHR) {
+                    $("#sshkey").parent().removeClass("has-success").addClass("has-error has-feedback");
+                    $("#sshkey").tooltip({
+                        "trigger": "focus",
+                        "title": jqXHR.responseJSON.title
+                    });
+                });
+            } else {
+                addUser();
+            }
+        });
+    });
+</script>
 
 </html>
