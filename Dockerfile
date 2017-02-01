@@ -15,35 +15,35 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.4.1/prometheus-1.4.1.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.5.0/prometheus-1.5.0.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus-1.4.1.linux-amd64.tar.gz --strip-components=1 -C prometheus && \
+	tar zxf prometheus*.tar.gz --strip-components=1 -C prometheus && \
 	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/v0.13.0/node_exporter-0.13.0.linux-amd64.tar.gz && \
 	tar zxf node_exporter-0.13.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus-1.4.1.linux-amd64.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
+	rm -f prometheus*.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
 COPY prometheus.yml /opt/prometheus/
 
 # ###################### #
 # Grafana and dashboards #
 # ###################### #
 COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
-RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.0.2-1481203731_amd64.deb && \
-	dpkg -i grafana_4.0.2-1481203731_amd64.deb && \
+RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.1.1-1484211277_amd64.deb && \
+	dpkg -i grafana*.deb && \
 	git clone https://github.com/percona/grafana-dashboards.git && \
 	mv import-dashboards.py VERSION grafana-dashboards/ && \
 	service grafana-server start && \
 	/opt/grafana-dashboards/import-dashboards.py && \
-	rm -rf grafana_4.0.2-1481203731_amd64.deb grafana-dashboards/.git
+	rm -rf grafana*.deb grafana-dashboards/.git
 
 # ###### #
 # Consul #
 # ###### #
-RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.1/consul_0.7.1_linux_amd64.zip && \
-	unzip consul_0.7.1_linux_amd64.zip && \
+RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.3/consul_0.7.3_linux_amd64.zip && \
+	unzip consul*.zip && \
 	mkdir -p /opt/consul-data && \
 	chown -R pmm:pmm /opt/consul-data && \
-	rm -f consul_0.7.1_linux_amd64.zip
+	rm -f consul*.zip
 
 # ##### #
 # Nginx #
