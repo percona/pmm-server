@@ -71,17 +71,17 @@ COPY landing-page/ /opt/landing-page/
 # ####################### #
 COPY purge-qan-data /etc/cron.daily/
 COPY qan-install.sh /opt/
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.0.7-20161209.e8b74e6-x86_64.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.0.6.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.1.0-1.1702021924.dd9f688.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.1.0-1.1702021919.ad8b6ce.tar.gz \
     /opt/
 RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona/percona-toolkit/2.2/bin/pt-archiver && \
 	chmod 755 /usr/bin/pt-archiver && \
 	mkdir qan-api qan-app && \
-	tar zxf percona-qan-api-1.0.7-20161209.e8b74e6-x86_64.tar.gz --strip-components=1 -C qan-api && \
-	tar zxf percona-qan-app-1.0.6.tar.gz --strip-components=1 -C qan-app && \
+	tar zxf percona-qan-api-*.tar.gz --strip-components=1 -C qan-api && \
+	tar zxf percona-qan-app-*.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh && \
-	rm -rf percona-qan-api-1.0.7-20161209.e8b74e6-x86_64.tar.gz percona-qan-app-1.0.6.tar.gz qan-api && \
-	sed -i 's/1.0.6/1.0.7/g' qan-app/index.html
+	rm -rf *.tar.gz qan-api && \
+	sed -i 's/1.0.0/1.1.0/g' qan-app/index.html
 
 # ##### #
 # Start #
