@@ -15,7 +15,7 @@ RUN apt-get -y update && \
 # ########## #
 # Prometheus #
 # ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.5.0/prometheus-1.5.0.linux-amd64.tar.gz && \
+RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.5.1/prometheus-1.5.1.linux-amd64.tar.gz && \
 	mkdir -p prometheus/data node_exporter && \
 	chown -R pmm:pmm /opt/prometheus/data && \
 	tar zxf prometheus*.tar.gz --strip-components=1 -C prometheus && \
