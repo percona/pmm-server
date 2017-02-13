@@ -87,6 +87,125 @@
 
     </content>
 
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <hr style="margin-bottom: 5px;" />
+                    <p class="text-right small">v1.0.0 <a onclick="checkUpdate()" href="javascript:void(0);"><i class="fa fa-refresh" aria-hidden="true"></i></a></p>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal" id="updateModal" role="dialog">
+                <div id="updateDialog" class="modal-dialog modal-sm">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update</h4>
+                        </div>
+                        <div class="modal-body">
+                            <pre id="updateOutput" style="display: none;"></pre>
+                            <center id="checkLoader">
+                                <p id="checkText">Checking for the latest PMM update...</p>
+                                <div class="loader"></div>
+                            </center>
+                            <p id="updateText" style="display: none;"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="updateRunBtn" type="button" class="btn btn-default" style="display: none;" onclick="runUpdate()">Update</button>
+                            <button id="updateCloseBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
 </body>
+<script>
+    var updateLocation = ""
+
+    function checkUpdate() {
+        $("#checkLoader").show();
+        $("#updateRunBtn").hide();
+        $("#updateText").hide();
+        $("#updateOutput").hide();
+        $("#checkText").show();
+        $("#updateDialog").removeClass("modal-lg").addClass("modal-sm");
+        $("#updateModal").modal();
+
+        var checkUpdate = $.get("/configurator/v1/check-update", null, null, "json");
+
+        checkUpdate.done(function(data, status, xhr) {
+            if (data.title === "in-progress") {
+                updateLocation = xhr.getResponseHeader('Location');
+                window.setTimeout(update, 1);
+            } else {
+                $("#checkLoader").hide();
+                $("#updateRunBtn").show();
+                $("#updateText").text(data.title);
+                $("#updateText").show();
+            }
+        });
+
+        checkUpdate.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
+            $("#checkLoader").hide();
+            $("#updateText").text(jqXHR.responseJSON.title);
+            $("#updateText").show();
+        });
+    }
+
+    function runUpdate() {
+        var runUpdate = $.post("/configurator/v1/updates", null, null, "json");
+
+        runUpdate.done(function(data, status, xhr) {
+            if (data.title === "in-progress") {
+                updateLocation = xhr.getResponseHeader('Location');
+                window.setTimeout(update, 1);
+            } else {
+                $("#checkLoader").hide();
+            }
+        });
+
+        runUpdate.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
+            $("#checkLoader").hide();
+            $("#updateText").text(jqXHR.responseJSON.title);
+            $("#updateText").show();
+        });
+    }
+
+    function update() {
+        $("#updateDialog").removeClass("modal-sm").addClass("modal-lg");
+        $("#checkLoader").show();
+        $("#updateRunBtn").hide();
+        $("#updateText").hide();
+        $("#checkText").hide();
+        $("#updateOutput").show();
+
+        var fetchLog = $.get(updateLocation, null, null, "json");
+
+        fetchLog.done(function(data) {
+            $("#updateOutput").text(data.detail);
+            if (data.title === "in-progress") {
+                window.setTimeout(update, 1000);
+            } else {
+                $("#checkLoader").hide();
+            }
+        });
+
+        fetchLog.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
+            $("#checkLoader").hide();
+            $("#updateText").text(jqXHR.responseJSON.title);
+            $("#updateText").show();
+        });
+    }
+</script>
 
 </html>
