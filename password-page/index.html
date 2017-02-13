@@ -74,14 +74,19 @@
         errorCounter = 0;
 
         // login validation
-        if ($("#login").val().length <= 255 && !$("#login").val().includes(":")) {
+        if ($("#login").val().length <= 255 && !$("#login").val().includes(":") && !$("#login").val().includes("#")) {
             $("#login").parent().removeClass("has-error").addClass("has-success has-feedback");
         } else {
             $("#login").parent().removeClass("has-success").addClass("has-error has-feedback");
             if ($("#login").val().includes(":")) {
                 $("#login").tooltip({
                     "trigger": "focus",
-                    "title": "Username should not contain colon"
+                    "title": "Username should not contain colon symbol"
+                });
+            } else if ($("#login").val().includes("#")) {
+                $("#login").tooltip({
+                    "trigger": "focus",
+                    "title": "Username should not contain hash symbol"
                 });
             } else {
                 $("#login").tooltip({
@@ -145,6 +150,7 @@
         });
 
         postUser.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
             resetValidation();
             $("#login").parent().removeClass("has-success").addClass("has-error has-feedback");
             $("#login").tooltip({
@@ -168,6 +174,7 @@
                     addUser();
                 });
                 postSSHKey.fail(function(jqXHR) {
+                    console.log(jqXHR.responseText);
                     $("#sshkey").parent().removeClass("has-success").addClass("has-error has-feedback");
                     $("#sshkey").tooltip({
                         "trigger": "focus",
