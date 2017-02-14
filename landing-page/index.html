@@ -164,7 +164,7 @@
         var runUpdate = $.post("/configurator/v1/updates", null, null, "json");
 
         runUpdate.done(function(data, status, xhr) {
-            if (data.title === "in-progress") {
+            if (data.title === "in-progress" || data.title === "finished") {
                 updateLocation = xhr.getResponseHeader('Location');
                 window.setTimeout(update, 1);
             } else {
