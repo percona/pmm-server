@@ -81,7 +81,7 @@ RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona
 	tar zxf percona-qan-app-*.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh && \
 	rm -rf *.tar.gz qan-api && \
-	sed -i 's/1.0.0/1.1.0/g' qan-app/index.html
+	sed -i 's/1.0.0/1.1.1/g' qan-app/index.html
 
 # ##### #
 # Start #
