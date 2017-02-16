@@ -155,7 +155,12 @@
         checkUpdate.fail(function(jqXHR) {
             console.log(jqXHR.responseText);
             $("#checkLoader").hide();
-            $("#updateText").text(jqXHR.responseJSON.title);
+            if (jqXHR.status === 404 ) {
+                $("#updateText").text(jqXHR.responseJSON.title);
+            } else {
+                $("#updateText").text("Unknown issue: " + jqXHR.statusText);
+                $("#updateRunBtn").show();
+            }
             $("#updateText").show();
         });
     }
