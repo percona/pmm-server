@@ -31,8 +31,8 @@ if [ -n "$SERVER_PASSWORD" ]; then
     echo "${SERVER_USER:-pmm}:$(openssl passwd -apr1 $SERVER_PASSWORD)" > /etc/nginx/.htpasswd
     sed -i 's/auth_basic off/auth_basic "PMM Server"/' /etc/nginx/nginx.conf
 
-    sed -i "s/ENV_SERVER_USER/${SERVER_USER:-pmm}/g" /opt/prometheus/prometheus.yml
-    sed -i "s/ENV_SERVER_PASSWORD/${SERVER_PASSWORD}/g" /opt/prometheus/prometheus.yml
+    perl -pe "BEGIN {\$text = q{${SERVER_USER:-pmm}}} s{ENV_SERVER_USER}{\$text}g;"     -i /opt/prometheus/prometheus.yml
+    perl -pe "BEGIN {\$text = q{$SERVER_PASSWORD}}    s{ENV_SERVER_PASSWORD}{\$text}g;" -i /opt/prometheus/prometheus.yml
 
     ENV_AUTH_BASIC="cfg:default.auth.basic.enabled=false"
 fi
