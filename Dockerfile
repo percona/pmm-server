@@ -71,8 +71,8 @@ COPY landing-page/ /opt/landing-page/
 # ####################### #
 COPY purge-qan-data /etc/cron.daily/
 COPY qan-install.sh /opt/
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.1.0-1.1702021924.dd9f688.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.1.0-1.1702021919.ad8b6ce.tar.gz \
+ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.1.1-1.1702210842.1bc49ea.tar.gz \
+    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.1.1-1.1702210818.3468e16.tar.gz \
     /opt/
 RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona/percona-toolkit/2.2/bin/pt-archiver && \
 	chmod 755 /usr/bin/pt-archiver && \
@@ -81,7 +81,7 @@ RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona
 	tar zxf percona-qan-app-*.tar.gz --strip-components=1 -C qan-app && \
 	/opt/qan-install.sh && \
 	rm -rf *.tar.gz qan-api && \
-	sed -i 's/1.0.0/1.1.1/g' qan-app/index.html
+	sed -i "s/v[0-9].[0-9].[0-9]/v$(cat grafana-dashboards/VERSION)/" qan-app/index.html
 
 # ##### #
 # Start #
