@@ -7,9 +7,9 @@ if [[ ! "${METRICS_RESOLUTION:-1s}" =~ ^[1-5]s$ ]]; then
     echo "METRICS_RESOLUTION takes only values from 1s to 5s."
     exit 1
 fi
-sed -i "s/1s/${METRICS_RESOLUTION:-1s}/" /opt/prometheus/prometheus.yml
-sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisor/supervisord.conf
-sed -i "s/ENV_METRICS_MEMORY/${METRICS_MEMORY:-262144}/" /etc/supervisor/supervisord.conf
+sed -i "s/1s/${METRICS_RESOLUTION:-1s}/" /etc/prometheus.yml
+sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisord.d/pmm.ini
+sed -i "s/ENV_METRICS_MEMORY/${METRICS_MEMORY:-262144}/" /etc/supervisord.d/pmm.ini
 
 # Orchestrator
 sed -i "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json
@@ -31,12 +31,12 @@ if [ -n "$SERVER_PASSWORD" ]; then
     echo "${SERVER_USER:-pmm}:$(openssl passwd -apr1 $SERVER_PASSWORD)" > /etc/nginx/.htpasswd
     sed -i 's/auth_basic off/auth_basic "PMM Server"/' /etc/nginx/nginx.conf
 
-    sed -i "s/ENV_SERVER_USER/${SERVER_USER:-pmm}/g" /opt/prometheus/prometheus.yml
-    sed -i "s/ENV_SERVER_PASSWORD/${SERVER_PASSWORD}/g" /opt/prometheus/prometheus.yml
+    sed -i "s/ENV_SERVER_USER/${SERVER_USER:-pmm}/g" /etc/prometheus.yml
+    sed -i "s/ENV_SERVER_PASSWORD/${SERVER_PASSWORD}/g" /etc/prometheus.yml
 
     ENV_AUTH_BASIC="cfg:default.auth.basic.enabled=false"
 fi
-sed -i "s/ENV_AUTH_BASIC/${ENV_AUTH_BASIC}/" /etc/supervisor/supervisord.conf
+sed -i "s/ENV_AUTH_BASIC/${ENV_AUTH_BASIC}/" /etc/supervisord.d/pmm.ini
 
 # Start supervisor in foreground
-supervisord -c /etc/supervisor/supervisord.conf
+exec supervisord -n -c /etc/supervisord.conf
