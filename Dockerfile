@@ -55,9 +55,9 @@ RUN touch /etc/nginx/.htpasswd
 # Orchestrator #
 # ############ #
 COPY orchestrator.conf.json /etc/
-RUN curl -s -LO https://github.com/github/orchestrator/releases/download/v2.0.1/orchestrator_2.0.1_amd64.deb && \
-	dpkg -i orchestrator_2.0.1_amd64.deb && \
-	rm -f orchestrator_2.0.1_amd64.deb
+RUN curl -s -LO https://github.com/github/orchestrator/releases/download/v2.0.2/orchestrator_2.0.2_amd64.deb && \
+	dpkg -i orchestrator*.deb && \
+	rm -f orchestrator*.deb
 
 # ########################### #
 # Supervisor and landing page # 
