@@ -1,0 +1,212 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Packages                   | Add Percona repository
+      when: ansible_os_family == 'RedHat'
+      yum:
+        name: https://www.percona.com/redir/downloads/percona-release/redhat/0.1-4/percona-release-0.1-4.noarch.rpm
+        state: installed
+
+    - name: Packages                   | Update OS
+      when: ansible_os_family == 'RedHat'
+      yum:
+        name: '*'
+        state: latest
+        disablerepo: percona-release-x86_64
+
+    - name: Packages                   | Install OS tools
+      when: ansible_os_family == 'RedHat'
+      yum: name={{ item }} state=installed
+      with_items:
+        - yum-utils
+        - yum-cron
+
+    - name: cloud-init                 | Create dirs
+      file: path={{ item }} state=directory
+      with_items:
+        - /var/lib/cloud/scripts/per-once
+        - /var/lib/cloud/scripts/per-boot
+
+    - name: cloud-init                 | Create dirs
+      file: path={{ item }} state=directory owner=pmm
+      with_items:
+        - /opt/prometheus/data
+        - /opt/consul-data
+
+    - name: cloud-init                 | Configure yum-cron
+      replace:
+        dest: /etc/yum/yum-cron-hourly.conf
+        regexp: 'update_cmd = default'
+        replace: 'update_cmd = minimal-security'
+
+    - name: cloud-init                 | Configure yum-cron
+      replace:
+        dest: /etc/yum/yum-cron.conf
+        regexp: 'update_cmd = default'
+        replace: 'update_cmd = minimal-security'
+
+    - name: Percona Server for MySQL   | Install Percona Client
+      when: ansible_os_family == 'RedHat'
+      yum: name={{ item }} state=installed
+      with_items:
+        - Percona-Server-client-55
+
+    - name: Percona Server for MySQL   | Remove MariaDB Client
+      when: ansible_os_family == 'RedHat'
+      yum: name={{ item }} state=absent
+      with_items:
+        - mariadb-libs
+
+    - name: Percona Server for MySQL   | Install Percona Server
+      when: ansible_os_family == 'RedHat'
+      yum: name={{ item }} state=installed
+      with_items:
+        - Percona-Server-server-55
+        - MySQL-python
+
+    - name: Percona Server for MySQL   | stat /root/.my.cnf
+      stat: path=/root/.my.cnf
+      register: root_mycnf_file
+
+    - name: Percona Server for MySQL   | Add password generator script
+      when: not root_mycnf_file.stat.exists
+      copy:
+        content: |
+          #!/bin/sh
+
+          TEMP_PASS=$(grep 'temporary password' /var/log/mysqld.log  | sed -e 's/.*localhost: //' | tail -1)
+          NEW_PASS=$(dd if=/dev/urandom bs=1 count=256 2>/dev/null | tr -cd '[:alnum:],.!@#$%^&*' | head -c32)
+          mysql "-p${TEMP_PASS}" --connect-expired-password -e "SET PASSWORD = PASSWORD('$NEW_PASS');"
+          echo "[client]
+          password = '$NEW_PASS'" > /root/.my.cnf
+          echo "
+          ++++++++++++++++++++++++++ Percona Server for MySQL ++++++++++++++++++++++++++
+            Setting password for root@localhost user: $NEW_PASS
+          ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          " | tee -a /var/log/mysqld.log
+        dest: /var/lib/cloud/scripts/per-once/init-mysql-password
+        mode: 0755
+
+    - name: PMM                        | Add PMM Server YUM repository
+      when: ansible_os_family == 'RedHat'
+      yum_repository:
+        name: pmm
+        description: PMM Server YUM repository - x86_64
+        baseurl: https://repo.percona.com/pmm/7/RPMS/x86_64/
+        gpgcheck: yes
+        enabled: no
+        gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Percona
+
+    - name: PMM                        | Add PMM Server YUM repository
+      when: ansible_os_family == 'RedHat'
+      yum_repository:
+        name: pmm-laboratory
+        description: PMM Server YUM repository - x86_64
+        baseurl: https://repo.percona.com/laboratory/7/RPMS/x86_64/
+        gpgcheck: yes
+        enabled: no
+        gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Percona
+
+    - name: PMM                        | Install RPMs
+      when: ansible_os_family == 'RedHat'
+      yum: name={{ item }} state=installed enablerepo=pmm-laboratory
+      with_items:
+        - nginx
+        - supervisor
+        - percona-consul
+        - percona-grafana
+        - percona-prometheus
+        - percona-orchestrator
+        - percona-node_exporter
+        - percona-qan-api
+        - percona-qan-app
+        - percona-toolkit
+        - percona-dashboards
+        - pmm-server
+        - pmm-manage
+        - pmm-update
+
+    - name: PMM                        | Fix nginx config
+      replace:
+        dest: /etc/nginx/nginx.conf
+        regexp: '^(\s*)listen'
+        replace: '\1#listen'
+
+    - name: NGINX SSL Certificate      | Add script
+      copy:
+        content: |
+          #!/bin/sh
+
+          set -o errexit
+
+          mkdir -p /srv/nginx
+
+          if [ ! -e /srv/nginx/dhparam.pem ]; then
+              openssl dhparam -out /srv/nginx/dhparam.pem 2048
+          fi
+
+          if [ ! -e /srv/nginx/ca-certs.pem ]; then
+              # Fetch letsencrypt chain
+              curl https://letsencrypt.org/certs/isrgrootx1.pem                          > /srv/nginx/ca-certs.pem
+              curl https://letsencrypt.org/certs/lets-encrypt-x1-cross-signed.pem       >> /srv/nginx/ca-certs.pem
+              curl https://letsencrypt.org/certs/letsencryptauthorityx1.pem             >> /srv/nginx/ca-certs.pem
+              curl https://www.identrust.com/certificates/trustid/root-download-x3.html >> /srv/nginx/ca-certs.pem
+          fi
+
+          if [ ! -e /srv/nginx/certificate.conf ]; then
+              echo "
+          [ req ]
+          distinguished_name = req_distinguished_name
+          prompt             = no
+
+          [ req_distinguished_name ]
+          O                  = Main Org.
+          " > /srv/nginx/certificate.conf
+          fi
+
+          if [ ! -e /srv/nginx/certificate.key -o ! -e /srv/nginx/certificate.crt ]; then
+              openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+                  -keyout /srv/nginx/certificate.key \
+                  -out    /srv/nginx/certificate.crt \
+                  -config /srv/nginx/certificate.conf
+          fi
+        dest: /var/lib/cloud/scripts/per-boot/generate-ssl-certificate
+        mode: 0755
+
+    - name: NGINX SSL Certificate      | Check certificate file
+      stat: path=/srv/nginx/certificate.crt
+      register: certificate_file
+
+    - name: NGINX SSL Certificate      | Generate certificate
+      when: not certificate_file.stat.exists
+      command: /var/lib/cloud/scripts/per-boot/generate-ssl-certificate
+
+    - name: Grafana                    | Check data dir
+      stat: path=/srv/grafana/grafana.db
+      register: grafana_db
+
+    - name: Grafana                    | Enable Anonymous access
+      when: not grafana_db.stat.exists
+      ini_file:
+        dest: /etc/grafana/grafana.ini
+        section: auth.anonymous
+        option: enabled
+        value: true
+
+    - name: supervisor                 | Fix credentials
+      ini_file:
+        dest: /etc/supervisord.conf
+        section: supervisorctl
+        option: username
+        value: dummy
+
+    - name: supervisor                 | Fix credentials
+      ini_file:
+        dest: /etc/supervisord.conf
+        section: supervisorctl
+        option: password
+        value: dummy
+
