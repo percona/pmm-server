@@ -18,25 +18,17 @@ sed -i "s/orc_client_password/${ORCHESTRATOR_PASSWORD:-orc_client_password}/" /e
 # Cron
 sed -i "s/^INTERVAL=.*/INTERVAL=${QUERIES_RETENTION:-8}/" /etc/cron.daily/purge-qan-data
 
-# SSL
-if [ -e /etc/nginx/ssl/server.crt ] && [ -e /etc/nginx/ssl/server.key ]; then
-    sed -i 's/#include nginx-ssl.conf/include nginx-ssl.conf/' /etc/nginx/nginx.conf
-    if [ -e /etc/nginx/ssl/dhparam.pem ]; then
-        sed -i 's/#ssl_dhparam/ssl_dhparam/' /etc/nginx/nginx-ssl.conf
-    fi
-fi
-
 # HTTP basic auth
 if [ -n "$SERVER_PASSWORD" ]; then
-    echo "${SERVER_USER:-pmm}:$(openssl passwd -apr1 $SERVER_PASSWORD)" > /etc/nginx/.htpasswd
-    sed -i 's/auth_basic off/auth_basic "PMM Server"/' /etc/nginx/nginx.conf
-
-    sed -i "s/ENV_SERVER_USER/${SERVER_USER:-pmm}/g" /etc/prometheus.yml
-    sed -i "s/ENV_SERVER_PASSWORD/${SERVER_PASSWORD}/g" /etc/prometheus.yml
-
-    ENV_AUTH_BASIC="cfg:default.auth.basic.enabled=false"
+	cat > /opt/pmm-manage.yml <<-EOF
+		configuration:
+		  skip-prometheus-reload: "true"
+		users:
+		- username: ${SERVER_USER:-pmm}
+		  password: ${SERVER_PASSWORD}
+	EOF
+	pmm-configure --config /opt/pmm-manage.yml -ssh-key-owner pmm -grafana-db-path /var/lib/grafana/grafana.db
 fi
-sed -i "s/ENV_AUTH_BASIC/${ENV_AUTH_BASIC}/" /etc/supervisord.d/pmm.ini
 
 # Start supervisor in foreground
 exec supervisord -n -c /etc/supervisord.conf
