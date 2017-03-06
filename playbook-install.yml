@@ -21,8 +21,10 @@
       when: ansible_os_family == 'RedHat'
       yum: name={{ item }} state=installed
       with_items:
+        - screen
         - yum-utils
         - yum-cron
+        - supervisor
 
     - name: cloud-init                 | Create dirs
       file: path={{ item }} state=directory
@@ -115,7 +117,6 @@
       yum: name={{ item }} state=installed enablerepo=pmm-laboratory
       with_items:
         - nginx
-        - supervisor
         - percona-consul
         - percona-grafana
         - percona-prometheus

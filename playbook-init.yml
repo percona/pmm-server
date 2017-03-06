@@ -60,12 +60,18 @@
 
     - name: qan-api                    | Create MySQL user
       mysql_user:
-        name: percona
+        name: qan-api
         host: localhost
-        password: '*25919B3ABBC2A54904C826DF14F11612455A5FAA'
+        password: '*5D6945E21E52CD547FBC205C676C7EFE950836B2'
         priv: 'pmm.*:ALL'
         encrypted: yes
         state: present
+
+    - name: qan-api                    | Fix DSN
+      replace:
+        dest: /etc/percona-qan-api.conf
+        regexp: 'percona:percona'
+        replace: 'qan-api:5goldenfipar'
 
     - name: PMM                        | Wait for dashboards
       wait_for:
@@ -76,6 +82,19 @@
       wait_for:
         path: /var/log/orchestrator.log
         search_regex: 'DEBUG outdated keys: \[\]'
+
+    - name: PMM                        | Create pmm-update dirs
+      file: path={{ item }} state=directory
+      with_items:
+        - /srv/update
+
+    - name: PMM                        | Check pmm-update
+      stat: path=/srv/update/main.yml
+      register: pmm_update_file
+
+    - name: PMM                        | Run pmm-update
+      when: not pmm_update_file.stat.exists
+      command: /usr/bin/pmm-update-stage2
 
     - name: PMM                        | Stop services
       shell: supervisorctl shutdown
@@ -96,3 +115,4 @@
         - /var/log/yum.log
         - /var/log/grafana/grafana.log
         - /var/log/supervisor/supervisord.log
+        - /var/log/pmm-manage.log

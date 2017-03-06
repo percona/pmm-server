@@ -28,6 +28,15 @@ if [ -n "$SERVER_PASSWORD" ]; then
 		  password: ${SERVER_PASSWORD}
 	EOF
 	pmm-configure --config /opt/pmm-manage.yml -ssh-key-owner pmm -grafana-db-path /var/lib/grafana/grafana.db
+else
+	touch /srv/nginx/.htpasswd
+	sed -i "s/realm on/realm off/" /etc/nginx/conf.d/pmm.conf
+fi
+
+# Upgrade
+if [ -f /var/lib/grafana/grafana.db ]; then
+	chown -R mysql:mysql /var/lib/mysql
+	chown -R grafana:grafana /var/lib/grafana
 fi
 
 # Start supervisor in foreground
