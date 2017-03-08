@@ -39,4 +39,4 @@ fi
 sed -i "s/ENV_AUTH_BASIC/${ENV_AUTH_BASIC}/" /etc/supervisor/supervisord.conf
 
 # Start supervisor in foreground
-supervisord -c /etc/supervisor/supervisord.conf
+exec supervisord -c /etc/supervisor/supervisord.conf
