@@ -1,17 +1,12 @@
 version: '2'
 
-services:
-  pmm-data:
-    build: .
-    image: percona/pmm-server
-    container_name: pmm-data
-    volumes:
-      - /opt/prometheus/data
-      - /opt/consul-data
-      - /var/lib/mysql
-      - /var/lib/grafana
-    entrypoint: /bin/true
+volumes:
+  pmm-data-prometheus:
+  pmm-data-consul:
+  pmm-data-mysql:
+  pmm-data-grafana:
 
+services:
   pmm-server:
     build: .
     container_name: pmm-server
@@ -20,9 +15,11 @@ services:
     ports:
       - "80:80"
 #      - "443:443"
-    volumes_from:
-      - pmm-data
-#    volumes:
+    volumes:
+      - pmm-data-prometheus:/opt/prometheus/data
+      - pmm-data-consul:/opt/consul-data
+      - pmm-data-mysql:/var/lib/mysql
+      - pmm-data-grafana:/var/lib/grafana
 #      - /root/docker_shared_volumes/ssl:/etc/nginx/ssl
     environment:
       - METRICS_RETENTION=720h
