@@ -28,7 +28,7 @@ if [ -n "$SERVER_PASSWORD" ]; then
 		- username: "${SERVER_USER//\"/\"}"
 		  password: "${SERVER_PASSWORD//\"/\"}"
 	EOF
-	pmm-configure --config /opt/pmm-manage.yml -ssh-key-owner pmm -grafana-db-path /var/lib/grafana/grafana.db
+	pmm-configure --config /opt/pmm-manage.yml -ssh-key-owner pmm -grafana-db-path /var/lib/grafana/grafana.db || :
 fi
 
 # Upgrade
