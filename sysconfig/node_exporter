@@ -1,0 +1,2 @@
+WEB_LISTEN_ADDRESS="localhost:9100"
+COLLECTORS_ENABLED="diskstats,filefd,filesystem,loadavg,meminfo,netdev,netstat,stat,time,uname,vmstat"
