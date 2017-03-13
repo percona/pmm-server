@@ -15,7 +15,7 @@
     <title>Percona Monitoring and Management</title>
 </head>
 
-<body>
+<body onload="check_errors();">
 
 
     <header>
@@ -95,6 +95,7 @@
                     <p class="text-right small">v1.0.0 <a onclick="checkUpdate()" href="javascript:void(0);"><i class="fa fa-refresh" aria-hidden="true"></i></a></p>
                 </div>
             </div>
+
             <!-- Modal -->
             <div class="modal" id="updateModal" role="dialog">
                 <div id="updateDialog" class="modal-dialog modal-sm">
@@ -119,6 +120,22 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal" id="logsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+                <div id="logsDialog" class="modal-dialog modal-lg">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Container Errors</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="logsText">The following error occurred during container initialization.<br />Please remove and re-run the pmm-server container.</p>
+                            <pre id="logsOutput" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -210,6 +227,18 @@
             $("#updateText").text(jqXHR.responseJSON.title);
             $("#updateText").show();
         });
+    }
+
+    function check_errors() {
+        var checkLogs = $.get("/configurator/v1/logs", null, null, "json");
+
+        checkLogs.done(function(data, status, xhr) {
+            if (data.title !== "ok") {
+                $("#logsModal").modal();
+                $("#logsOutput").text(data.detail)
+            }
+        });
+
     }
 </script>
 
