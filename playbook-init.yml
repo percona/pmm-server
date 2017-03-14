@@ -86,8 +86,10 @@
 
     - name: PMM                        | Wait for orchestrator
       wait_for:
-        path: /var/log/orchestrator.log
-        search_regex: 'DEBUG outdated keys: \[\]'
+        port: 4000
+        state: present
+        delay: 30
+        timeout: 60
 
     - name: PMM                        | Create pmm-update dirs
       file: path={{ item }} state=directory
