@@ -84,11 +84,15 @@
         path: /var/lib/grafana/PERCONA_DASHBOARDS_VERSION
         state: present
 
+    - name: PMM                        | Stop services
+      shell: supervisorctl restart orchestrator
+
     - name: PMM                        | Wait for orchestrator
       wait_for:
+        host: 127.0.0.1
         port: 4000
         state: present
-        delay: 30
+        delay: 10
         timeout: 60
 
     - name: PMM                        | Create pmm-update dirs
