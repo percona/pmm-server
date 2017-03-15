@@ -211,3 +211,8 @@
         option: password
         value: dummy
 
+    - name: MySQL                      | Add includedir to MySQL config
+      lineinfile:
+        dest: /etc/my.cnf
+        line: '!includedir /etc/my.cnf.d/'
+
