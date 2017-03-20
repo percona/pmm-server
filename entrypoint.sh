@@ -1,6 +1,12 @@
 #!/bin/bash
 
-set -e
+set -o errexit
+
+# Add logging
+if [ -n "${ENABLE_DEBUG}" ]; then
+    set -o xtrace
+    exec > >(tee -a /var/log/$(basename $0).log) 2>&1
+fi
 
 # Prometheus
 if [[ ! "${METRICS_RESOLUTION:-1s}" =~ ^[1-5]s$ ]]; then
