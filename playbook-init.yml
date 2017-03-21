@@ -93,7 +93,7 @@
         port: 4000
         state: present
         delay: 10
-        timeout: 60
+        timeout: 180
 
     - name: PMM                        | Create pmm-update dirs
       file: path={{ item }} state=directory
