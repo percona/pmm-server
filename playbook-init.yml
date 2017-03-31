@@ -1,0 +1,130 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: cloud-init                 | Create dirs
+      file: path={{ item }} state=directory owner=pmm group=pmm
+      with_items:
+        - /opt/prometheus/data
+        - /opt/consul-data
+
+    - name: NGINX                      | Disable daemon
+      lineinfile:
+        dest: /etc/nginx/nginx.conf
+        line: 'daemon off;'
+
+    - name: NGINX                      | Disable password-page
+      replace:
+        dest: /etc/nginx/conf.d/pmm.conf
+        regexp: '/usr/share/pmm-server/password-page'
+        replace: '/usr/share/pmm-server/landing-page'
+
+    - name: PMM                        | Fix nginx config
+      replace:
+        dest: /etc/nginx/nginx.conf
+        regexp: '^(\s*)listen'
+        replace: '\1#listen'
+
+    - name: PMM                        | Start services
+      shell: supervisord -c /etc/supervisord.conf &
+
+    - name: PMM                        | Wait for mysqld start
+      wait_for:
+        port: 3306
+        state: present
+        delay: 30
+        timeout: 60
+
+    - name: Orchestrator               | Create MySQL database
+      mysql_db:
+        name: orchestrator
+        state: present
+
+    - name: Orchestrator               | Create MySQL user
+      mysql_user:
+        name: orchestrator
+        host: localhost
+        password: '*0AD183209365CECFB9275669074B645DFEF2D180'
+        priv: 'orchestrator.*:ALL'
+        encrypted: yes
+        state: present
+
+    - name: qan-api                    | Create MySQL database
+      mysql_db:
+        name: pmm
+        state: present
+      register: pmm_db
+
+    - name: qan-api                    | Import MySQL database
+      when: pmm_db.changed
+      mysql_db:
+        name: pmm
+        state: import
+        target: /usr/share/percona-qan-api/schema/pmm.sql
+
+    - name: qan-api                    | Create MySQL user
+      mysql_user:
+        name: qan-api
+        host: localhost
+        password: '*5D6945E21E52CD547FBC205C676C7EFE950836B2'
+        priv: 'pmm.*:ALL'
+        encrypted: yes
+        state: present
+
+    - name: qan-api                    | Fix DSN
+      replace:
+        dest: /etc/percona-qan-api.conf
+        regexp: 'percona:percona'
+        replace: 'qan-api:5goldenfipar'
+
+    - name: PMM                        | Wait for dashboards
+      wait_for:
+        path: /var/lib/grafana/PERCONA_DASHBOARDS_VERSION
+        state: present
+
+    - name: PMM                        | Stop services
+      shell: supervisorctl restart orchestrator
+
+    - name: PMM                        | Wait for orchestrator
+      wait_for:
+        host: 127.0.0.1
+        port: 4000
+        state: present
+        delay: 10
+        timeout: 180
+
+    - name: PMM                        | Create pmm-update dirs
+      file: path={{ item }} state=directory
+      with_items:
+        - /srv/update
+
+    - name: PMM                        | Check pmm-update
+      stat: path=/srv/update/main.yml
+      register: pmm_update_file
+
+    - name: PMM                        | Run pmm-update
+      when: not pmm_update_file.stat.exists
+      command: /usr/bin/pmm-update-stage2
+
+    - name: PMM                        | Stop services
+      shell: supervisorctl shutdown
+
+    - name: PMM                        | Cleanup logs
+      file: path={{ item }} state=absent
+      with_items:
+        - /var/log/consul.log
+        - /var/log/createdb.log
+        - /var/log/cron.log
+        - /var/log/dashboard-upgrade.log
+        - /var/log/mysql.log
+        - /var/log/nginx.log
+        - /var/log/node_exporter.log
+        - /var/log/orchestrator.log
+        - /var/log/prometheus.log
+        - /var/log/qan-api.log
+        - /var/log/yum.log
+        - /var/log/grafana/grafana.log
+        - /var/log/supervisor/supervisord.log
+        - /var/log/pmm-manage.log

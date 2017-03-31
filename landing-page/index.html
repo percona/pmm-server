@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="icon" href="img/favicon.ico" type="image/png" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/Open_Sans_400_300_600_700_800.css">
-    <link rel="stylesheet"  href="css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-    <script src="js/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/use.fontawesome.com.16054168c9.js"></script>
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <meta charset="UTF-8">
     <title>Percona Monitoring and Management</title>
 </head>
-<body>
+
+<body onload="check_errors();">
 
 
     <header>
-      <nav>
-           <div class="container">
-               <div class="row">
-                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                       <a href="https://www.percona.com/" target="_blank">
-                       <img class="plogo img-responsive" src="img/percona-logo.svg" alt="Percona Logo">
-                       </a>
-                   </div>
-               </div>
-           </div>
-       </nav>
+        <nav>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                        <a href="https://www.percona.com/" target="_blank">
+                            <img class="plogo img-responsive" src="img/percona-logo.svg" alt="Percona Logo">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
 
     </header>
@@ -37,55 +37,209 @@
     <content>
 
         <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <h3>Percona Monitoring and Management</h3>
-                        <p>Percona Monitoring and Management (PMM) is a free and open-source solution for managing and monitoring performance on MySQL and MongoDB, and provides time-based analysis of performance to ensure that your data works as efficiently as possible.</p>
-                    </div>
-                      </div>
-                <div class="row">
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <p><a style="font-weight:600; color:#ff9630;" target="_blank" href="https://www.percona.com/doc/percona-monitoring-and-management/index.html">Review the documentation</a></p>
-                    <p><a style="font-weight:600; color:#ff9630;" target="_blank" href="https://learn.percona.com/download-percona-monitoring-and-management-pmm-1-0-manual">Download User Manual</a></p>
-                  </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h3>Percona Monitoring and Management</h3>
+                    <p>Percona Monitoring and Management (PMM) is a free and open-source solution for managing and monitoring performance on MySQL and MongoDB, and provides time-based analysis of performance to ensure that your data works as efficiently as possible.</p>
                 </div>
             </div>
-
-    <div class="product-block">
-       <div class="container">
-           <div class="row">
-
-              <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <img class="img-responsive" src="img/pmm-logo-color.svg" alt="Percona Monitoring and Management Tool">
-            </div>
-
-             <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-               <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
-               </div>
-                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 center-block">
-                     <a target="_blank" href="/qan/" class="btn btn-warning btn-prop center-block"><i class="fa fa-bar-chart" aria-hidden="true"></i><br> Query <br> Analytics</a>
-                 </div>
-                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 center-block">
-                     <a target="_blank" href="/graph/" class="btn btn-warning btn-prop center-block"><i class="fa fa-cogs" aria-hidden="true"></i><br> Metrics <br> Monitor</a>
-                 </div>
-                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 center-block">
-                     <a target="_blank" href="/orchestrator/" class="btn btn-warning btn-prop center-block"><i class="fa fa-database" aria-hidden="true"></i><br> MySQL Replication <br> Topology Manager</a>
-                 </div>
-             </div>
-           </div>
-       </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                <h3>Tell us what you think</h3>
-                <p>We welcome your feedback, questions and comments. Please visit our PMM forums for <a style="font-weight:600; color:#ff9630;" target="_blank" href="https://www.percona.com/forums/questions-discussions/percona-monitoring-and-management">questions and discussions</a>.</p>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <p><a style="font-weight:600; color:#ff9630;" target="_blank" href="https://www.percona.com/doc/percona-monitoring-and-management/index.html">Review the documentation</a></p>
+                    <p><a style="font-weight:600; color:#ff9630;" target="_blank" href="https://learn.percona.com/download-percona-monitoring-and-management-pmm-1-0-manual">Download User Manual</a></p>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="product-block">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <img class="img-responsive" src="img/pmm-logo-color.svg" alt="Percona Monitoring and Management Tool">
+                    </div>
+
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                        <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 center-block">
+                            <a target="_blank" href="/qan/" class="btn btn-warning btn-prop center-block"><i class="fa fa-bar-chart" aria-hidden="true"></i><br> Query <br> Analytics</a>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 center-block">
+                            <a target="_blank" href="/graph/" class="btn btn-warning btn-prop center-block"><i class="fa fa-cogs" aria-hidden="true"></i><br> Metrics <br> Monitor</a>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 center-block">
+                            <a target="_blank" href="/orchestrator/" class="btn btn-warning btn-prop center-block"><i class="fa fa-database" aria-hidden="true"></i><br> MySQL Replication <br> Topology Manager</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                    <h3>Tell us what you think</h3>
+                    <p>We welcome your feedback, questions and comments. Please visit our PMM forums for <a style="font-weight:600; color:#ff9630;" target="_blank" href="https://www.percona.com/forums/questions-discussions/percona-monitoring-and-management">questions and discussions</a>.</p>
+                </div>
+            </div>
+        </div>
 
     </content>
 
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <hr style="margin-bottom: 5px;" />
+                    <p class="text-right small">v1.0.0 <a onclick="checkUpdate()" href="javascript:void(0);"><i class="fa fa-refresh" aria-hidden="true"></i></a></p>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal" id="updateModal" role="dialog">
+                <div id="updateDialog" class="modal-dialog modal-sm">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Update</h4>
+                        </div>
+                        <div class="modal-body">
+                            <pre id="updateOutput" style="display: none;"></pre>
+                            <center id="checkLoader">
+                                <p id="checkText">Checking for the latest PMM update...</p>
+                                <div class="loader"></div>
+                            </center>
+                            <p id="updateText" style="display: none;"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="updateRunBtn" type="button" class="btn btn-default" style="display: none;" onclick="runUpdate()">Update</button>
+                            <button id="updateCloseBtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal" id="logsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+                <div id="logsDialog" class="modal-dialog modal-lg">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Container Errors</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="logsText">The following error occurred during container initialization.<br />Please remove (<tt>docker rm</tt>) and re-run (<tt>docker run</tt>) the pmm-server container.</p>
+                            <pre id="logsOutput" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
 </body>
+<script>
+    var updateLocation = ""
+
+    function checkUpdate() {
+        $("#checkLoader").show();
+        $("#updateRunBtn").hide();
+        $("#updateText").hide();
+        $("#updateOutput").hide();
+        $("#checkText").show();
+        $("#updateDialog").removeClass("modal-lg").addClass("modal-sm");
+        $("#updateModal").modal();
+
+        var checkUpdate = $.get("/configurator/v1/check-update", null, null, "json");
+
+        checkUpdate.done(function(data, status, xhr) {
+            if (data.title === "in-progress") {
+                updateLocation = xhr.getResponseHeader('Location');
+                window.setTimeout(update, 1);
+            } else {
+                $("#checkLoader").hide();
+                $("#updateRunBtn").show();
+                $("#updateText").text(data.title);
+                $("#updateText").show();
+            }
+        });
+
+        checkUpdate.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
+            $("#checkLoader").hide();
+            if (jqXHR.status === 404 ) {
+                $("#updateText").text(jqXHR.responseJSON.title);
+            } else {
+                $("#updateText").text("Unknown issue: " + jqXHR.statusText);
+                $("#updateRunBtn").show();
+            }
+            $("#updateText").show();
+        });
+    }
+
+    function runUpdate() {
+        var runUpdate = $.post("/configurator/v1/updates", null, null, "json");
+
+        runUpdate.done(function(data, status, xhr) {
+            if (data.title === "in-progress" || data.title === "finished") {
+                updateLocation = xhr.getResponseHeader('Location');
+                window.setTimeout(update, 1);
+            } else {
+                $("#checkLoader").hide();
+            }
+        });
+
+        runUpdate.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
+            $("#checkLoader").hide();
+            $("#updateText").text(jqXHR.responseJSON.title);
+            $("#updateText").show();
+        });
+    }
+
+    function update() {
+        $("#updateDialog").removeClass("modal-sm").addClass("modal-lg");
+        $("#checkLoader").show();
+        $("#updateRunBtn").hide();
+        $("#updateText").hide();
+        $("#checkText").hide();
+        $("#updateOutput").show();
+
+        var fetchLog = $.get(updateLocation, null, null, "json");
+
+        fetchLog.done(function(data) {
+            $("#updateOutput").text(data.detail);
+            if (data.title === "in-progress") {
+                window.setTimeout(update, 1000);
+            } else {
+                $("#checkLoader").hide();
+            }
+        });
+
+        fetchLog.fail(function(jqXHR) {
+            console.log(jqXHR.responseText);
+            $("#checkLoader").hide();
+            $("#updateText").text(jqXHR.responseJSON.title);
+            $("#updateText").show();
+        });
+    }
+
+    function check_errors() {
+        var checkLogs = $.get("/configurator/v1/logs", null, null, "json");
+
+        checkLogs.done(function(data, status, xhr) {
+            if (data.title !== "ok") {
+                $("#logsModal").modal();
+                $("#logsOutput").text(data.detail)
+            }
+        });
+
+    }
+</script>
+
 </html>

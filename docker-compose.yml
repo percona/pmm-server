@@ -23,7 +23,7 @@ services:
     volumes_from:
       - pmm-data
 #    volumes:
-#      - /root/docker_shared_volumes/ssl:/etc/nginx/ssl
+#      - /root/docker_shared_volumes/ssl:/srv/nginx
     environment:
       - METRICS_RETENTION=720h
       - METRICS_MEMORY=262144

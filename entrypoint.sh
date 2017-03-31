@@ -1,15 +1,21 @@
 #!/bin/bash
 
-set -e
+set -o errexit
+
+# Add logging
+if [ -n "${ENABLE_DEBUG}" ]; then
+    set -o xtrace
+    exec > >(tee -a /var/log/$(basename $0).log) 2>&1
+fi
 
 # Prometheus
 if [[ ! "${METRICS_RESOLUTION:-1s}" =~ ^[1-5]s$ ]]; then
     echo "METRICS_RESOLUTION takes only values from 1s to 5s."
     exit 1
 fi
-sed -i "s/1s/${METRICS_RESOLUTION:-1s}/" /opt/prometheus/prometheus.yml
-sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisor/supervisord.conf
-sed -i "s/ENV_METRICS_MEMORY/${METRICS_MEMORY:-262144}/" /etc/supervisor/supervisord.conf
+sed -i "s/1s/${METRICS_RESOLUTION:-1s}/" /etc/prometheus.yml
+sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisord.d/pmm.ini
+sed -i "s/ENV_METRICS_MEMORY/${METRICS_MEMORY:-262144}/" /etc/supervisord.d/pmm.ini
 
 # Orchestrator
 sed -i "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json
@@ -18,25 +24,37 @@ sed -i "s/orc_client_password/${ORCHESTRATOR_PASSWORD:-orc_client_password}/" /e
 # Cron
 sed -i "s/^INTERVAL=.*/INTERVAL=${QUERIES_RETENTION:-8}/" /etc/cron.daily/purge-qan-data
 
-# SSL
-if [ -e /etc/nginx/ssl/server.crt ] && [ -e /etc/nginx/ssl/server.key ]; then
-    sed -i 's/#include nginx-ssl.conf/include nginx-ssl.conf/' /etc/nginx/nginx.conf
-    if [ -e /etc/nginx/ssl/dhparam.pem ]; then
-        sed -i 's/#ssl_dhparam/ssl_dhparam/' /etc/nginx/nginx-ssl.conf
-    fi
-fi
-
 # HTTP basic auth
 if [ -n "$SERVER_PASSWORD" ]; then
-    echo "${SERVER_USER:-pmm}:$(openssl passwd -apr1 $SERVER_PASSWORD)" > /etc/nginx/.htpasswd
-    sed -i 's/auth_basic off/auth_basic "PMM Server"/' /etc/nginx/nginx.conf
-
-    perl -pe "BEGIN {\$text = q{${SERVER_USER:-pmm}}} s{ENV_SERVER_USER}{\$text}g;"     -i /opt/prometheus/prometheus.yml
-    perl -pe "BEGIN {\$text = q{$SERVER_PASSWORD}}    s{ENV_SERVER_PASSWORD}{\$text}g;" -i /opt/prometheus/prometheus.yml
-
-    ENV_AUTH_BASIC="cfg:default.auth.basic.enabled=false"
+	SERVER_USER=${SERVER_USER:-pmm}
+	cat > /opt/pmm-manage.yml <<-EOF
+		configuration:
+		  skip-prometheus-reload: "true"
+		users:
+		- username: "${SERVER_USER//\"/\"}"
+		  password: "${SERVER_PASSWORD//\"/\"}"
+	EOF
+	pmm-configure --config /opt/pmm-manage.yml -ssh-key-owner pmm -grafana-db-path /var/lib/grafana/grafana.db || :
 fi
-sed -i "s/ENV_AUTH_BASIC/${ENV_AUTH_BASIC}/" /etc/supervisor/supervisord.conf
+
+# Upgrade
+if [ -f /var/lib/grafana/grafana.db ]; then
+	chown -R mysql:mysql /var/lib/mysql
+	chown -R grafana:grafana /var/lib/grafana
+fi
+
+# copy SSL, follow links
+pushd /etc/nginx >/dev/null
+    if [ -s ssl/server.crt ]; then
+        cat ssl/server.crt  > /srv/nginx/certificate.crt
+    fi
+    if [ -s ssl/server.key ]; then
+        cat ssl/server.key  > /srv/nginx/certificate.key
+    fi
+    if [ -s ssl/dhparam.pem ]; then
+        cat ssl/dhparam.pem > /srv/nginx/dhparam.pem
+    fi
+popd >/dev/null
 
 # Start supervisor in foreground
-exec supervisord -c /etc/supervisor/supervisord.conf
+exec supervisord -n -c /etc/supervisord.conf

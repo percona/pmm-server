@@ -1,89 +1,19 @@
-FROM ubuntu:14.04
+FROM centos
 
 EXPOSE 80 443
 
 WORKDIR /opt
 
-# ############### #
-# System packages #
-# ############### #
-RUN apt-get -y update && \
-	apt-get install -y apt-transport-https curl git unzip nginx mysql-server-5.5 python python-requests supervisor && \
-	rm -f /etc/cron.daily/apt && \
-	useradd -s /bin/false pmm
+RUN useradd -s /bin/false pmm
+RUN yum -y install epel-release && yum -y install ansible
 
-# ########## #
-# Prometheus #
-# ########## #
-RUN curl -s -LO https://github.com/prometheus/prometheus/releases/download/v1.5.1/prometheus-1.5.1.linux-amd64.tar.gz && \
-	mkdir -p prometheus/data node_exporter && \
-	chown -R pmm:pmm /opt/prometheus/data && \
-	tar zxf prometheus*.tar.gz --strip-components=1 -C prometheus && \
-	curl -s -LO https://github.com/prometheus/node_exporter/releases/download/v0.13.0/node_exporter-0.13.0.linux-amd64.tar.gz && \
-	tar zxf node_exporter-0.13.0.linux-amd64.tar.gz --strip-components=1 -C node_exporter && \
-	rm -f prometheus*.tar.gz node_exporter-0.13.0.linux-amd64.tar.gz
-COPY prometheus.yml /opt/prometheus/
+COPY playbook-install.yml /opt/playbook-install.yml
+RUN ansible-playbook -vvv -i 'localhost,' -c local /opt/playbook-install.yml
 
-# ###################### #
-# Grafana and dashboards #
-# ###################### #
-COPY import-dashboards.py grafana-postinstall.sh VERSION /opt/
-RUN curl -s -LO https://grafanarel.s3.amazonaws.com/builds/grafana_4.1.1-1484211277_amd64.deb && \
-	dpkg -i grafana*.deb && \
-	git clone https://github.com/percona/grafana-dashboards.git && \
-	mv import-dashboards.py VERSION grafana-dashboards/ && \
-	service grafana-server start && \
-	/opt/grafana-dashboards/import-dashboards.py && \
-	rm -rf grafana*.deb grafana-dashboards/.git
+COPY supervisord.conf /etc/supervisord.d/pmm.ini
+COPY playbook-init.yml /opt/playbook-init.yml
+RUN ansible-playbook -vvv -i 'localhost,' -c local /opt/playbook-init.yml
 
-# ###### #
-# Consul #
-# ###### #
-RUN curl -s -LO https://releases.hashicorp.com/consul/0.7.3/consul_0.7.3_linux_amd64.zip && \
-	unzip consul*.zip && \
-	mkdir -p /opt/consul-data && \
-	chown -R pmm:pmm /opt/consul-data && \
-	rm -f consul*.zip
-
-# ##### #
-# Nginx #
-# ##### #
-COPY nginx.conf nginx-ssl.conf /etc/nginx/
-RUN touch /etc/nginx/.htpasswd
-
-# ############ #
-# Orchestrator #
-# ############ #
-COPY orchestrator.conf.json /etc/
-RUN curl -s -LO https://github.com/github/orchestrator/releases/download/v2.0.2/orchestrator_2.0.2_amd64.deb && \
-	dpkg -i orchestrator*.deb && \
-	rm -f orchestrator*.deb
-
-# ########################### #
-# Supervisor and landing page # 
-# ########################### #
-COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY entrypoint.sh /opt
-COPY landing-page/ /opt/landing-page/
 
-# ####################### #
-# Percona Query Analytics #
-# ####################### #
-COPY purge-qan-data /etc/cron.daily/
-COPY qan-install.sh /opt/
-ADD https://www.percona.com/downloads/TESTING/pmm/percona-qan-api-1.1.1-1.1702210842.1bc49ea.tar.gz \
-    https://www.percona.com/downloads/TESTING/pmm/percona-qan-app-1.1.1-1.1702210818.3468e16.tar.gz \
-    /opt/
-RUN curl -s -L -o /usr/bin/pt-archiver https://raw.githubusercontent.com/percona/percona-toolkit/2.2/bin/pt-archiver && \
-	chmod 755 /usr/bin/pt-archiver && \
-	mkdir qan-api qan-app && \
-	tar zxf percona-qan-api-*.tar.gz --strip-components=1 -C qan-api && \
-	tar zxf percona-qan-app-*.tar.gz --strip-components=1 -C qan-app && \
-	/opt/qan-install.sh && \
-	rm -rf *.tar.gz qan-api && \
-	sed -i "s/v[0-9].[0-9].[0-9]/v$(cat grafana-dashboards/VERSION)/" qan-app/index.html
-
-# ##### #
-# Start #
-# ##### #
 CMD ["/opt/entrypoint.sh"]
