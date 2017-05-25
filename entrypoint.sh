@@ -27,14 +27,12 @@ sed -i "s/^INTERVAL=.*/INTERVAL=${QUERIES_RETENTION:-8}/" /etc/cron.daily/purge-
 # HTTP basic auth
 if [ -n "$SERVER_PASSWORD" ]; then
 	SERVER_USER=${SERVER_USER:-pmm}
-	cat > /opt/pmm-manage.yml <<-EOF
-		configuration:
-		  skip-prometheus-reload: "true"
+	cat > /srv/update/pmm-manage.yml <<-EOF
 		users:
 		- username: "${SERVER_USER//\"/\"}"
 		  password: "${SERVER_PASSWORD//\"/\"}"
 	EOF
-	pmm-configure --config /opt/pmm-manage.yml -ssh-key-owner pmm -grafana-db-path /var/lib/grafana/grafana.db || :
+	pmm-configure -skip-prometheus-reload true -grafana-db-path /var/lib/grafana/grafana.db || :
 fi
 
 # Upgrade
