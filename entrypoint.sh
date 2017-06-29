@@ -15,7 +15,11 @@ if [[ ! "${METRICS_RESOLUTION:-1s}" =~ ^[1-5]s$ ]]; then
 fi
 sed -i "s/1s/${METRICS_RESOLUTION:-1s}/" /etc/prometheus.yml
 sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisord.d/pmm.ini
-sed -i "s/ENV_METRICS_MEMORY/${METRICS_MEMORY:-262144}/" /etc/supervisord.d/pmm.ini
+
+# Preserve compatibility with existing METRICS_MEMORY variable.
+# https://jira.percona.com/browse/PMM-969
+METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY:-262144} * 1024 ))
+sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /etc/supervisord.d/pmm.ini
 
 # Orchestrator
 sed -i "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json
