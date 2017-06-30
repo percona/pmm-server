@@ -158,7 +158,7 @@
         var checkUpdate = $.get("/configurator/v1/check-update", null, null, "json");
 
         checkUpdate.done(function(data, status, xhr) {
-            if (data.title === "in-progress") {
+            if (data.title === "running" || data.title === "succeeded" || data.title === "failed") {
                 updateLocation = xhr.getResponseHeader('Location');
                 window.setTimeout(update, 1);
             } else {
@@ -186,7 +186,7 @@
         var runUpdate = $.post("/configurator/v1/updates", null, null, "json");
 
         runUpdate.done(function(data, status, xhr) {
-            if (data.title === "in-progress" || data.title === "finished") {
+            if (data.title === "running" || data.title === "succeeded" || data.title === "failed") {
                 updateLocation = xhr.getResponseHeader('Location');
                 window.setTimeout(update, 1);
             } else {
@@ -214,10 +214,18 @@
 
         fetchLog.done(function(data) {
             $("#updateOutput").text(data.detail);
-            if (data.title === "in-progress") {
+            if (data.title === "running") {
                 window.setTimeout(update, 1000);
+            } else if (data.title === "succeeded") {
+                $("#checkLoader").hide();
+                $("#updateOutput").hide();
+                $("#updateDialog").removeClass("modal-lg").addClass("modal-sm");
+                $("#updateText").text("PMM Server update was completed.")
+                $("#updateText").show();
             } else {
                 $("#checkLoader").hide();
+                $("#updateText").text("An unknown error occurred during the update, please try again later.")
+                $("#updateText").show();
             }
         });
 
