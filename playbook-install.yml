@@ -26,6 +26,7 @@
         - yum-utils
         - yum-cron
         - supervisor
+        - logrotate
 
     - name: cloud-init                 | Create dirs
       file: path={{ item }} state=directory
