@@ -94,6 +94,19 @@
         dest: /var/lib/cloud/scripts/per-once/init-mysql-password
         mode: 0755
 
+    - name: PMM                        | Create grafana group
+      group:
+        gid: 996
+        name: grafana
+
+    - name: PMM                        | Create grafana user
+      user:
+        uid: 996
+        name: grafana
+        group: grafana
+        home: /etc/grafana
+        shell: /sbin/nologin
+
     - name: PMM                        | Add PMM Server YUM repository
       when: ansible_os_family == 'RedHat'
       yum_repository:
