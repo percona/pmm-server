@@ -18,7 +18,7 @@ sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisord.d/
 
 # Preserve compatibility with existing METRICS_MEMORY variable.
 # https://jira.percona.com/browse/PMM-969
-METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY:-262144} * 1024 ))
+METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY:-748982} * 1024 ))
 sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /etc/supervisord.d/pmm.ini
 
 # Orchestrator
