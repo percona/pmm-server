@@ -22,8 +22,11 @@ METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY:-748982} * 1024 ))
 sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /etc/supervisord.d/pmm.ini
 
 # Orchestrator
-sed -i "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json
-sed -i "s/orc_client_password/${ORCHESTRATOR_PASSWORD:-orc_client_password}/" /etc/orchestrator.conf.json
+if [[ "${ORCHESTRATOR_ENABLED}" = "true" ]]; then
+    sed -i "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json
+    sed -i "s/orc_client_password/${ORCHESTRATOR_PASSWORD:-orc_client_password}/" /etc/orchestrator.conf.json
+    sed -i "s/autostart = false/autostart = true/" /etc/supervisord.d/pmm.ini
+fi
 
 # Cron
 sed -i "s/^INTERVAL=.*/INTERVAL=${QUERIES_RETENTION:-8}/" /etc/cron.daily/purge-qan-data
