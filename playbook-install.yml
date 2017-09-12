@@ -221,6 +221,14 @@
         option: org_role
         value: Editor
 
+    - name: Grafana                    | Disable reporting
+      when: not grafana_db.stat.exists
+      ini_file:
+        dest: /etc/grafana/grafana.ini
+        section: analytics
+        option: reporting_enabled
+        value: false
+
     - name: supervisor                 | Fix credentials
       ini_file:
         dest: /etc/supervisord.conf
