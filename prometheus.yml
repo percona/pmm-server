@@ -2,7 +2,7 @@ global:
   scrape_interval:     1s
   scrape_timeout:      1s
   evaluation_interval: 5s
- 
+
 scrape_configs:
   - job_name: prometheus
     metrics_path: /prometheus/metrics
@@ -108,8 +108,6 @@ scrape_configs:
       services: ['mysql:metrics']
 
     relabel_configs:
-    - target_label:  'job'
-      replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
@@ -137,8 +135,6 @@ scrape_configs:
       services: ['mysql:metrics']
 
     relabel_configs:
-    - target_label:  'job'
-      replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
@@ -166,8 +162,6 @@ scrape_configs:
       services: ['mysql:metrics']
 
     relabel_configs:
-    - target_label:  'job'
-      replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
@@ -176,4 +170,3 @@ scrape_configs:
       regex:         '.*,scheme_https,.*'
       target_label:  '__scheme__'
       replacement:   'https'
-
