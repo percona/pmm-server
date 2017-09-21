@@ -128,3 +128,12 @@
         - /var/log/grafana/grafana.log
         - /var/log/supervisor/supervisord.log
         - /var/log/pmm-manage.log
+        - /opt/consul-data/*
+        - /opt/prometheus/data
+        - /opt/consul-data
+
+    - name: cloud-init                 | Create dirs
+      file: path={{ item }} state=directory owner=pmm group=pmm
+      with_items:
+        - /opt/prometheus/data
+        - /opt/consul-data
