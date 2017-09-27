@@ -106,7 +106,7 @@
 
     - name: PMM                        | Run pmm-update
       when: not pmm_update_file.stat.exists
-      command: /usr/bin/pmm-update-stage2
+      command: env EXTRA_ARGS='--extra-vars image_creation=1' /usr/bin/pmm-update-stage2
 
     - name: PMM                        | Stop services
       shell: supervisorctl shutdown
