@@ -42,6 +42,11 @@ if [ -n "$SERVER_PASSWORD" ]; then
 	pmm-configure -skip-prometheus-reload true -grafana-db-path /var/lib/grafana/grafana.db || :
 fi
 
+# Hide update button
+if [[ $DISABLE_UPDATES =~ ^(1|t|T|TRUE|true|True)$ ]]; then
+    sed -i "s/fa-refresh/fa-refresh hidden/" /usr/share/pmm-server/landing-page/index.html
+fi
+
 # Upgrade
 if [ -f /var/lib/grafana/grafana.db ]; then
     chown -R pmm:pmm /opt/consul-data
