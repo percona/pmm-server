@@ -9,7 +9,7 @@
       with_items:
         - /opt/prometheus/data
         - /opt/consul-data
-        - /opt/collect_info
+        - /srv/collect_info
 
     - name: NGINX                      | Disable daemon
       lineinfile:
