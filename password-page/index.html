@@ -159,7 +159,8 @@
 
         var postUser = $.post("/configurator/v1/users", JSON.stringify({
             "Username": $("#login").val(),
-            "Password": $("#password").val()
+            "Password": $("#password").val(),
+            "Instance": $("#InstanceID").val()
         }), null, "json");
 
         postUser.done(function() {
@@ -225,14 +226,14 @@
                     $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
                     $("#InstanceID").tooltip({
                         "trigger": "focus",
-                        "title": "Incorrect InstanceID"
+                        "title": "Wrong Instance ID"
                     });
                 })
                 postInstanceID.fail(function(jqXHR) {
                     $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
                     $("#InstanceID").tooltip({
                         "trigger": "focus",
-                        "title": "Incorrect InstanceID"
+                        "title": "Wrong Instance ID"
                     });
                 });
             }
