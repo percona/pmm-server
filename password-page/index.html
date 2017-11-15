@@ -205,7 +205,7 @@
         });
     });
     // set to false to avoid InstanceID input.
-    const isInstanceIDFlag = true;
+    const isInstanceIDFlag = false;
     $(function() {
         if (!isInstanceIDFlag) {
             $("#form-instance-id").hide();
@@ -222,19 +222,18 @@
                     $("#form-instance-id").hide();
                     $("#form").show();
                 });
-                postInstanceID.error(function(jqXHR) {
-                    $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
-                    $("#InstanceID").tooltip({
-                        "trigger": "focus",
-                        "title": "Wrong Instance ID"
-                    });
-                })
                 postInstanceID.fail(function(jqXHR) {
                     $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
                     $("#InstanceID").tooltip({
                         "trigger": "focus",
                         "title": "Wrong Instance ID"
                     });
+                });
+            } else {
+                $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
+                $("#InstanceID").tooltip({
+                    "trigger": "focus",
+                    "title": "Wrong Instance ID"
                 });
             }
         });
