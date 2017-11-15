@@ -30,8 +30,25 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                <form id="form-instance-id">
+                    <div class="col-md-12 form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-info-sign"></i></span>
+                            <input type="text" name="InstanceID" class="form-control" id="InstanceID" placeholder="Instance ID" required>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <button type="reset" class="btn btn-default">
+                            <i class="glyphicon glyphicon-remove"></i>
+                            Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="glyphicon glyphicon-ok"></i>
+                            Submit
+                        </button>
+                    </div>
+                </form>
                 <form id="form">
-
                     <div class="col-md-12 form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -183,6 +200,41 @@
                 });
             } else {
                 addUser();
+            }
+        });
+    });
+    // set to false to avoid InstanceID input.
+    const isInstanceIDFlag = true;
+    $(function() {
+        if (!isInstanceIDFlag) {
+            $("#form-instance-id").hide();
+            return;
+        }
+        $("#form").hide();
+        $("#form-instance-id").submit(function(event) {
+            event.preventDefault();
+            if (/^i-[0-9a-f]+$/.test($("#InstanceID").val())) {
+                var postInstanceID = $.post("/configurator/v1/check-instance", JSON.stringify({
+                    "InstanceID": $("#InstanceID").val()
+                }), null, "json");
+                postInstanceID.done(function() {
+                    $("#form-instance-id").hide();
+                    $("#form").show();
+                });
+                postInstanceID.error(function(jqXHR) {
+                    $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
+                    $("#InstanceID").tooltip({
+                        "trigger": "focus",
+                        "title": "Incorrect InstanceID"
+                    });
+                })
+                postInstanceID.fail(function(jqXHR) {
+                    $("#InstanceID").parent().removeClass("has-success").addClass("has-error has-feedback");
+                    $("#InstanceID").tooltip({
+                        "trigger": "focus",
+                        "title": "Incorrect InstanceID"
+                    });
+                });
             }
         });
     });
