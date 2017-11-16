@@ -136,12 +136,12 @@
         - percona-grafana
         - percona-prometheus
         - percona-orchestrator
-        - percona-node_exporter
         - percona-qan-api
         - percona-qan-app
         - percona-toolkit
         - percona-dashboards
         - pmm-server
+        - pmm-client
         - pmm-manage
         - pmm-managed
         - pmm-update
