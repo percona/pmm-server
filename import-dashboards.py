@@ -139,11 +139,23 @@ def import_dashboards():
             sys.exit(-1)
 
 
+def import_apps():
+    for app in ['pmm-qan-app']:
+        print app
+        data = json.dumps({'enabled': True})
+        r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=HEADERS)
+        if r.status_code != 200:
+            print r.status_code, r.content
+            print ' * Cannot add %s app' % app
+            sys.exit(-1)
+
+
 def main():
     upgrade = check_dashboards_version()
     wait_for_grafana_start()
     add_api_key()
     add_datasources()
+    import_apps()
     import_dashboards()
     delete_api_key(upgrade)
 
