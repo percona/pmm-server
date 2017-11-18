@@ -1,1 +1,1 @@
-OPTIONS="--prometheus-url http://127.0.0.1:9090/prometheus"
+OPTIONS="-prometheus-url http://127.0.0.1:9090/prometheus -db-name pmm-managed -db-username pmm-managed -db-password pmm-managed"
