@@ -145,6 +145,7 @@
         - pmm-manage
         - pmm-managed
         - pmm-update
+        - rds_exporter
 
     - name: PMM                        | Fix nginx config
       replace:
