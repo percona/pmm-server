@@ -140,7 +140,7 @@ def import_dashboards():
 
 
 def import_apps():
-    for app in ['pmm-qan-app']:
+    for app in ['pmm-app']:
         print app
         data = json.dumps({'enabled': True})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=HEADERS)
