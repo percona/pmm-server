@@ -9,6 +9,8 @@ import sqlite3
 import sys
 import requests
 import time
+import shutil
+import subprocess
 
 GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
@@ -139,6 +141,20 @@ def import_dashboards():
             sys.exit(-1)
 
 
+def copy_apps():
+    for app in ['pmm-app']:
+        source_dir = '/usr/share/percona-dashboards/' + app
+        dest_dir = '/var/lib/grafana/plugins/' + app
+        if os.path.isdir(source_dir):
+            print app
+            shutil.rmtree(dest_dir, True)
+            shutil.copytree(source_dir, dest_dir)
+
+            if os.path.exists('/usr/bin/supervisorctl'):
+                subprocess.call(["/usr/bin/supervisorctl", "restart", "grafana"])
+            else:
+                subprocess.call(["/bin/systemctl", "restart", "grafana-server"])
+
 def import_apps():
     for app in ['pmm-app']:
         print app
@@ -152,6 +168,7 @@ def import_apps():
 
 def main():
     upgrade = check_dashboards_version()
+    copy_apps()
     wait_for_grafana_start()
     add_api_key()
     add_datasources()
