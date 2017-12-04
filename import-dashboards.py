@@ -50,7 +50,7 @@ def wait_for_grafana_start():
     for _ in xrange(60):
         try:
             requests.get('%s/api/datasources' % HOST, timeout=0.1)
-        except requests.exceptions.ConnectionError:
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
             sys.stdout.write('.')
             sys.stdout.flush()
             time.sleep(1)
