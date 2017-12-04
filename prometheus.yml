@@ -1,3 +1,6 @@
+remote_read:
+  - url: "http://127.0.0.1:9094/prometheus/api/v1/read"
+
 global:
   scrape_interval:     60s
   scrape_timeout:      10s
