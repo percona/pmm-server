@@ -28,6 +28,11 @@
         regexp: '^(\s*)listen'
         replace: '\1#listen'
 
+    # https://github.com/geerlingguy/drupal-vm/issues/1497
+    # https://docs.docker.com/engine/userguide/storagedriver/overlayfs-driver/#limitations-on-overlayfs-compatibility
+    - name: PMM                        | Run workaround for overlayfs
+      command: find /var/lib/mysql -type f -exec touch {} \;
+
     - name: PMM                        | Start services
       shell: supervisord -c /etc/supervisord.conf &
 
@@ -78,11 +83,6 @@
         name: pmm
         state: import
         target: /usr/share/percona-qan-api/schema/pmm.sql
-
-    # https://github.com/geerlingguy/drupal-vm/issues/1497
-    # https://docs.docker.com/engine/userguide/storagedriver/overlayfs-driver/#limitations-on-overlayfs-compatibility
-    - name: PMM                        | Run workaround for overlayfs
-      command: find /var/lib/mysql -type f -exec touch {} \;
 
     - name: qan-api                    | Create MySQL user
       mysql_user:
