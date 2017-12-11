@@ -44,6 +44,24 @@ def check_dashboards_version():
     return upgrade
 
 
+def start_grafana():
+    res = None
+    if os.path.exists('/usr/bin/supervisorctl'):
+        res = subprocess.call(["/usr/bin/supervisorctl", "start", "grafana"])
+    else:
+        res = subprocess.call(["/bin/systemctl", "start", "grafana-server"])
+    print ' * Grafana start: %r.' % (res,)
+
+
+def stop_grafana():
+    res = None
+    if os.path.exists('/usr/bin/supervisorctl'):
+        res = subprocess.call(["/usr/bin/supervisorctl", "stop", "grafana"])
+    else:
+        res = subprocess.call(["/bin/systemctl", "stop", "grafana-server"])
+    print ' * Grafana stop: %r.' % (res,)
+
+
 def wait_for_grafana_start():
     sys.stdout.write(' * Waiting for Grafana to start')
     sys.stdout.flush()
@@ -150,10 +168,6 @@ def copy_apps():
             shutil.rmtree(dest_dir, True)
             shutil.copytree(source_dir, dest_dir)
 
-            if os.path.exists('/usr/bin/supervisorctl'):
-                subprocess.call(["/usr/bin/supervisorctl", "restart", "grafana"])
-            else:
-                subprocess.call(["/bin/systemctl", "restart", "grafana-server"])
 
 def import_apps():
     for app in ['pmm-app']:
@@ -168,13 +182,27 @@ def import_apps():
 
 def main():
     upgrade = check_dashboards_version()
-    copy_apps()
+
+    # modify database when Grafana is stopped to avoid a data race
+    stop_grafana()
+    try:
+        copy_apps()
+        add_api_key()
+    finally:
+        start_grafana()
+
     wait_for_grafana_start()
-    add_api_key()
+
     add_datasources()
     import_apps()
     import_dashboards()
-    delete_api_key(upgrade)
+
+    # modify database when Grafana is stopped to avoid a data race
+    stop_grafana()
+    try:
+        delete_api_key(upgrade)
+    finally:
+        start_grafana()
 
     shutil.copyfile(NEW_VERSION_FILE, OLD_VERSION_FILE)
 
