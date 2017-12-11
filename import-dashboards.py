@@ -109,19 +109,27 @@ def delete_api_key(upgrade):
 
 
 def fix_cloudwatch_datasource():
+    """
+    Replaces incorrect CloudWatch datasource stored as JSON string with correct JSON object.
+    """
+
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
     cur = con.cursor()
 
-    # update parameters only if they were not changed
     found = False
-    old = {'defaultRegion': 'us-east-1'}
     cur.execute("SELECT id, json_data FROM data_source WHERE name = 'CloudWatch'")
     for row in cur.fetchall():
         found = True
-        id, jd = row
-        if json.loads(jd) == old:
-            new = {'authType': 'keys', 'timeField': '@timestamp'}
-            cur.execute("UPDATE data_source SET json_data = ? WHERE id = ?", (json.dumps(new), id))
+
+        old = None
+        try:
+            old = json.loads(row[1])
+        except:
+            pass
+
+        if not isinstance(old, dict):
+            new = {'authType': 'keys'}
+            cur.execute("UPDATE data_source SET json_data = ? WHERE id = ?", (json.dumps(new), row[0]))
 
     con.commit()
     con.close()
