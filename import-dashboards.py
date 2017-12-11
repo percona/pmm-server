@@ -81,7 +81,6 @@ def wait_for_grafana_start():
 
 def add_api_key():
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
-    con.execute("PRAGMA busy_timeout = 60000")
     cur = con.cursor()
 
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
@@ -93,7 +92,6 @@ def add_api_key():
 
 def delete_api_key(upgrade):
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
-    con.execute("PRAGMA busy_timeout = 60000")
     cur = con.cursor()
 
     # Set home dashboard.
@@ -105,6 +103,25 @@ def delete_api_key(upgrade):
 
     # Delete key.
     cur.execute("DELETE FROM api_key WHERE key='%s'" % (DB_KEY,))
+
+    con.commit()
+    con.close()
+
+
+def fix_cloudwatch_datasource():
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    cur = con.cursor()
+
+    # update parameters only if they were not changed
+    found = False
+    old = {'defaultRegion': 'us-east-1'}
+    cur.execute("SELECT id, json_data FROM data_source WHERE name = 'CloudWatch'")
+    for row in cur.fetchall():
+        found = True
+        id, jd = row
+        if json.loads(jd) == old:
+            new = {'authType': 'keys', 'timeField': '@timestamp'}
+            cur.execute("UPDATE data_source SET json_data = ? WHERE id = ?", (json.dumps(new), id))
 
     con.commit()
     con.close()
@@ -123,7 +140,7 @@ def add_datasources():
             sys.exit(-1)
 
     if 'CloudWatch' not in ds:
-        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': '{"defaultRegion":"us-east-1"}', 'access': 'proxy', 'isDefault': False})
+        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': {'authType': 'keys'}, 'access': 'proxy', 'isDefault': False})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
@@ -188,6 +205,7 @@ def main():
     try:
         copy_apps()
         add_api_key()
+        fix_cloudwatch_datasource()
     finally:
         start_grafana()
 
