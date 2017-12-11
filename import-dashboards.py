@@ -105,7 +105,7 @@ def add_datasources():
             sys.exit(-1)
 
     if 'CloudWatch' not in ds:
-        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': '{"defaultRegion":"us-east-1"}', 'access': 'proxy', 'isDefault': False})
+        data = '{"name":"CloudWatch","type":"cloudwatch","url":"","access":"proxy","jsonData":{"timeField":"@timestamp","authType":"keys","defaultRegion":"us-east-1"},"secureJsonFields":{}}'
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=HEADERS)
         print r.status_code, r.content
         if r.status_code != 200:
