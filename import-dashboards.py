@@ -84,7 +84,7 @@ def add_api_key():
     cur = con.cursor()
 
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
-                "VALUES (1, 'PMM Dashboard Import', '%s', 'Admin', datetime('now'), datetime('now'))" % (DB_KEY,))
+                "VALUES (1, 'PMM Dashboard Import', ?, 'Admin', datetime('now'), datetime('now'))", (DB_KEY,))
 
     con.commit()
     con.close()
@@ -102,7 +102,7 @@ def delete_api_key(upgrade):
                     "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
 
     # Delete key.
-    cur.execute("DELETE FROM api_key WHERE key='%s'" % (DB_KEY,))
+    cur.execute("DELETE FROM api_key WHERE key = ?", (DB_KEY,))
 
     con.commit()
     con.close()
