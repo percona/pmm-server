@@ -117,8 +117,6 @@ scrape_configs:
       services: ['mysql:metrics']
 
     relabel_configs:
-    - target_label:  'job'
-      replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
@@ -146,8 +144,6 @@ scrape_configs:
       services: ['mysql:metrics']
 
     relabel_configs:
-    - target_label:  'job'
-      replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
@@ -175,8 +171,6 @@ scrape_configs:
       services: ['mysql:metrics']
 
     relabel_configs:
-    - target_label:  'job'
-      replacement:   'mysql'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,alias_([-\w:\.]+),.*'
       target_label:  'instance'
@@ -185,4 +179,3 @@ scrape_configs:
       regex:         '.*,scheme_https,.*'
       target_label:  '__scheme__'
       replacement:   'https'
-
