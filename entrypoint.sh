@@ -16,9 +16,16 @@ fi
 sed -i "s/1s/${METRICS_RESOLUTION:-1s}/" /etc/prometheus.yml
 sed -i "s/ENV_METRICS_RETENTION/${METRICS_RETENTION:-720h}/" /etc/supervisord.d/pmm.ini
 
-# Preserve compatibility with existing METRICS_MEMORY variable.
-# https://jira.percona.com/browse/PMM-969
-METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY:-748982} * 1024 ))
+if [ -n "$METRICS_MEMORY" ]; then
+    # Preserve compatibility with existing METRICS_MEMORY variable.
+    # https://jira.percona.com/browse/PMM-969
+    METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY} * 1024 ))
+else
+    MEMORY_LIMIT=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes)
+    TOTAL_MEMORY=$(( $(grep MemTotal /proc/meminfo | awk '{print$2}') * 1024 ))
+    MEMORY_AVAIABLE=$(printf "%i\n%i\n" "$MEMORY_LIMIT" "$TOTAL_MEMORY" | sort -n | head -1)
+    METRICS_MEMORY_MULTIPLIED=$(( ${MEMORY_AVAIABLE} / 100 * 40 - 256*1024*1024 ))
+fi
 sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /etc/supervisord.d/pmm.ini
 
 # Orchestrator
