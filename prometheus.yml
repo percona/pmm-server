@@ -113,7 +113,10 @@ scrape_configs:
   - job_name: mysql-hr
     scrape_interval: 1s
     scrape_timeout:  1s
-    metrics_path: /metrics-hr
+    params:
+      collect[]:
+        - 'global_status'
+        - 'info_schema.innodb_metrics'
     basic_auth:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
@@ -142,7 +145,15 @@ scrape_configs:
   - job_name: mysql-mr
     scrape_interval: 5s
     scrape_timeout:  1s
-    metrics_path: /metrics-mr
+    params:
+      collect[]:
+        - 'slave_status'
+        - 'info_schema.processlist'
+        - 'perf_schema.eventswaits'
+        - 'perf_schema.file_events'
+        - 'perf_schema.tablelocks'
+        - 'info_schema.query_response_time'
+        - 'engine_innodb_status'
     basic_auth:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
@@ -171,7 +182,22 @@ scrape_configs:
   - job_name: mysql-lr
     scrape_interval: 60s
     scrape_timeout:   5s
-    metrics_path: /metrics-lr
+    params:
+      collect[]:
+        - 'global_variables'
+        - 'info_schema.tables'
+        - 'auto_increment.columns'
+        - 'binlog_size'
+        - 'perf_schema.tableiowaits'
+        - 'perf_schema.indexiowaits'
+        - 'perf_schema.file_instances'
+        - 'info_schema.userstats'
+        - 'info_schema.tablestats'
+        - 'perf_schema.eventsstatements'
+        - 'info_schema.clientstats'
+        - 'info_schema.innodb_tablespaces'
+        - 'engine_tokudb_status'
+        - 'heartbeat'
     basic_auth:
       username: ENV_SERVER_USER
       password: ENV_SERVER_PASSWORD
