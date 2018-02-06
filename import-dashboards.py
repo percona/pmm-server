@@ -183,34 +183,6 @@ def add_datasources(api_key):
             sys.exit(-1)
 
 
-def import_dashboards(api_key):
-    # Import dashboards with overwrite.
-    files = []
-    for f in os.listdir(DASHBOARD_DIR):
-        if not f.endswith('.json'):
-            continue
-
-        files.append(DASHBOARD_DIR + f)
-
-    for file_ in files:
-        print file_
-        f = open(file_, 'r')
-        dash = json.load(f)
-        f.close()
-
-        # Set time range and refresh options.
-        dash['time']['from'] = 'now-1h'
-        dash['time']['to'] = 'now'
-        dash['refresh'] = '1m'
-
-        data = json.dumps({'dashboard': dash, 'overwrite': True})
-        r = requests.post('%s/api/dashboards/db' % HOST, data=data, headers=grafana_headers(api_key))
-        if r.status_code != 200:
-            print r.status_code, r.content
-            print ' * Cannot add %s Dashboard' % file_
-            sys.exit(-1)
-
-
 def copy_apps():
     for app in ['pmm-app']:
         source_dir = '/usr/share/percona-dashboards/' + app
@@ -250,7 +222,6 @@ def main():
 
     add_datasources(api_key)
     import_apps(api_key)
-    import_dashboards(api_key)
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
