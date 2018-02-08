@@ -182,6 +182,24 @@ def add_datasources(api_key):
             print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
+    if 'QAN-API' not in ds:
+        data = json.dumps({
+            'name': 'QAN-API',
+            'type': 'mysql',
+            'url': 'localhost:3306',
+            'access': 'proxy',
+            'jsonData': {},
+            'secureJsonFields': {},
+            'database': 'pmm',
+            'user': 'grafana',
+            'password': 'N9mutoipdtlxutgi9rHIFnjM'
+        })
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != 200:
+            print ' * Cannot add QAN-API Data Source'
+            sys.exit(-1)
+
 
 def copy_apps():
     for app in ['pmm-app']:
