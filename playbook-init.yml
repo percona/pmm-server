@@ -148,6 +148,9 @@
     - name: PMM                        | Stop services
       shell: supervisorctl shutdown
 
+    - name: PMM                        | Cleanup yum cache
+      shell: yum clean all
+
     - name: PMM                        | Cleanup logs
       file: path={{ item }} state=absent
       with_items:
