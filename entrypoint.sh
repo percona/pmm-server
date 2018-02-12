@@ -39,7 +39,7 @@ fi
 sed -i "s/^INTERVAL=.*/INTERVAL=${QUERIES_RETENTION:-8}/" /etc/cron.daily/purge-qan-data
 
 # HTTP basic auth
-if [ -n "$SERVER_PASSWORD" ]; then
+if [ -n "${SERVER_PASSWORD}" -a -z "${UPDATE_MODE}" ]; then
 	SERVER_USER=${SERVER_USER:-pmm}
 	cat > /srv/update/pmm-manage.yml <<-EOF
 		users:
@@ -76,6 +76,6 @@ pushd /etc/nginx >/dev/null
 popd >/dev/null
 
 # Start supervisor in foreground
-if [ -z "${SKIP_SUPERVISOR}" ]; then
+if [ -z "${UPDATE_MODE}" ]; then
     exec supervisord -n -c /etc/supervisord.conf
 fi
