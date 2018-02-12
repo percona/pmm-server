@@ -76,4 +76,6 @@ pushd /etc/nginx >/dev/null
 popd >/dev/null
 
 # Start supervisor in foreground
-exec supervisord -n -c /etc/supervisord.conf
+if [ -z "${SKIP_SUPERVISOR}" ]; then
+    exec supervisord -n -c /etc/supervisord.conf
+fi
