@@ -135,7 +135,7 @@
 
     - name: PMM                        | Enable testing repo for pmm-client and percona-toolkit
       when: not pmm_update_file.stat.exists
-      command: yum-config-manager --enable percona-testing-x86_64
+      command: yum-config-manager --enable percona-testing-x86_64 --enable pmm-laboratory
 
     - name: PMM                        | Run pmm-update
       when: not pmm_update_file.stat.exists
@@ -143,7 +143,7 @@
 
     - name: PMM                        | Enable testing repo for pmm-client and percona-toolkit
       when: not pmm_update_file.stat.exists
-      command: yum-config-manager --disable percona-testing-x86_64
+      command: yum-config-manager --disable percona-testing-x86_64 --disable pmm-laboratory
 
     - name: PMM                        | Stop services
       shell: supervisorctl shutdown
