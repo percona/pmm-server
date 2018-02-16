@@ -122,11 +122,10 @@ def delete_api_key(db_key, upgrade):
     cur = con.cursor()
 
     # Set home dashboard.
-    if not upgrade:
-        cur.execute("REPLACE INTO star (user_id, dashboard_id) "
-                    "SELECT 1, id from dashboard WHERE slug='cross-server-graphs'")
-        cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
-                    "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='cross-server-graphs'")
+    cur.execute("REPLACE INTO star (user_id, dashboard_id) "
+                "SELECT 1, id from dashboard WHERE slug='home'")
+    cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
+                "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
 
     # Delete key.
     cur.execute("DELETE FROM api_key WHERE key = ?", (db_key,))
