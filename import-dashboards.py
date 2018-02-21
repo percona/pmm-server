@@ -88,6 +88,9 @@ def stop_grafana():
         res = subprocess.call(["/bin/systemctl", "stop", "grafana-server"])
     print ' * Grafana stop: %r.' % (res,)
 
+    # wait for full stop
+    time.sleep(5)
+
 
 def wait_for_grafana_start():
     sys.stdout.write(' * Waiting for Grafana to start')
