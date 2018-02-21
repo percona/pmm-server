@@ -110,7 +110,7 @@ def wait_for_grafana_start():
 
 
 def add_api_key(name, db_key):
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
@@ -121,7 +121,7 @@ def add_api_key(name, db_key):
 
 
 def delete_api_key(db_key, upgrade):
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     # Set home dashboard.
@@ -142,7 +142,7 @@ def fix_cloudwatch_datasource():
     Replaces incorrect CloudWatch datasource stored as JSON string with correct JSON object.
     """
 
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     found = False
