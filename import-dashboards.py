@@ -221,9 +221,10 @@ def import_apps(api_key):
 
 
 def set_home_dashboard(api_key):
-    # "home" is a fixed dashboard slug
+    # Get dashboard information by dashboard slug (name) which is "home" in our case
+    # This API is different from /api/dashboards/home which returns home dashboard
     r = requests.get('%s/api/dashboards/db/home' % (HOST,), headers=grafana_headers(api_key))
-    print ' * Home dashboard: %r %r' % (r.status_code, r.content)
+    print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
     res = json.loads(r.content)
 
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
@@ -256,6 +257,12 @@ def main():
 
     add_datasources(api_key)
     import_apps(api_key)
+
+    # restart Grafana to load app and set home dashboard below
+    stop_grafana()
+    start_grafana()
+    wait_for_grafana_start()
+
     set_home_dashboard(api_key)
 
     # modify database when Grafana is stopped to avoid a data race
