@@ -19,8 +19,8 @@
     - name: NGINX                      | Disable password-page
       replace:
         dest: /etc/nginx/conf.d/pmm.conf
-        regexp: '/usr/share/pmm-server/password-page'
-        replace: '/usr/share/pmm-server/landing-page'
+        regexp: 'setup_type ovf-ami'
+        replace: 'setup_type docker'
 
     - name: PMM                        | Fix nginx config
       replace:
