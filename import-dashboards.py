@@ -214,9 +214,9 @@ def import_apps(api_key):
         print ' * Importing %r' % (app,)
         data = json.dumps({'enabled': True})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
+        print ' * Plugin enable result: %r %r' % (r.status_code, r.content)
         if r.status_code != 200:
-            print r.status_code, r.content
-            print ' * Cannot add %s app' % app
+            print ' * Cannot import %s app' % app
             sys.exit(-1)
 
 
@@ -225,6 +225,10 @@ def set_home_dashboard(api_key):
     # This API is different from /api/dashboards/home which returns home dashboard
     r = requests.get('%s/api/dashboards/db/home' % (HOST,), headers=grafana_headers(api_key))
     print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
+    if r.status_code != 200:
+        # TODO sys.exit(-1)
+        return
+
     res = json.loads(r.content)
 
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
