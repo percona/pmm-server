@@ -266,6 +266,7 @@ def main():
     stop_grafana()
     start_grafana()
     wait_for_grafana_start()
+    time.sleep(10)
 
     set_home_dashboard(api_key)
 
