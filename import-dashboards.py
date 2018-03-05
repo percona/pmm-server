@@ -242,6 +242,13 @@ def set_home_dashboard(api_key):
     r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
     print ' * Preferences set: %r %r' % (r.status_code, r.content)
 
+    # Copy pmm logo to the grafana directory
+    logo_file = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+    dest_dir = '/usr/share/grafana/public/img/'
+    if os.path.isfile(logo_file) and os.access(logo_file, os.R_OK):
+        print ' * Copying %r to grafana directory %r' % (logo_file, dest_dir)
+        shutil.copy(logo_file, dest_dir)
+
     # # Set home dashboard.
     # cur.execute("REPLACE INTO star (user_id, dashboard_id) "
     #             "SELECT 1, id from dashboard WHERE slug='home'")
