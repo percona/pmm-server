@@ -33,6 +33,13 @@
     - name: PMM                        | Run workaround for overlayfs
       command: find /var/lib/mysql -type f -exec touch {} \;
 
+    - name: Grafana                    | Enable gzip
+      ini_file:
+        dest: /etc/grafana/grafana.ini
+        section: server
+        option: enable_gzip
+        value: true
+
     - name: PMM                        | Start services
       shell: supervisord -c /etc/supervisord.conf &
 
