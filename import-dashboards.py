@@ -18,12 +18,13 @@ import time
 import requests
 
 GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
+GRAFANA_IMG_DR   = '/usr/share/grafana/public/img/'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
-
+LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 
 def grafana_headers(api_key):
     """
@@ -241,6 +242,11 @@ def set_home_dashboard(api_key):
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
     r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
     print ' * Preferences set: %r %r' % (r.status_code, r.content)
+
+    # Copy pmm logo to the grafana directory
+    if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
+        print ' * Copying %r to grafana directory %r' % (LOGO_FILE, GRAFANA_IMG_DR)
+        shutil.copy(LOGO_FILE, GRAFANA_IMG_DR)
 
     # # Set home dashboard.
     # cur.execute("REPLACE INTO star (user_id, dashboard_id) "
