@@ -1,0 +1,102 @@
+.header {
+  height: 50px;
+  margin-bottom: 90px;
+  color: #cccccc;
+  background-color: #292929;
+}
+
+.header div {
+  height: inherit;
+}
+
+.header .row > div {
+  display: flex;
+  align-items: center;
+}
+
+.header p {
+  margin-bottom: 0;
+}
+
+.header .border-right {
+  border-right: 1px solid #141414;
+}
+
+.header .header-logo {
+  float: left;
+
+  width: 35px;
+  height: 35px;
+  margin: 0 10px;
+
+  background: url("../../assets/pmm-logo.png") no-repeat;
+  background-size: cover;
+}
+
+.main {
+  font-size: 14px;
+}
+
+.main p {
+  font-weight: 300;
+  color: #ffffff;
+  margin-bottom: 25px;
+}
+
+.main .nav-tabs {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.main .nav-tabs > li.active {
+  border-bottom: 5px solid #292929;
+}
+
+.main .nav-tabs > li.active > a,
+.main .nav-tabs > li.active > a:focus,
+.main .nav-tabs > li.active > a:hover,
+.main .nav-tabs > li > a,
+.main .nav-tabs > li > a:focus,
+.main .nav-tabs > li > a:hover,
+.main .nav-tabs > li > i {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+.main .nav-tabs > li > i {
+  padding: 5px 10px 0;
+}
+
+.main .tab-content {
+  padding-top: 85px;
+  padding-bottom: 60px;
+  border: 1px solid #2a2a2a;
+  background-color: #1f1d1e;
+}
+
+@media screen and (max-width: 767px) {
+  .main p {
+    font-size: 14px;
+  }
+
+  .tab-content {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .nav-tabs > li > a {
+    padding: 0 0 3px 0;
+  }
+
+  .nav-tabs > li > i {
+    padding: 3px 10px 0;
+  }
+}
+
+
