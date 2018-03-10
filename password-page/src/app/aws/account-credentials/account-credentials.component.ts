@@ -20,13 +20,15 @@ export class AccountCredentialsComponent {
     this.isIdentical = this.awsUserData.password === this.repeatPassword;
   }
 
-  constructor(private router: Router, public installWizardService: AppService) {
+  constructor(private router: Router, public appService: AppService) {
 
   }
 
   public submit(): any {
     if (!this.isIdentical) return false;
-    this.installWizardService.checkUserData(this.awsUserData);
-    this.router.navigate(['success-page']);
+    this.appService.checkUserData(this.awsUserData).then(() => {
+        this.router.navigate(['success-page']);
+    });
+
   }
 }

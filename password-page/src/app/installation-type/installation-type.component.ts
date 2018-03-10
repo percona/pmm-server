@@ -7,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InstallationTypeComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    console.log('Test message');
+  }
 
   ngOnInit() {
   }

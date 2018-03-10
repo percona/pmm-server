@@ -1,38 +1,36 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 import {AppService} from "../../app.service";
 
 @Component({
-  selector: 'app-account-credentials-ova',
-  templateUrl: './account-credentials-ova.component.html',
-  styleUrls: ['./account-credentials-ova.component.scss'],
-  providers: [AppService]
+    selector: 'app-account-credentials-ova',
+    templateUrl: './account-credentials-ova.component.html',
+    styleUrls: ['./account-credentials-ova.component.scss'],
+    providers: [AppService]
 })
 export class AccountCredentialsOvaComponent {
-  ovaUserData = {
-    username: '',
-    password: '',
-  };
+    public ovaUserData = {
+        username: '',
+        password: '',
+    };
+    public ssh: string = '';
+    public repeatPassword: string = '';
+    public isIdentical: boolean;
 
-  ovaSshData = {
-    ssh: ''
-  };
+    onPasswordChange() {
+        this.isIdentical = this.ovaUserData.password === this.repeatPassword;
+    }
 
-  isIdentical: boolean;
-  repeatPassword: string = '';
+    constructor(private router: Router, public appService: AppService) {
 
-  onPasswordChange() {
-    this.isIdentical = this.ovaUserData.password === this.repeatPassword;
-  }
+    }
 
-  constructor(private router: Router, public installWizardService: AppService) {
-
-  }
-
-  public submit(): any {
-    if (!this.isIdentical) return false;
-    this.installWizardService.checkUserData(this.ovaUserData);
-    this.installWizardService.checkSSH(this.ovaSshData);
-    this.router.navigate(['success-page']);
-  }
+    public submit(): any {
+        if (!this.isIdentical) return false;
+        this.appService.checkUserData(this.ovaUserData).then(() => {
+            this.appService.checkSSH(this.ssh).then(()=> {
+                this.router.navigate(['success-page']);
+            });
+        });
+    }
 }

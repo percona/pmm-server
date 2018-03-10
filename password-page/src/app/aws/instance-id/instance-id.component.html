@@ -9,16 +9,16 @@
       who started the instance or authorized. Please provide Instance ID from your ASW
       console</p>
   </div>
-  <!--FORM!!!!!!!!!!!!!!!-->
   <form action="">
     <div class="row">
-      <div class="col-lg-8 col-md-8 col-sm-10 col-xs-10 col-lg-offset-3 col-md-offset-3 col-sm-offset-1 col-xs-offset-1  input-wrapper">
+      <div class="col-lg-8 col-md-8 col-sm-10 col-xs-10 col-lg-offset-3 col-md-offset-3 col-sm-offset-1 col-sm-offset-1  input-wrapper">
         <div class="row flex-container">
           <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 text-right">
             <input type="text" class="custom-form-input form-control" placeholder="Instance ID"
                    name="instance-id"
-                   [(ngModel)]="instanceParams.instanceId"
+                   [(ngModel)]="instanceId"
                    #id="ngModel"
+                   pattern="/^i-[0-9a-f]+$/"
                    required>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 input-caption">
