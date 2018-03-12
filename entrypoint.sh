@@ -21,9 +21,9 @@ if [ -n "$METRICS_MEMORY" ]; then
     # https://jira.percona.com/browse/PMM-969
     METRICS_MEMORY_MULTIPLIED=$(( ${METRICS_MEMORY} * 1024 ))
 else
-    MEMORY_LIMIT=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes)
+    MEMORY_LIMIT=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes || :)
     TOTAL_MEMORY=$(( $(grep MemTotal /proc/meminfo | awk '{print$2}') * 1024 ))
-    MEMORY_AVAIABLE=$(printf "%i\n%i\n" "$MEMORY_LIMIT" "$TOTAL_MEMORY" | sort -n | head -1)
+    MEMORY_AVAIABLE=$(printf "%i\n%i\n" "$MEMORY_LIMIT" "$TOTAL_MEMORY" | sort -n | grep -v "^0$" | head -1)
     METRICS_MEMORY_MULTIPLIED=$(( ${MEMORY_AVAIABLE} / 100 * 40 - 256*1024*1024 ))
 fi
 sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /etc/supervisord.d/pmm.ini

@@ -18,12 +18,13 @@ import time
 import requests
 
 GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
+GRAFANA_IMG_DR   = '/usr/share/grafana/public/img/'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
-
+LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 
 def grafana_headers(api_key):
     """
@@ -88,6 +89,9 @@ def stop_grafana():
         res = subprocess.call(["/bin/systemctl", "stop", "grafana-server"])
     print ' * Grafana stop: %r.' % (res,)
 
+    # wait for full stop
+    time.sleep(5)
+
 
 def wait_for_grafana_start():
     sys.stdout.write(' * Waiting for Grafana to start')
@@ -107,7 +111,7 @@ def wait_for_grafana_start():
 
 
 def add_api_key(name, db_key):
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
@@ -118,16 +122,9 @@ def add_api_key(name, db_key):
 
 
 def delete_api_key(db_key, upgrade):
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
-    # Set home dashboard.
-    cur.execute("REPLACE INTO star (user_id, dashboard_id) "
-                "SELECT 1, id from dashboard WHERE slug='home'")
-    cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
-                "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
-
-    # Delete key.
     cur.execute("DELETE FROM api_key WHERE key = ?", (db_key,))
 
     con.commit()
@@ -139,7 +136,7 @@ def fix_cloudwatch_datasource():
     Replaces incorrect CloudWatch datasource stored as JSON string with correct JSON object.
     """
 
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     found = False
@@ -163,9 +160,10 @@ def fix_cloudwatch_datasource():
 
 def add_datasources(api_key):
     r = requests.get('%s/api/datasources' % (HOST,), headers=grafana_headers(api_key))
-    print r.status_code, r.content
+    print ' * Datasources: %r %r' % (r.status_code, r.content)
     ds = [x['name'] for x in json.loads(r.content)]
     if 'Prometheus' not in ds:
+        print ' * Adding Prometheus Data Source'
         data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
@@ -174,6 +172,7 @@ def add_datasources(api_key):
             sys.exit(-1)
 
     if 'CloudWatch' not in ds:
+        print ' * Adding CloudWatch Data Source'
         data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': {'authType': 'keys'}, 'access': 'proxy', 'isDefault': False})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
@@ -182,6 +181,7 @@ def add_datasources(api_key):
             sys.exit(-1)
 
     if 'QAN-API' not in ds:
+        print ' * QAN-API Data Source'
         data = json.dumps({
             'name': 'QAN-API',
             'type': 'mysql',
@@ -205,23 +205,58 @@ def copy_apps():
         source_dir = '/usr/share/percona-dashboards/' + app
         dest_dir = '/var/lib/grafana/plugins/' + app
         if os.path.isdir(source_dir):
-            print app
+            print ' * Copying %r' % (app,)
             shutil.rmtree(dest_dir, True)
             shutil.copytree(source_dir, dest_dir)
 
 
 def import_apps(api_key):
     for app in ['pmm-app']:
-        print app
+        print ' * Importing %r' % (app,)
+        data = json.dumps({'enabled': False})
+        r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
+        print ' * Plugin disable result: %r %r' % (r.status_code, r.content)
+        if r.status_code != 200:
+            print ' * Cannot dissable %s app' % app
+            sys.exit(-1)
+
         data = json.dumps({'enabled': True})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
+        print ' * Plugin enable result: %r %r' % (r.status_code, r.content)
         if r.status_code != 200:
-            print r.status_code, r.content
-            print ' * Cannot add %s app' % app
+            print ' * Cannot enable %s app' % app
             sys.exit(-1)
 
 
+def set_home_dashboard(api_key):
+    # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
+    # This API is different from /api/dashboards/home which returns home dashboard
+    r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
+    print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
+    if r.status_code != 200:
+        # TODO sys.exit(-1)
+        return
+
+    res = json.loads(r.content)
+
+    data = json.dumps({'homeDashboardId': res['dashboard']['id']})
+    r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
+    print ' * Preferences set: %r %r' % (r.status_code, r.content)
+
+    # Copy pmm logo to the grafana directory
+    if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
+        print ' * Copying %r to grafana directory %r' % (LOGO_FILE, GRAFANA_IMG_DR)
+        shutil.copy(LOGO_FILE, GRAFANA_IMG_DR)
+
+    # # Set home dashboard.
+    # cur.execute("REPLACE INTO star (user_id, dashboard_id) "
+    #             "SELECT 1, id from dashboard WHERE slug='home'")
+    # cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
+    #             "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
+
+
 def main():
+    print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
     upgrade = check_dashboards_version()
 
     name, api_key, db_key = get_api_key()
@@ -239,6 +274,14 @@ def main():
 
     add_datasources(api_key)
     import_apps(api_key)
+
+    # restart Grafana to load app and set home dashboard below
+    stop_grafana()
+    start_grafana()
+    wait_for_grafana_start()
+    time.sleep(10)
+
+    set_home_dashboard(api_key)
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
