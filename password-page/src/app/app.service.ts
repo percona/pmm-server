@@ -14,6 +14,11 @@ export class AppService {
     constructor(private http: HttpClient) {
     }
 
+    /**
+     * Send user data
+     * @param {UserCredentials} credentials - username and password
+     * @returns {Promise<{}>} - result of matching credentials
+     */
     async checkUserData(credentials: UserCredentials): Promise<{}> {
         const url = `/configurator/v1/users`;
         const data = {
@@ -26,6 +31,11 @@ export class AppService {
         return response;
     }
 
+    /**
+     * Send instance id
+     * @param {string} instanceId - instance of user id
+     * @returns {Promise<{}>} - result of matching instanceId
+     */
     async checkInstanceId(instanceId: string): Promise<{}> {
         const url = `/configurator/v1/check-instance`;
         const data = {
@@ -37,6 +47,11 @@ export class AppService {
         return response;
     }
 
+    /**
+     * Send ssh
+     * @param {string} ssh - ssh
+     * @returns {Promise<{}>} - result of matching ssh
+     */
     async checkSSH(ssh: string): Promise<{}> {
         const url = `/configurator/v1/sshkey`;
         const data = {
