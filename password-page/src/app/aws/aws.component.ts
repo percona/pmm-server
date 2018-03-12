@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './aws.component.html',
   styleUrls: ['./aws.component.scss']
 })
-export class AddAwsInstallationComponent implements OnInit {
+export class AppAwsInstallationComponent implements OnInit {
 
   constructor() { }
 

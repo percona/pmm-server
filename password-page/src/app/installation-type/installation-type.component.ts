@@ -3,13 +3,11 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-installation-type',
   templateUrl: './installation-type.component.html',
-  styleUrls: ['./installation-type.component.css']
+  styleUrls: ['./installation-type.component.scss']
 })
-export class InstallationTypeComponent implements OnInit {
+export class AppInstallationTypeComponent implements OnInit {
 
-  constructor() {
-    console.log('Test message');
-  }
+  constructor() { }
 
   ngOnInit() {
   }

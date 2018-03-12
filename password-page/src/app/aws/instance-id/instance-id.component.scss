@@ -1,37 +1,13 @@
-body {
-  background-color: #141414;
+.active {
+  display: block;
 }
 
-//Modal styles
-.backdrop{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100vh;
-  background-color:rgba(0,0,0,0.6);
-  display: none;
-}
-.modal-dialog {
-  max-width: 710px;
-  margin: 200px auto 0;
-}
-
-.modal-content {
-  margin: 15px;
-}
-
-.input-caption {
-  padding-left: 0;
+.input-wrapper > div {
+  margin-bottom: 15px;
 }
 
 .tab-pane p {
-  color: white;
-  font-weight: 300;
   margin-bottom: 25px;
-}
-
-.error-text {
   color: white;
   font-weight: 300;
 }
@@ -51,28 +27,29 @@ input.custom-form-input::placeholder {
   font-size: 12px;
 }
 
-.input-wrapper > div {
-  margin-bottom: 15px;
+.flex-container {
+  display: flex;
+  align-items: center;
+}
+
+.error-text {
+  color: white;
+  font-weight: 300;
+}
+
+.input-caption {
+  padding-left: 0;
 }
 
 .modal-link {
-  font-size: 12px;
   color: #ff7941;
+  font-size: 12px;
   text-decoration: none;
 }
 
 .modal-link:hover {
-  color: #ff7941 !important;
+  color: #ff7941;
   text-decoration: underline;
-}
-
-.font-italic {
-  font-style: italic;
-}
-
-.flex-container {
-  display: flex;
-  align-items: center;
 }
 
 .button-row button {
@@ -97,7 +74,24 @@ input.custom-form-input::placeholder {
   box-shadow: none;
 }
 
+.backdrop{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100vh;
+  background-color:rgba(0,0,0,0.6);
+  display: none;
+}
+
+.modal-dialog {
+  max-width: 680px;
+  width: 100%;
+  margin: 200px auto 0;
+}
+
 #instance-modal {
+  margin: 15px;
   color: white;
   font-weight: 300;
   background-color: #1f1d1d;
@@ -128,11 +122,11 @@ input.custom-form-input::placeholder {
   cursor: pointer;
   height: 40px;
   width: 120px;
-  text-transform: uppercase;
   padding: 0;
+  color: white;
   font-weight: 300;
   outline: none;
-  color: white;
+  text-transform: uppercase;
   background-color: transparent;
   border: none;
 }
@@ -147,6 +141,8 @@ input.custom-form-input::placeholder {
   .flex-container {
     display: flex;
     flex-direction: column-reverse;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
 
   .input-caption {
@@ -157,13 +153,5 @@ input.custom-form-input::placeholder {
     margin-bottom: 10px;
     display: block;
   }
-
-  .tab-content {
-    padding-top: 40px;
-    padding-bottom: 40px;
-  }
 }
 
-.active {
-  display: block;
-}

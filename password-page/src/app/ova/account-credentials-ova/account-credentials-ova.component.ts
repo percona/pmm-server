@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-import {AppService} from "../../app.service";
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppService } from '../../app.service';
 
 @Component({
     selector: 'app-account-credentials-ova',
@@ -8,24 +8,24 @@ import {AppService} from "../../app.service";
     styleUrls: ['./account-credentials-ova.component.scss'],
     providers: [AppService]
 })
-export class AccountCredentialsOvaComponent {
+export class AppAccountCredentialsOvaComponent {
     public ovaUserData = {
         username: '',
         password: '',
     };
+
     public ssh: string = '';
     public repeatPassword: string = '';
     public isIdentical: boolean;
 
-    onPasswordChange() {
+    constructor(private router: Router, public appService: AppService) {
+    }
+
+    public onPasswordChange(): void {
         this.isIdentical = this.ovaUserData.password === this.repeatPassword;
     }
 
-    constructor(private router: Router, public appService: AppService) {
-
-    }
-
-    public submit(): any {
+    public submit(): (boolean | void) {
         if (!this.isIdentical) return false;
         this.appService.checkUserData(this.ovaUserData).then(() => {
             this.appService.checkSSH(this.ssh).then(()=> {

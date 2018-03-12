@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './ova.component.html',
   styleUrls: ['./ova.component.scss']
 })
-export class AddOvaComponent implements OnInit {
+export class AppOvaComponent implements OnInit {
 
   constructor() { }
 
