@@ -9,6 +9,9 @@ import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
 import { OvaGuard } from './guards/ova.guard';
 import { AppComponent } from './app.component';
 import { MainGuard } from './guards/main.guard';
+import { AppDockerPageComponent } from './docker-page/docker-page.component';
+import { SuccessPageGuard } from './guards/success-page.guard';
+import { DockerGuard } from "./guards/docker.guard";
 
 export const AppRouter: Routes = [
     { path: '', children: [
@@ -31,5 +34,6 @@ export const AppRouter: Routes = [
             },
         ]
     },
-    { path: 'success-page', component: AppSuccessPageComponent }
+    { path: 'docker', component: AppDockerPageComponent, canActivate: [DockerGuard] },
+    { path: 'success-page', component: AppSuccessPageComponent, canActivate: [SuccessPageGuard] }
 ];

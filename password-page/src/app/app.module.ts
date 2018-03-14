@@ -16,6 +16,9 @@ import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
 import { OvaGuard } from './guards/ova.guard';
 import { AppService } from './app.service';
 import { MainGuard } from './guards/main.guard';
+import { AppDockerPageComponent } from './docker-page/docker-page.component';
+import { SuccessPageGuard } from './guards/success-page.guard';
+import { DockerGuard } from "./guards/docker.guard";
 
 @NgModule({
     declarations: [
@@ -26,6 +29,7 @@ import { MainGuard } from './guards/main.guard';
         AppOvaComponent,
         AppAccountCredentialsOvaComponent,
         AppSuccessPageComponent,
+        AppDockerPageComponent,
     ],
     imports: [
         BrowserModule,
@@ -36,7 +40,7 @@ import { MainGuard } from './guards/main.guard';
     exports: [
         AppComponent,
     ],
-    providers: [MainGuard, AwsGuard, AwsCredentialsGuard, OvaGuard, AppService],
+    providers: [MainGuard, AwsGuard, AwsCredentialsGuard, OvaGuard, SuccessPageGuard, DockerGuard, AppService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

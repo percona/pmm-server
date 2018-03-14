@@ -11,6 +11,7 @@ interface UserCredentials {
 export class AppService {
     private headers = new HttpHeaders({'Content-Type': 'application/json'});
     _isInstanceChecked: boolean = false;
+    _isInstallationComplete: boolean = false;
 
     constructor(private http: HttpClient) {
     }
@@ -21,6 +22,14 @@ export class AppService {
      */
     public isInstanceChecked() {
         return this._isInstanceChecked;
+    }
+
+    /**
+     * Check installation completing
+     * @returns {boolean} - result of checking instance id
+     */
+    public isInstallationComplete() {
+        return this._isInstallationComplete;
     }
 
     /**
@@ -36,7 +45,11 @@ export class AppService {
         };
         const response = await this.http
             .post(url, data, {headers: this.headers})
-            .toPromise();
+            .toPromise()
+            .then(() => {
+               this._isInstallationComplete = true;
+               return response;
+            });
         return response;
     }
 
