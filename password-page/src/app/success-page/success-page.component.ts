@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-success-page',
@@ -20,7 +20,7 @@ export class AppSuccessPageComponent implements OnInit {
      */
     public redirectToMainPage(): void {
         setTimeout(() => {
-            this.router.navigate(['../installation-type']);
+            this.router.navigate(['../']);
         }, 5000);
     }
 }

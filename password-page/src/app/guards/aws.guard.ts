@@ -3,10 +3,10 @@ import {
     CanActivate,
     RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { environment } from '../../environments/environment';
-import { AppService } from '../app.service';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { AppService } from '../app.service';
+import { environment } from '../../environments/environment.prod';
 
 export class AwsGuard implements CanActivate {
     INSTALLATION_TYPE: string = 'aws';

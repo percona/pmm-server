@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    installationType: 'aws'
+    installationType: 'ova'
 };
 

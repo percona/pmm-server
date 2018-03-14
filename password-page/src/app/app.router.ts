@@ -5,17 +5,16 @@ import { AppAccountCredentialsComponent } from './aws/account-credentials/accoun
 import { AppOvaComponent } from './ova/ova.component';
 import { AppAccountCredentialsOvaComponent } from './ova/account-credentials-ova/account-credentials-ova.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
-import { AppInstallationTypeComponent } from './installation-type/installation-type.component';
 import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
 import { OvaGuard } from './guards/ova.guard';
+import { AppComponent } from './app.component';
+import { MainGuard } from './guards/main.guard';
 
 export const AppRouter: Routes = [
-    { path: '', redirectTo: 'installation-type', pathMatch: 'full' },
-    {
-        path: 'installation-type', children: [
+    { path: '', children: [
             {
                 path: '',
-                component: AppInstallationTypeComponent,
+                component: AppComponent, canActivate: [MainGuard]
             },
             {
                 path: 'ova', component: AppOvaComponent, canActivate: [OvaGuard], children: [

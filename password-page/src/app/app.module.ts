@@ -12,10 +12,10 @@ import { AppInstanceIdComponent } from './aws/instance-id/instance-id.component'
 import { AppAccountCredentialsComponent } from './aws/account-credentials/account-credentials.component';
 import { AppAccountCredentialsOvaComponent } from './ova/account-credentials-ova/account-credentials-ova.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
-import { AppInstallationTypeComponent } from './installation-type/installation-type.component';
 import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
 import { OvaGuard } from './guards/ova.guard';
 import { AppService } from './app.service';
+import { MainGuard } from './guards/main.guard';
 
 @NgModule({
     declarations: [
@@ -26,7 +26,6 @@ import { AppService } from './app.service';
         AppOvaComponent,
         AppAccountCredentialsOvaComponent,
         AppSuccessPageComponent,
-        AppInstallationTypeComponent,
     ],
     imports: [
         BrowserModule,
@@ -37,7 +36,7 @@ import { AppService } from './app.service';
     exports: [
         AppComponent,
     ],
-    providers: [AwsGuard, AwsCredentialsGuard, OvaGuard, AppService],
+    providers: [MainGuard, AwsGuard, AwsCredentialsGuard, OvaGuard, AppService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
