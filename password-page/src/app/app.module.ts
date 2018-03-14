@@ -13,6 +13,9 @@ import { AppAccountCredentialsComponent } from './aws/account-credentials/accoun
 import { AppAccountCredentialsOvaComponent } from './ova/account-credentials-ova/account-credentials-ova.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
 import { AppInstallationTypeComponent } from './installation-type/installation-type.component';
+import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
+import { OvaGuard } from './guards/ova.guard';
+import { AppService } from './app.service';
 
 @NgModule({
     declarations: [
@@ -34,7 +37,7 @@ import { AppInstallationTypeComponent } from './installation-type/installation-t
     exports: [
         AppComponent,
     ],
-    providers: [],
+    providers: [AwsGuard, AwsCredentialsGuard, OvaGuard, AppService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

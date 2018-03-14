@@ -18,7 +18,7 @@
                    name="instance-id"
                    [(ngModel)]="instanceId"
                    #id="ngModel"
-                   pattern="/^i-[0-9a-f]+$/"
+                   pattern="^i-[0-9a-f]+$"
                    required>
           </div>
           <div class="col-md-3 col-xs-12 input-caption">
@@ -59,7 +59,7 @@
           the <b>EC2 console</b>. Click the Copy button next to the Instance ID field. This button appears as soon
           as you hover the cursor of your mouse over the ID.</p>
         <div>
-          <img src="test-image-screen.png" alt="instruction-image">
+          <img src="../../../assets/aws-marketplace.pmm.ec2.properties.instance-id.png" alt="instruction-image">
           <p><em>Hover the cursor over instance ID for Copy button to appear.</em></p>
         </div>
         <p>Paste the instance in the Instance ID field of the Percona Monitoring and Management welcome page and

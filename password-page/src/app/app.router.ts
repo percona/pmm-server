@@ -6,6 +6,8 @@ import { AppOvaComponent } from './ova/ova.component';
 import { AppAccountCredentialsOvaComponent } from './ova/account-credentials-ova/account-credentials-ova.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
 import { AppInstallationTypeComponent } from './installation-type/installation-type.component';
+import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
+import { OvaGuard } from './guards/ova.guard';
 
 export const AppRouter: Routes = [
     { path: '', redirectTo: 'installation-type', pathMatch: 'full' },
@@ -16,15 +18,15 @@ export const AppRouter: Routes = [
                 component: AppInstallationTypeComponent,
             },
             {
-                path: 'ova', component: AppOvaComponent, children: [
+                path: 'ova', component: AppOvaComponent, canActivate: [OvaGuard], children: [
                     { path: 'account-credentials-ova', component: AppAccountCredentialsOvaComponent },
                     { path: '', redirectTo: 'account-credentials-ova', pathMatch: 'full' },
                 ]
             },
             {
-                path: 'aws', component: AppAwsInstallationComponent, children: [
+                path: 'aws', component: AppAwsInstallationComponent, canActivate: [AwsGuard], children: [
                     { path: 'instance-id', component: AppInstanceIdComponent },
-                    { path: 'account-credentials', component: AppAccountCredentialsComponent },
+                    { path: 'account-credentials', component: AppAccountCredentialsComponent, canActivate: [AwsCredentialsGuard] },
                     { path: '', redirectTo: 'instance-id', pathMatch: 'full' },
                 ]
             },

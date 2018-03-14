@@ -10,8 +10,17 @@ interface UserCredentials {
 @Injectable()
 export class AppService {
     private headers = new HttpHeaders({'Content-Type': 'application/json'});
+    _isInstanceChecked: boolean = false;
 
     constructor(private http: HttpClient) {
+    }
+
+    /**
+     * Check instance id
+     * @returns {boolean} - result of checking instance id
+     */
+    public isInstanceChecked() {
+        return this._isInstanceChecked;
     }
 
     /**
@@ -43,7 +52,11 @@ export class AppService {
         };
         const response = await this.http
             .post(url, data, {headers: this.headers})
-            .toPromise();
+            .toPromise()
+            .then(() => {
+                this._isInstanceChecked = true;
+                return response;
+            });
         return response;
     }
 
