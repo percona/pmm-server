@@ -6,7 +6,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { AppService } from '../app.service';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 
 export class AwsGuard implements CanActivate {
     INSTALLATION_TYPE: string = 'aws';

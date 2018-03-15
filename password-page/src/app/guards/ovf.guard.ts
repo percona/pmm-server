@@ -4,7 +4,7 @@ import {
     RouterStateSnapshot
 } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 
 export class OvfGuard implements CanActivate {
     INSTALLATION_TYPE: string = 'ovf';
