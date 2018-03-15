@@ -12,7 +12,7 @@ export class DockerGuard implements CanActivate {
     }
 
     /**
-     * Check resolution for ova route
+     * Check resolution for ovf route
      */
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         return environment.installationType === this.INSTALLATION_TYPE;

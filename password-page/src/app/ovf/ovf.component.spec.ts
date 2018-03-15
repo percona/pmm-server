@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddOvaComponent } from './ova.component';
+import { AppOvfComponent } from './ovf.component';
 
-describe('AddOvaComponent', () => {
-  let component: AddOvaComponent;
-  let fixture: ComponentFixture<AddOvaComponent>;
+describe('AddOvfComponent', () => {
+  let component: AppOvfComponent;
+  let fixture: ComponentFixture<AppOvfComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AddOvaComponent ]
+      declarations: [ AppOvfComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddOvaComponent);
+    fixture = TestBed.createComponent(AppOvfComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

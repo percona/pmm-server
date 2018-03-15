@@ -2,11 +2,11 @@ import { Routes } from '@angular/router';
 import { AppAwsInstallationComponent } from './aws/aws.component';
 import { AppInstanceIdComponent } from './aws/instance-id/instance-id.component';
 import { AppAccountCredentialsComponent } from './aws/account-credentials/account-credentials.component';
-import { AppOvaComponent } from './ova/ova.component';
-import { AppAccountCredentialsOvaComponent } from './ova/account-credentials-ova/account-credentials-ova.component';
+import { AppOvfComponent } from './ovf/ovf.component';
+import { AppAccountCredentialsOvfComponent } from './ovf/account-credentials-ovf/account-credentials-ovf.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
 import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
-import { OvaGuard } from './guards/ova.guard';
+import { OvfGuard } from './guards/ovf.guard';
 import { AppComponent } from './app.component';
 import { MainGuard } from './guards/main.guard';
 import { AppDockerPageComponent } from './docker-page/docker-page.component';
@@ -20,9 +20,9 @@ export const AppRouter: Routes = [
                 component: AppComponent, canActivate: [MainGuard]
             },
             {
-                path: 'ova', component: AppOvaComponent, canActivate: [OvaGuard], children: [
-                    { path: 'account-credentials-ova', component: AppAccountCredentialsOvaComponent },
-                    { path: '', redirectTo: 'account-credentials-ova', pathMatch: 'full' },
+                path: 'ovf', component: AppOvfComponent, canActivate: [OvfGuard], children: [
+                    { path: 'account-credentials-ovf', component: AppAccountCredentialsOvfComponent },
+                    { path: '', redirectTo: 'account-credentials-ovf', pathMatch: 'full' },
                 ]
             },
             {

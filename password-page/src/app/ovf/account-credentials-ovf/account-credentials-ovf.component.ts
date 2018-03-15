@@ -3,13 +3,13 @@ import { Router } from '@angular/router';
 import { AppService } from '../../app.service';
 
 @Component({
-    selector: 'app-account-credentials-ova',
-    templateUrl: './account-credentials-ova.component.html',
-    styleUrls: ['./account-credentials-ova.component.scss'],
+    selector: 'app-account-credentials-ovf',
+    templateUrl: './account-credentials-ovf.component.html',
+    styleUrls: ['./account-credentials-ovf.component.scss'],
     providers: [AppService]
 })
-export class AppAccountCredentialsOvaComponent {
-    public ovaUserData = {
+export class AppAccountCredentialsOvfComponent {
+    public ovfUserData = {
         username: '',
         password: '',
     };
@@ -25,7 +25,7 @@ export class AppAccountCredentialsOvaComponent {
      * Check passwords fields for identical
      */
     public onPasswordChange(): void {
-        this.isIdentical = this.ovaUserData.password === this.repeatPassword;
+        this.isIdentical = this.ovfUserData.password === this.repeatPassword;
     }
 
     /**
@@ -34,7 +34,7 @@ export class AppAccountCredentialsOvaComponent {
      */
     public submit(): (boolean | void) {
         if (!this.isIdentical) return false;
-        this.appService.checkUserData(this.ovaUserData).then(() => {
+        this.appService.checkUserData(this.ovfUserData).then(() => {
             this.appService.checkSSH(this.ssh).then(()=> {
                 this.router.navigate(['success-page']);
             });

@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment.prod';
 export class MainGuard implements CanActivate {
     INSTALLATION_TYPES: any = {
         AWS: 'aws',
-        OVA: 'ova',
+        OVF: 'ovf',
         DOCKER: 'docker'
     };
 
@@ -24,8 +24,8 @@ export class MainGuard implements CanActivate {
             case this.INSTALLATION_TYPES.AWS:
                 this.router.navigate(['aws']);
                 break;
-            case this.INSTALLATION_TYPES.OVA:
-                this.router.navigate(['ova']);
+            case this.INSTALLATION_TYPES.OVF:
+                this.router.navigate(['ovf']);
                 break;
             case this.INSTALLATION_TYPES.DOCKER:
                 this.router.navigate(['docker']);

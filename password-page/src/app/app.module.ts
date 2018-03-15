@@ -7,13 +7,13 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { AppAwsInstallationComponent } from './aws/aws.component';
-import { AppOvaComponent } from './ova/ova.component';
+import { AppOvfComponent } from './ovf/ovf.component';
 import { AppInstanceIdComponent } from './aws/instance-id/instance-id.component';
 import { AppAccountCredentialsComponent } from './aws/account-credentials/account-credentials.component';
-import { AppAccountCredentialsOvaComponent } from './ova/account-credentials-ova/account-credentials-ova.component';
+import { AppAccountCredentialsOvfComponent } from './ovf/account-credentials-ovf/account-credentials-ovf.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
 import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
-import { OvaGuard } from './guards/ova.guard';
+import { OvfGuard } from './guards/ovf.guard';
 import { AppService } from './app.service';
 import { MainGuard } from './guards/main.guard';
 import { AppDockerPageComponent } from './docker-page/docker-page.component';
@@ -26,8 +26,8 @@ import { DockerGuard } from "./guards/docker.guard";
         AppAwsInstallationComponent,
         AppInstanceIdComponent,
         AppAccountCredentialsComponent,
-        AppOvaComponent,
-        AppAccountCredentialsOvaComponent,
+        AppOvfComponent,
+        AppAccountCredentialsOvfComponent,
         AppSuccessPageComponent,
         AppDockerPageComponent,
     ],
@@ -40,7 +40,7 @@ import { DockerGuard } from "./guards/docker.guard";
     exports: [
         AppComponent,
     ],
-    providers: [MainGuard, AwsGuard, AwsCredentialsGuard, OvaGuard, SuccessPageGuard, DockerGuard, AppService],
+    providers: [MainGuard, AwsGuard, AwsCredentialsGuard, OvfGuard, SuccessPageGuard, DockerGuard, AppService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
