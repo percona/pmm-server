@@ -10,6 +10,9 @@ interface UserCredentials {
 @Injectable()
 export class AppService {
     private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    private url = `/configurator/v1/users`;
+    private instanceUrl = `/configurator/v1/check-instance`;
+    private sshUrl = `/configurator/v1/sshkey`;
     _isInstanceChecked: boolean;
     _isInstallationComplete: boolean;
 
@@ -33,7 +36,7 @@ export class AppService {
     }
 
     /**
-     * Check installation completing
+     * Check installation completing for guards
      * @returns {boolean} - result of checking instance id
      */
     public isInstallationComplete() {
@@ -41,7 +44,7 @@ export class AppService {
     }
 
     /**
-     * Check installation completing
+     * Check installation completing for guards
      * @returns {boolean} - result of checking instance id
      */
     public isInstanceChecked() {
@@ -54,15 +57,13 @@ export class AppService {
      * @returns {Promise<{}>} - result of matching credentials
      */
     async checkUserData(credentials: UserCredentials): Promise<{}> {
-        const url = `/configurator/v1/users`;
         const data = {
             username: credentials.username,
             password: credentials.password,
         };
-        const response = await this.http
-            .post(url, data, { headers: this.headers })
+        return this.http
+            .post(this.url, data, { headers: this.headers })
             .toPromise();
-        return response;
     }
 
     /**
@@ -71,14 +72,12 @@ export class AppService {
      * @returns {Promise<{}>} - result of matching instanceId
      */
     async checkInstanceId(instanceId: string): Promise<{}> {
-        const url = `/configurator/v1/check-instance`;
         const data = {
             instanceId
         };
-        const response = await this.http
-            .post(url, data, { headers: this.headers })
+        return this.http
+            .post(this.instanceUrl, data, { headers: this.headers })
             .toPromise();
-        return response;
     }
 
     /**
@@ -87,14 +86,12 @@ export class AppService {
      * @returns {Promise<{}>} - result of matching ssh
      */
     async checkSSH(ssh: string): Promise<{}> {
-        const url = `/configurator/v1/sshkey`;
         const data = {
             ssh
         };
-        const response = await this.http
-            .post(url, data, { headers: this.headers })
+        return this.http
+            .post(this.sshUrl, data, { headers: this.headers })
             .toPromise();
-        return response;
     }
 
 }
