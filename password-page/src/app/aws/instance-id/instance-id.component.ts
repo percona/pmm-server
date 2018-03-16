@@ -9,8 +9,8 @@ import { AppService } from '../../app.service';
     providers: [AppService]
 })
 export class AppInstanceIdComponent {
-    public instanceId: string = '';
-    public isOpenModal: boolean = false;
+    public instanceId = '';
+    public isOpenModal = false;
 
     constructor(private router: Router, public appService: AppService) {
     }
@@ -27,6 +27,7 @@ export class AppInstanceIdComponent {
      */
     public submit(): void {
         this.appService.checkInstanceId(this.instanceId).then(() => {
+            this.appService.setCheckInstance(true);
             this.router.navigate(['aws/account-credentials']);
         });
     }

@@ -14,8 +14,8 @@ export class AppAccountCredentialsOvfComponent {
         password: '',
     };
 
-    public ssh: string = '';
-    public repeatPassword: string = '';
+    public ssh = '';
+    public repeatPassword = '';
     public isIdentical: boolean;
 
     constructor(private router: Router, public appService: AppService) {
@@ -33,9 +33,10 @@ export class AppAccountCredentialsOvfComponent {
      * @returns {boolean | void} boolean - result of matching password fields
      */
     public submit(): (boolean | void) {
-        if (!this.isIdentical) return false;
+        if (!this.isIdentical) { return false; }
         this.appService.checkUserData(this.ovfUserData).then(() => {
-            this.appService.checkSSH(this.ssh).then(()=> {
+            this.appService.checkSSH(this.ssh).then(() => {
+                this.appService.setInstallationComplete(true);
                 this.router.navigate(['success-page']);
             });
         });

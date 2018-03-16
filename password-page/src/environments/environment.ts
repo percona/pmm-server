@@ -5,5 +5,5 @@
 
 export const environment = {
     production: false,
-    installationType: 'docker'
+    installationType: 'aws'
 };

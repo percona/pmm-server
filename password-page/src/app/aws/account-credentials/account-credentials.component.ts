@@ -13,7 +13,7 @@ export class AppAccountCredentialsComponent {
         username: '',
         password: '',
     };
-    public repeatPassword: string = '';
+    public repeatPassword: '';
     public isIdentical: boolean;
 
     constructor(private router: Router, public appService: AppService) {
@@ -30,8 +30,8 @@ export class AppAccountCredentialsComponent {
      * Send a request and navigate to success page if response is success
      * @returns {boolean | void} boolean - result of matching password fields
      */
-    public submit(): (boolean | void)  {
-        if (!this.isIdentical) return false;
+    public submit(): (boolean | void) {
+        if (!this.isIdentical) { return false; }
         this.appService.checkUserData(this.awsUserData).then(() => {
             this.router.navigate(['success-page']);
         });

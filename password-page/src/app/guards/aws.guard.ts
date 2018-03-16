@@ -9,7 +9,7 @@ import { AppService } from '../app.service';
 import { environment } from '../../environments/environment';
 
 export class AwsGuard implements CanActivate {
-    INSTALLATION_TYPE: string = 'aws';
+    INSTALLATION_TYPE = 'aws';
 
     constructor() {
     }
@@ -24,7 +24,8 @@ export class AwsGuard implements CanActivate {
 
 @Injectable()
 export class AwsCredentialsGuard implements CanActivate {
-    constructor(private appService: AppService) { }
+    constructor(private appService: AppService) {
+    }
 
     /**
      * Check on resolution for aws children account credentials route

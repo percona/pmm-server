@@ -110,6 +110,11 @@ input.custom-form-input::placeholder {
   cursor: pointer;
 }
 
+#instance-modal .modal-img {
+  background: url("../../../assets/pmm-logo.png") no-repeat;
+  background-size: cover;
+}
+
 #instance-modal .modal-flex-container {
   display: flex;
   justify-content: space-between;
@@ -121,7 +126,7 @@ input.custom-form-input::placeholder {
   align-items: center;
   cursor: pointer;
   height: 40px;
-  width: 120px;
+  width: 150px;
   padding: 0;
   color: white;
   font-weight: 300;
