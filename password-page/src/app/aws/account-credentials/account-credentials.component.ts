@@ -6,7 +6,6 @@ import { AppService } from '../../app.service';
     selector: 'app-account-credentials',
     templateUrl: './account-credentials.component.html',
     styleUrls: ['./account-credentials.component.scss'],
-    providers: [AppService]
 })
 export class AppAccountCredentialsComponent {
     public awsUserData = {

@@ -10,29 +10,13 @@ interface UserCredentials {
 @Injectable()
 export class AppService {
     private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    private url = `/configurator/v1/users`;
-    private instanceUrl = `/configurator/v1/check-instance`;
-    private sshUrl = `/configurator/v1/sshkey`;
-    _isInstanceChecked: boolean;
-    _isInstallationComplete: boolean;
+    private url = '/configurator/v1/users';
+    private instanceUrl = '/configurator/v1/check-instance';
+    private sshUrl = '/configurator/v1/sshkey';
+    _isInstanceChecked = false;
+    _isInstallationComplete = false;
 
     constructor(private http: HttpClient) {
-    }
-
-    /**
-     * Check instance id
-     * @returns {boolean} - result of checking instance id
-     */
-    public setCheckInstance(value = false) {
-        return this._isInstanceChecked = value;
-    }
-
-    /**
-     * Check installation completing
-     * @returns {boolean} - result of checking instance id
-     */
-    public setInstallationComplete(value = false) {
-        return this._isInstallationComplete = value;
     }
 
     /**
@@ -56,14 +40,16 @@ export class AppService {
      * @param {UserCredentials} credentials - username and password
      * @returns {Promise<{}>} - result of matching credentials
      */
-    async checkUserData(credentials: UserCredentials): Promise<{}> {
+    async checkUserData(credentials: UserCredentials): Promise<any> {
         const data = {
             username: credentials.username,
             password: credentials.password,
         };
         return this.http
             .post(this.url, data, { headers: this.headers })
-            .toPromise();
+            .toPromise()
+            .then(() => this._isInstallationComplete = true)
+            .catch(console.error);
     }
 
     /**
@@ -71,13 +57,15 @@ export class AppService {
      * @param {string} instanceId - instance of user id
      * @returns {Promise<{}>} - result of matching instanceId
      */
-    async checkInstanceId(instanceId: string): Promise<{}> {
+    async checkInstanceId(instanceId: string): Promise<any> {
         const data = {
             instanceId
         };
         return this.http
             .post(this.instanceUrl, data, { headers: this.headers })
-            .toPromise();
+            .toPromise()
+            .then(() => this._isInstanceChecked = true)
+            .catch (console.error);
     }
 
     /**
@@ -85,13 +73,14 @@ export class AppService {
      * @param {string} ssh - ssh
      * @returns {Promise<{}>} - result of matching ssh
      */
-    async checkSSH(ssh: string): Promise<{}> {
+    async checkSSH(ssh: string): Promise<any> {
         const data = {
             ssh
         };
         return this.http
             .post(this.sshUrl, data, { headers: this.headers })
-            .toPromise();
+            .toPromise()
+            .catch(console.error);
     }
 
 }

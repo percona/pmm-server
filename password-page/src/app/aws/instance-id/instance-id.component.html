@@ -1,7 +1,7 @@
 <div class="tab-pane">
   <div class="row">
     <p
-      class="text-center col-lg-8 col-xs-10 offset-lg-2 offset-xs-1">
+      class="text-center col-xl-8 col-10 offset-xl-2 offset-1">
       For security compliance, we need to
       verify
       your
@@ -11,9 +11,9 @@
   </div>
   <form action="">
     <div class="row">
-      <div class="col-md-8 col-xs-10 offset-md-3 offset-xs-1  input-wrapper">
-        <div class="row flex-container">
-          <div class="col-md-9 col-xs-12 text-right">
+      <div class="col-xl-8 col-10 offset-xl-3 offset-1 input-wrapper">
+        <div class="row flex-column-reverse flex-xl-row align-items-center">
+          <div class="col-xl-9 col-12 text-right">
             <input type="text" class="custom-form-input form-control" placeholder="Instance ID"
                    name="instance-id"
                    [(ngModel)]="instanceId"
@@ -21,20 +21,20 @@
                    pattern="^i-[0-9a-f]+$"
                    required>
           </div>
-          <div class="col-md-3 col-xs-12 input-caption">
+          <div class="col-xl-3 col-12 pl-xl-0">
             <a href="javascript:;" class="modal-link" (click)="toggleModal()">Where should I get my
               Instance
               ID?</a>
           </div>
         </div>
         <div class="row">
-          <div *ngIf="id?.errors && (id?.dirty || id?.touched)" class="col-md-9 col-xs-12">
+          <div *ngIf="id?.errors && (id?.dirty || id?.touched)" class="col-xl-9 col-xs-12">
             <div *ngIf="id?.errors?.required" class="error-text">*Field is required</div>
             <div *ngIf="id?.errors?.pattern" class="error-text">*Must be correct instance id</div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-9 col-xs-12 text-right button-row">
+          <div class="col-xl-9 col-12 text-right button-row">
             <button class="btn btn-primary" type="reset">Reset</button>
             <button class="btn btn-primary"
                     (click)="submit()" [disabled]="!id?.valid">Submit
@@ -51,7 +51,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content" id="instance-modal">
       <div class="modal-body">
-        <div class="modal-flex-container">
+        <div class="d-flex justify-content-between">
           <h2>Where to get your instance ID</h2>
           <i class="fa fa-close text-right close-icon" (click)="toggleModal()"></i>
         </div>
@@ -59,8 +59,7 @@
           the <b>EC2 console</b>. Click the Copy button next to the Instance ID field. This button appears as soon
           as you hover the cursor of your mouse over the ID.</p>
         <div>
-          <img src="../../../assets/id-instruction-img.png" alt="instruction-image">
-          <!--<div class="modal-img"></div>-->
+          <img src="./assets/id-instruction-img.png" alt="instruction-image">
           <p><em>Hover the cursor over instance ID for Copy button to appear.</em></p>
         </div>
         <p>Paste the instance in the Instance ID field of the Percona Monitoring and Management welcome page and

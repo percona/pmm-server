@@ -6,7 +6,6 @@ import { AppService } from '../../app.service';
     selector: 'app-account-credentials-ovf',
     templateUrl: './account-credentials-ovf.component.html',
     styleUrls: ['./account-credentials-ovf.component.scss'],
-    providers: [AppService]
 })
 export class AppAccountCredentialsOvfComponent {
     public ovfUserData = {
@@ -36,7 +35,6 @@ export class AppAccountCredentialsOvfComponent {
         if (!this.isIdentical) { return false; }
         this.appService.checkUserData(this.ovfUserData).then(() => {
             this.appService.checkSSH(this.ssh).then(() => {
-                this.appService.setInstallationComplete(true);
                 this.router.navigate(['success-page']);
             });
         });

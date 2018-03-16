@@ -6,7 +6,6 @@ import { AppService } from '../../app.service';
     selector: 'app-instance-id',
     templateUrl: './instance-id.component.html',
     styleUrls: ['./instance-id.component.scss'],
-    providers: [AppService]
 })
 export class AppInstanceIdComponent {
     public instanceId = '';
@@ -27,7 +26,6 @@ export class AppInstanceIdComponent {
      */
     public submit(): void {
         this.appService.checkInstanceId(this.instanceId).then(() => {
-            this.appService.setCheckInstance(true);
             this.router.navigate(['aws/account-credentials']);
         });
     }

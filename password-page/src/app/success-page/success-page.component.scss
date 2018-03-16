@@ -19,7 +19,7 @@
 }
 
 .header .border-right {
-  border-right: 1px solid #141414;
+  border-right: 1px solid #141414 !important;
 }
 
 .header .header-logo {
@@ -32,11 +32,11 @@
   background: url("../../assets/pmm-logo.png") no-repeat;
   background-size: cover;
 }
-.page-wrapper p {
-  color: #ffffff;
+ p {
+  color: var(--white);
 }
 
-.page-wrapper > p {
+> p {
   font-size: 16px;
 }
 
