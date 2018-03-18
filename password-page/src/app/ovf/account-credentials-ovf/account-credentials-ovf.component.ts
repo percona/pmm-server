@@ -17,8 +17,7 @@ export class AppAccountCredentialsOvfComponent {
     public repeatPassword = '';
     public isIdentical: boolean;
 
-    constructor(private router: Router, public appService: AppService) {
-    }
+    constructor(private router: Router, public appService: AppService) { }
 
     /**
      * Check passwords fields for identical

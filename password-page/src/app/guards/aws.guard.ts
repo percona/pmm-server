@@ -4,20 +4,18 @@ import {
     RouterStateSnapshot
 } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { AppService } from '../app.service';
 import { environment } from '../../environments/environment';
 
 export class AwsGuard implements CanActivate {
     INSTALLATION_TYPE = 'aws';
 
-    constructor() {
-    }
+    constructor() { }
 
     /**
      * Check on resolution for aws route
      */
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         return environment.installationType === this.INSTALLATION_TYPE;
     }
 }
@@ -30,7 +28,7 @@ export class AwsCredentialsGuard implements CanActivate {
     /**
      * Check on resolution for aws children account credentials route
      */
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         return this.appService.isInstanceChecked();
     }
 }

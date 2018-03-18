@@ -11,8 +11,7 @@ export class AppInstanceIdComponent {
     public instanceId = '';
     public isOpenModal = false;
 
-    constructor(private router: Router, public appService: AppService) {
-    }
+    constructor(private router: Router, public appService: AppService) { }
 
     /**
      * Show modal dialog with instructions of getting instance id

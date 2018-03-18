@@ -3,9 +3,8 @@ import {
     CanActivate,
     RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { AppService } from "../app.service";
-import { Injectable } from "@angular/core";
+import { AppService } from '../app.service';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class SuccessPageGuard implements CanActivate {
@@ -14,7 +13,7 @@ export class SuccessPageGuard implements CanActivate {
     /**
      * Check resolution for success page router link
      */
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         return this.appService.isInstallationComplete();
     }
 }

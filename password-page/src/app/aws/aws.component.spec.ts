@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddAwsInstallationComponent } from './aws.component';
+import { AppAwsInstallationComponent } from './aws.component';
 
-describe('AddAwsInstallationComponent', () => {
-  let component: AddAwsInstallationComponent;
-  let fixture: ComponentFixture<AddAwsInstallationComponent>;
+describe('AppAwsInstallationComponent', () => {
+  let component: AppAwsInstallationComponent;
+  let fixture: ComponentFixture<AppAwsInstallationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AddAwsInstallationComponent ]
+      declarations: [ AppAwsInstallationComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddAwsInstallationComponent);
+    fixture = TestBed.createComponent(AppAwsInstallationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

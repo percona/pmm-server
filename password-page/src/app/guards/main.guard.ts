@@ -5,29 +5,28 @@ import {
     Router
 } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { environment } from '../../environments/environment';
+
+enum Installation {
+    AWS = 'aws',
+    OVF = 'ovf',
+    DOCKER = 'docker'
+}
 
 @Injectable()
 export class MainGuard implements CanActivate {
-    INSTALLATION_TYPES: any = {
-        AWS: 'aws',
-        OVF: 'ovf',
-        DOCKER: 'docker'
-    };
 
-    constructor(private router: Router) {
-    }
+    constructor(private router: Router) { }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         switch (environment.installationType) {
-            case this.INSTALLATION_TYPES.AWS:
+            case Installation.AWS:
                 this.router.navigate(['aws']);
                 break;
-            case this.INSTALLATION_TYPES.OVF:
+            case Installation.OVF:
                 this.router.navigate(['ovf']);
                 break;
-            case this.INSTALLATION_TYPES.DOCKER:
+            case Installation.DOCKER:
                 this.router.navigate(['docker']);
                 break;
         }

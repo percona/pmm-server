@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SuccessPageComponent } from './success-page.component';
+import { AppSuccessPageComponent } from './success-page.component';
 
 describe('SucessPageComponent', () => {
-  let component: SuccessPageComponent;
-  let fixture: ComponentFixture<SuccessPageComponent>;
+  let component: AppSuccessPageComponent;
+  let fixture: ComponentFixture<AppSuccessPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SuccessPageComponent ]
+      declarations: [ AppSuccessPageComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SuccessPageComponent);
+    fixture = TestBed.createComponent(AppSuccessPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

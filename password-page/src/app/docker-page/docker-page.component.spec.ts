@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DockerPageComponent } from './docker-page.component';
+import { AppDockerPageComponent } from './docker-page.component';
 
-describe('DockerPageComponent', () => {
-  let component: DockerPageComponent;
-  let fixture: ComponentFixture<DockerPageComponent>;
+describe('AppDockerPageComponent', () => {
+  let component: AppDockerPageComponent;
+  let fixture: ComponentFixture<AppDockerPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DockerPageComponent ]
+      declarations: [ AppDockerPageComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DockerPageComponent);
+    fixture = TestBed.createComponent(AppDockerPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

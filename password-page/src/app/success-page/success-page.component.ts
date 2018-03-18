@@ -8,8 +8,7 @@ import { Router } from '@angular/router';
 })
 export class AppSuccessPageComponent implements OnInit {
 
-    constructor(private router: Router) {
-    }
+    constructor(private router: Router) { }
 
     ngOnInit() {
         this.redirectToMainPage();

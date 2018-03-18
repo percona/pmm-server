@@ -15,8 +15,7 @@ export class AppAccountCredentialsComponent {
     public repeatPassword: '';
     public isIdentical: boolean;
 
-    constructor(private router: Router, public appService: AppService) {
-    }
+    constructor(private router: Router, public appService: AppService) { }
 
     /**
      * Checks password fields for identical
