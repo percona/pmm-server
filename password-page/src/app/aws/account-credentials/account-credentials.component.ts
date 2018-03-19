@@ -14,6 +14,7 @@ export class AppAccountCredentialsComponent {
     };
     public repeatPassword: '';
     public isIdentical: boolean;
+    public errorMessage: '';
 
     constructor(private router: Router, public appService: AppService) { }
 
@@ -32,6 +33,8 @@ export class AppAccountCredentialsComponent {
         if (!this.isIdentical) { return false; }
         this.appService.checkUserData(this.awsUserData).then(() => {
             this.router.navigate(['success-page']);
+        }).catch( (err) => {
+            this.errorMessage = err.error.title ? err.error.title : err.statusText;
         });
 
     }

@@ -16,8 +16,11 @@ export class AppAccountCredentialsOvfComponent {
     public ssh = '';
     public repeatPassword = '';
     public isIdentical: boolean;
+    public errorMessage: '';
+    public errorMessageSsh: '';
 
-    constructor(private router: Router, public appService: AppService) { }
+    constructor(private router: Router, public appService: AppService) {
+    }
 
     /**
      * Check passwords fields for identical
@@ -31,11 +34,17 @@ export class AppAccountCredentialsOvfComponent {
      * @returns {boolean | void} boolean - result of matching password fields
      */
     public submit(): (boolean | void) {
-        if (!this.isIdentical) { return false; }
+        if (!this.isIdentical) {
+            return false;
+        }
         this.appService.checkUserData(this.ovfUserData).then(() => {
             this.appService.checkSSH(this.ssh).then(() => {
                 this.router.navigate(['success-page']);
+            }).catch((err) => {
+                this.errorMessageSsh = err.error.title ? err.error.title : err.statusText;
             });
+        }).catch((err) => {
+            this.errorMessage = err.error.title ? err.error.title : err.statusText;
         });
     }
 }

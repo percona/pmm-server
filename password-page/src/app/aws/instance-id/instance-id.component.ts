@@ -10,8 +10,10 @@ import { AppService } from '../../app.service';
 export class AppInstanceIdComponent {
     public instanceId = '';
     public isOpenModal = false;
+    public errorMessage: '';
 
-    constructor(private router: Router, public appService: AppService) { }
+    constructor(private router: Router, public appService: AppService) {
+    }
 
     /**
      * Show modal dialog with instructions of getting instance id
@@ -26,6 +28,8 @@ export class AppInstanceIdComponent {
     public submit(): void {
         this.appService.checkInstanceId(this.instanceId).then(() => {
             this.router.navigate(['aws/account-credentials']);
+        }).catch( (err) => {
+            this.errorMessage = err.error.title ? err.error.title : err.statusText;
         });
     }
 }

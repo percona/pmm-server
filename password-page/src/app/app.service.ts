@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 interface UserCredentials {
     username: string;
     password: string;
+    instanceId?: string;
 }
 
 @Injectable()
@@ -15,6 +16,7 @@ export class AppService {
     private sshUrl = '/configurator/v1/sshkey';
     _isInstanceChecked = false;
     _isInstallationComplete = false;
+    private data = <any>{};
 
     constructor(private http: HttpClient) {
     }
@@ -41,15 +43,12 @@ export class AppService {
      * @returns {Promise<{}>} - result of matching credentials
      */
     async checkUserData(credentials: UserCredentials): Promise<any> {
-        const data = {
-            username: credentials.username,
-            password: credentials.password,
-        };
+        this.data.username = credentials.username;
+        this.data.password = credentials.password;
         return this.http
-            .post(this.url, data, { headers: this.headers })
+            .post(this.url, this.data, { headers: this.headers })
             .toPromise()
-            .then(() => this._isInstallationComplete = true)
-            .catch(console.error);
+            .then(() => this._isInstallationComplete = true);
     }
 
     /**
@@ -58,14 +57,11 @@ export class AppService {
      * @returns {Promise<{}>} - result of matching instanceId
      */
     async checkInstanceId(instanceId: string): Promise<any> {
-        const data = {
-            instanceId
-        };
+        this.data.instanceId = instanceId;
         return this.http
-            .post(this.instanceUrl, data, { headers: this.headers })
+            .post(this.instanceUrl, this.data, { headers: this.headers })
             .toPromise()
-            .then(() => this._isInstanceChecked = true)
-            .catch (console.error);
+            .then(() => this._isInstanceChecked = true);
     }
 
     /**
@@ -74,13 +70,9 @@ export class AppService {
      * @returns {Promise<{}>} - result of matching ssh
      */
     async checkSSH(ssh: string): Promise<any> {
-        const data = {
-            ssh
-        };
         return this.http
-            .post(this.sshUrl, data, { headers: this.headers })
-            .toPromise()
-            .catch(console.error);
+            .post(this.sshUrl, {ssh}, { headers: this.headers })
+            .toPromise();
     }
 
 }

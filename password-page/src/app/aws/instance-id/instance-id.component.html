@@ -32,6 +32,7 @@
             <div *ngIf="id?.errors?.required" class="error-text">*Field is required</div>
             <div *ngIf="id?.errors?.pattern" class="error-text">*Must be correct instance id</div>
           </div>
+            <div *ngIf="errorMessage" class="error-text col-xl-9 col-xs-12">*{{ errorMessage }}</div>
         </div>
         <div class="row">
           <div class="col-xl-9 col-12 text-right button-row">

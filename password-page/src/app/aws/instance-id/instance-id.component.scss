@@ -1,5 +1,5 @@
 .active {
-  display: block !important;
+  display: flex !important;
 }
 
 .input-wrapper > div {
@@ -78,7 +78,7 @@ input.custom-form-input::placeholder {
 .modal-dialog {
   max-width: 680px;
   width: 100%;
-  margin: 200px auto 0;
+  margin: auto;
 }
 
 #instance-modal {
