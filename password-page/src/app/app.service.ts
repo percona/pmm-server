@@ -14,9 +14,9 @@ export class AppService {
     private url = '/configurator/v1/users';
     private instanceUrl = '/configurator/v1/check-instance';
     private sshUrl = '/configurator/v1/sshkey';
+    private data = <any>{};
     _isInstanceChecked = false;
     _isInstallationComplete = false;
-    private data = <any>{};
 
     constructor(private http: HttpClient) {
     }
@@ -42,9 +42,10 @@ export class AppService {
      * @param {UserCredentials} credentials - username and password
      * @returns {Promise<{}>} - result of matching credentials
      */
-    async checkUserData(credentials: UserCredentials): Promise<any> {
-        this.data.username = credentials.username;
-        this.data.password = credentials.password;
+    checkUserData(credentials: UserCredentials): Promise<any> {
+        this.data.Username = credentials.username;
+        this.data.Password = credentials.password;
+
         return this.http
             .post(this.url, this.data, { headers: this.headers })
             .toPromise()
@@ -56,10 +57,10 @@ export class AppService {
      * @param {string} instanceId - instance of user id
      * @returns {Promise<{}>} - result of matching instanceId
      */
-    async checkInstanceId(instanceId: string): Promise<any> {
-        this.data.instanceId = instanceId;
+    checkInstanceId(instanceId: string): Promise<any> {
+        this.data.Instance = instanceId;
         return this.http
-            .post(this.instanceUrl, this.data, { headers: this.headers })
+            .post(this.instanceUrl, { instanceId }, { headers: this.headers })
             .toPromise()
             .then(() => this._isInstanceChecked = true);
     }
@@ -69,9 +70,9 @@ export class AppService {
      * @param {string} ssh - ssh
      * @returns {Promise<{}>} - result of matching ssh
      */
-    async checkSSH(ssh: string): Promise<any> {
+    checkSSH(ssh: string): Promise<any> {
         return this.http
-            .post(this.sshUrl, {ssh}, { headers: this.headers })
+            .post(this.sshUrl, { key: ssh }, { headers: this.headers })
             .toPromise();
     }
 

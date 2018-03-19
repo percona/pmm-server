@@ -25,7 +25,10 @@
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
+        "prod": "environments/environment.prod.ts",
+        "aws": "environments/environment.aws.ts",
+        "ovf": "environments/environment.ovf.ts",
+        "docker": "environments/environment.docker.ts"
       }
     }
   ],

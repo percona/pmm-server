@@ -5,5 +5,5 @@
 
 export const environment = {
     production: false,
-    installationType: 'aws'
+    installationType: 'ovf'
 };
