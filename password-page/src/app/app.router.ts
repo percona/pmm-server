@@ -5,7 +5,7 @@ import { AppAccountCredentialsComponent } from './ami/account-credentials/accoun
 import { AppOvfComponent } from './ovf/ovf.component';
 import { AppAccountCredentialsOvfComponent } from './ovf/account-credentials-ovf/account-credentials-ovf.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
-import { AwsCredentialsGuard, AwsGuard } from './guards/ami.guard';
+import { AmiCredentialsGuard, AmiGuard } from './guards/ami.guard';
 import { OvfGuard } from './guards/ovf.guard';
 import { AppComponent } from './app.component';
 import { MainGuard } from './guards/main.guard';
@@ -26,9 +26,9 @@ export const AppRouter: Routes = [
                 ]
             },
             {
-                path: 'ami', component: AppAmiInstallationComponent, canActivate: [AwsGuard], children: [
+                path: 'ami', component: AppAmiInstallationComponent, canActivate: [AmiGuard], children: [
                     { path: 'instance-id', component: AppInstanceIdComponent },
-                    { path: 'account-credentials', component: AppAccountCredentialsComponent, canActivate: [AwsCredentialsGuard] },
+                    { path: 'account-credentials', component: AppAccountCredentialsComponent, canActivate: [AmiCredentialsGuard] },
                     { path: '', redirectTo: 'instance-id', pathMatch: 'full' },
                 ]
             },

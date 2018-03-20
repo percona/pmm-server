@@ -7,7 +7,7 @@
     "start": "ng serve",
     "build": "ng build -bh '/password-page/'",
     "build:prod": "ng b -bh '/password-page/' --prod",
-    "build:aws": "ng b -bh -pr -aot -op dist/ --environment=aws --output-hashing=all",
+    "build:ami": "ng b -bh -pr -aot -op dist/ --environment=ami --output-hashing=all",
     "build:ovf": "ng b -bh -pr -aot -op dist/ --environment=ovf --output-hashing=all",
     "build:docker": "ng b -bh -pr -aot -op dist/ --environment=docker --output-hashing=all",
     "test": "ng test",

@@ -12,7 +12,7 @@ import { AppInstanceIdComponent } from './ami/instance-id/instance-id.component'
 import { AppAccountCredentialsComponent } from './ami/account-credentials/account-credentials.component';
 import { AppAccountCredentialsOvfComponent } from './ovf/account-credentials-ovf/account-credentials-ovf.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
-import { AwsCredentialsGuard, AwsGuard } from './guards/ami.guard';
+import { AmiCredentialsGuard, AmiGuard } from './guards/ami.guard';
 import { OvfGuard } from './guards/ovf.guard';
 import { AppService } from './app.service';
 import { MainGuard } from './guards/main.guard';
@@ -40,7 +40,7 @@ import { DockerGuard } from "./guards/docker.guard";
     exports: [
         AppComponent,
     ],
-    providers: [MainGuard, AwsGuard, AwsCredentialsGuard, OvfGuard, SuccessPageGuard, DockerGuard, AppService],
+    providers: [MainGuard, AmiGuard, AmiCredentialsGuard, OvfGuard, SuccessPageGuard, DockerGuard, AppService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

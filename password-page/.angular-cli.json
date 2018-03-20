@@ -26,7 +26,7 @@
       "environments": {
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts",
-        "aws": "environments/environment.aws.ts",
+        "ami": "environments/environment.ami.ts",
         "ovf": "environments/environment.ovf.ts",
         "docker": "environments/environment.docker.ts"
       }

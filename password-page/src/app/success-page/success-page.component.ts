@@ -19,7 +19,7 @@ export class AppSuccessPageComponent implements OnInit {
      */
     public redirectToMainPage(): void {
         setTimeout(() => {
-            this.router.navigate(['../']);
+            this.router.navigate(['/']);
         }, 5000);
     }
 }

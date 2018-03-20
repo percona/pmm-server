@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { AppService } from '../app.service';
 import { environment } from '../../environments/environment';
 
-export class AwsGuard implements CanActivate {
+export class AmiGuard implements CanActivate {
     INSTALLATION_TYPE = 'ami';
 
     constructor() { }
@@ -21,7 +21,7 @@ export class AwsGuard implements CanActivate {
 }
 
 @Injectable()
-export class AwsCredentialsGuard implements CanActivate {
+export class AmiCredentialsGuard implements CanActivate {
     constructor(private appService: AppService) {
     }
 

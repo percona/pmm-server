@@ -8,7 +8,7 @@ import { AppService } from '../../app.service';
     styleUrls: ['./account-credentials.component.scss'],
 })
 export class AppAccountCredentialsComponent {
-    public awsUserData = {
+    public amiUserData = {
         username: '',
         password: '',
     };
@@ -22,7 +22,7 @@ export class AppAccountCredentialsComponent {
      * Checks password fields for identical
      */
     public onPasswordChange(): void {
-        this.isIdentical = this.awsUserData.password === this.repeatPassword;
+        this.isIdentical = this.amiUserData.password === this.repeatPassword;
     }
 
     /**
@@ -31,7 +31,7 @@ export class AppAccountCredentialsComponent {
      */
     public submit(): (boolean | void) {
         if (!this.isIdentical) { return false; }
-        this.appService.checkUserData(this.awsUserData).then(() => {
+        this.appService.checkUserData(this.amiUserData).then(() => {
             this.router.navigate(['success-page']);
         }).catch( (err) => {
             this.errorMessage = err.error.title ? err.error.title : err.statusText;
