@@ -17,9 +17,13 @@ export class AppSuccessPageComponent implements OnInit {
     /**
      * Automatic redirect to installation page
      */
+    goTo(): void {
+        window.location.replace('/');
+    }
+
     public redirectToMainPage(): void {
         setTimeout(() => {
-            this.router.navigate(['/']);
+          this.goTo();
         }, 5000);
     }
 }

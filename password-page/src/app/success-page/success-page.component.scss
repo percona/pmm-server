@@ -40,6 +40,15 @@
   font-size: 16px;
 }
 
+.home-link {
+  color: #007bff;;
+}
+
+.home-link:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
 .fa-spinner {
   font-size: 4em;
   -webkit-animation: spin 1500ms infinite linear;

@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
 import { MainGuard } from './guards/main.guard';
 import { AppDockerPageComponent } from './docker-page/docker-page.component';
 import { SuccessPageGuard } from './guards/success-page.guard';
-import { DockerGuard } from "./guards/docker.guard";
+import { DockerGuard } from './guards/docker.guard';
 
 export const AppRouter: Routes = [
     { path: '', children: [
