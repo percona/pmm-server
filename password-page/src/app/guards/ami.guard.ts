@@ -8,12 +8,12 @@ import { AppService } from '../app.service';
 import { environment } from '../../environments/environment';
 
 export class AwsGuard implements CanActivate {
-    INSTALLATION_TYPE = 'aws';
+    INSTALLATION_TYPE = 'ami';
 
     constructor() { }
 
     /**
-     * Check on resolution for aws route
+     * Check on resolution for ami route
      */
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         return environment.installationType === this.INSTALLATION_TYPE;
@@ -26,7 +26,7 @@ export class AwsCredentialsGuard implements CanActivate {
     }
 
     /**
-     * Check on resolution for aws children account credentials route
+     * Check on resolution for ami children account credentials route
      */
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         return this.appService.isInstanceChecked();

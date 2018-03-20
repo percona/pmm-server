@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { AppAwsInstallationComponent } from './aws/aws.component';
-import { AppInstanceIdComponent } from './aws/instance-id/instance-id.component';
-import { AppAccountCredentialsComponent } from './aws/account-credentials/account-credentials.component';
+import { AppAmiInstallationComponent } from './ami/ami.component';
+import { AppInstanceIdComponent } from './ami/instance-id/instance-id.component';
+import { AppAccountCredentialsComponent } from './ami/account-credentials/account-credentials.component';
 import { AppOvfComponent } from './ovf/ovf.component';
 import { AppAccountCredentialsOvfComponent } from './ovf/account-credentials-ovf/account-credentials-ovf.component';
 import { AppSuccessPageComponent } from './success-page/success-page.component';
-import { AwsCredentialsGuard, AwsGuard } from './guards/aws.guard';
+import { AwsCredentialsGuard, AwsGuard } from './guards/ami.guard';
 import { OvfGuard } from './guards/ovf.guard';
 import { AppComponent } from './app.component';
 import { MainGuard } from './guards/main.guard';
@@ -26,7 +26,7 @@ export const AppRouter: Routes = [
                 ]
             },
             {
-                path: 'aws', component: AppAwsInstallationComponent, canActivate: [AwsGuard], children: [
+                path: 'ami', component: AppAmiInstallationComponent, canActivate: [AwsGuard], children: [
                     { path: 'instance-id', component: AppInstanceIdComponent },
                     { path: 'account-credentials', component: AppAccountCredentialsComponent, canActivate: [AwsCredentialsGuard] },
                     { path: '', redirectTo: 'instance-id', pathMatch: 'full' },

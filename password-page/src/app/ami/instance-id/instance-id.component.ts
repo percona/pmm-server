@@ -27,7 +27,7 @@ export class AppInstanceIdComponent {
      */
     public submit(): void {
         this.appService.checkInstanceId(this.instanceId).then(() => {
-            this.router.navigate(['aws/account-credentials']);
+            this.router.navigate(['ami/account-credentials']);
         }).catch( (err) => {
             this.errorMessage = err.error.title ? err.error.title : err.statusText;
         });

@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 
 enum Installation {
-    AWS = 'aws',
+    AWS = 'ami',
     OVF = 'ovf',
     DOCKER = 'docker'
 }
@@ -21,7 +21,7 @@ export class MainGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         switch (environment.installationType) {
             case Installation.AWS:
-                this.router.navigate(['aws']);
+                this.router.navigate(['ami']);
                 break;
             case Installation.OVF:
                 this.router.navigate(['ovf']);
