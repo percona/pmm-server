@@ -1,0 +1,77 @@
+.header {
+  height: 50px;
+  margin-bottom: 90px;
+  color: #cccccc;
+  background-color: #292929;
+}
+
+.header div {
+  height: inherit;
+}
+
+.header .row > div {
+  display: flex;
+  align-items: center;
+}
+
+.header p {
+  margin-bottom: 0;
+}
+
+.header .border-right {
+  border-right: 1px solid #141414 !important;
+}
+
+.header .header-logo {
+  float: left;
+
+  width: 35px;
+  height: 35px;
+  margin: 0 10px;
+
+  background: url("../../assets/pmm-logo.png") no-repeat;
+  background-size: cover;
+}
+ p {
+  color: var(--white);
+}
+
+> p {
+  font-size: 16px;
+}
+
+.home-link {
+  color: #007bff;;
+}
+
+.home-link:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.fa-spinner {
+  font-size: 4em;
+  -webkit-animation: spin 1500ms infinite linear;
+  animation: spin 1500ms infinite linear;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}

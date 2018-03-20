@@ -1,0 +1,38 @@
+<div class="container-fluid header">
+    <div class="row">
+        <div class="col-xl-4 col-5 border-right">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-2">
+                        <img src="./assets/pmm-logo.png" class="header-logo" alt="pmm-logo">
+                    </div>
+                    <div class="col-10">Percona Monitoring and Management</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8 col-7">
+            <p>Installation <i class="fa fa-long-arrow-right"></i> AMI</p>
+        </div>
+    </div>
+</div>
+<div class="container main">
+    <div class="row">
+        <div class="col-xl-10 offset-xl-1 col-12">
+            <p class="text-center">Welcome to the installation wizard for PMM. Please provide us with some require
+                information</p>
+            <section>
+                <ul class="nav nav-tabs gf-tabs">
+                    <li class="nav-item gf-tabs-item" routerLinkActive="active"><a routerLink="instance-id">Instance ID
+                        Verification</a>
+                    </li>
+                    <li><i class="fa fa-long-arrow-right"></i></li>
+                    <li class="nav-item" routerLinkActive="active"><a routerLink="account-credentials">Account
+                        Credentials</a></li>
+                </ul>
+                <div class="tab-content table-panel-wrapper">
+                    <router-outlet></router-outlet>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

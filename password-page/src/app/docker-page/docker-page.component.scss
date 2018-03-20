@@ -1,0 +1,31 @@
+.header {
+  height: 50px;
+  margin-bottom: 90px;
+  color: #cccccc;
+  background-color: #292929;
+}
+
+.header div {
+  height: inherit;
+}
+
+.header .row > div {
+  display: flex;
+  align-items: center;
+}
+
+.header p {
+  margin-bottom: 0;
+}
+
+.header .border-right {
+  border-right: 1px solid #141414 !important;
+}
+
+.header .header-logo {
+  width: 35px;
+  height: 35px;
+}
+p {
+  color: var(--white);
+}
