@@ -32,8 +32,10 @@
   background: url("../../assets/pmm-logo.png") no-repeat;
   background-size: cover;
 }
- p {
+
+p {
   color: var(--white);
+  font-size: 0.9rem;
 }
 
 > p {
@@ -65,6 +67,7 @@
     transform: rotate(359deg);
   }
 }
+
 @keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);
