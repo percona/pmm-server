@@ -2,12 +2,7 @@
   <div class="row">
     <p
       class="text-center col-xl-8 col-10 offset-xl-2 offset-1">
-      For security compliance, we need to
-      verify
-      your
-      identity. That you the person
-      who started the instance or authorized. Please provide Instance ID from your ASW
-      console</p>
+      Please provide the Amazon Instance ID (AMI ID) from the AWS Console. It uses the format of i-abc123def.</p>
   </div>
   <form action="">
     <div class="row">
@@ -36,7 +31,6 @@
         </div>
         <div class="row">
           <div class="col-xl-9 col-12 text-right button-row">
-            <button class="btn btn-primary" type="reset">Reset</button>
             <button class="btn btn-primary"
                     (click)="submit()" [disabled]="!id?.valid">Submit
             </button>
