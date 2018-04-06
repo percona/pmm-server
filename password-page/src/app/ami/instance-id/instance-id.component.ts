@@ -16,15 +16,17 @@ export class AppInstanceIdComponent {
     constructor(private router: Router, public appService: AppService) {
     }
 
-
     /**
      * Show modal dialog with instructions of getting instance id
      */
-
     public toggleModal(): void {
         this.isOpenModal = !this.isOpenModal;
     }
 
+    /**
+     * Trim whitespaces in instance id input field
+     * @param event - User keyup event
+     */
     onKey(event: any) {
         this.instanceId = event.target.value.trim();
         this.isSubmitted = false;
