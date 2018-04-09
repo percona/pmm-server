@@ -14,6 +14,7 @@
                    [(ngModel)]="instanceId"
                    #id="ngModel"
                    pattern="^i-[0-9a-f]+$"
+                   (keyup)="onKey($event)"
                    required>
           </div>
           <div class="col-xl-3 col-12 pl-xl-0">
@@ -23,7 +24,7 @@
           </div>
         </div>
         <div class="row">
-          <div *ngIf="id?.errors && (id?.dirty || id?.touched)" class="col-xl-9 col-xs-12">
+          <div *ngIf="id?.errors && isSubmitted" class="col-xl-9 col-xs-12">
             <div *ngIf="id?.errors?.required" class="error-text">*Field is required</div>
             <div *ngIf="id?.errors?.pattern" class="error-text">*Must be correct instance id</div>
           </div>
@@ -32,7 +33,7 @@
         <div class="row">
           <div class="col-xl-9 col-12 text-right button-row">
             <button class="btn btn-primary"
-                    (click)="submit()" [disabled]="!id?.valid">Submit
+                    (click)="submit(!id?.valid)">Submit
             </button>
           </div>
         </div>
@@ -64,6 +65,3 @@
     </div>
   </div>
 </div>
-
-
-
