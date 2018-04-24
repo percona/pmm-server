@@ -241,7 +241,10 @@ def set_home_dashboard(api_key):
 
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
     r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
-    print ' * Preferences set: %r %r' % (r.status_code, r.content)
+    print ' * User preferences set: %r %r' % (r.status_code, r.content)
+
+    r = requests.put('%s/api/org/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
+    print ' * Organization homedashboard preference set: %r %r' % (r.status_code, r.content)
 
     # Copy pmm logo to the grafana directory
     if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
@@ -254,6 +257,18 @@ def set_home_dashboard(api_key):
     # cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
     #             "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
 
+def set_org_timezone(api_key):
+    r = requests.get('%s/api/org/preferences' % (HOST,), headers=grafana_headers(api_key))
+    print ' * Organization preferences: %r %r' % (r.status_code, r.content)
+    if r.status_code != 200:
+        # TODO sys.exit(-1)
+        return
+
+    res = json.loads(r.content)
+
+    data = json.dumps({'homeDashboardId': res['homeDashboardId'],'theme': res['theme'], 'timezone': "browser"})
+    r = requests.put('%s/api/org/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
+    print ' * Organization timezone preference set to browser: %r %r' % (r.status_code, r.content)
 
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
@@ -282,6 +297,7 @@ def main():
     time.sleep(10)
 
     set_home_dashboard(api_key)
+    set_org_timezone(api_key)
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
