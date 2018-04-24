@@ -33,3 +33,5 @@ services:
       - ORCHESTRATOR_PASSWORD=orc_client_password
       - SERVER_USER=pmm
       - SERVER_PASSWORD=
+      - PROMETHEUS_EVALUATION_INTERVAL=60s
+      - PROMETHEUS_RULE_FILES=

@@ -1,7 +1,9 @@
 global:
   scrape_interval:     60s
   scrape_timeout:      10s
-  evaluation_interval: 60s
+  evaluation_interval: ENV_PROMETHEUS_EVALUATION_INTERVAL
+
+rule_files: ENV_PROMETHEUS_RULE_FILES
 
 scrape_configs:
   - job_name: prometheus

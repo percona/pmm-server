@@ -31,6 +31,9 @@ else
 fi
 sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /etc/supervisord.d/pmm.ini
 
+sed -i "s/ENV_PROMETHEUS_EVALUATION_INTERVAL/${PROMETHEUS_EVALUATION_INTERVAL:-60s}/" /etc/prometheus.yml
+sed -i "s/ENV_PROMETHEUS_RULE_FILES/[${PROMETHEUS_RULE_FILES:-}]/" /etc/prometheus.yml
+
 # Orchestrator
 if [[ "${ORCHESTRATOR_ENABLED}" = "true" ]]; then
     sed -i "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json
