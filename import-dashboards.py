@@ -240,8 +240,8 @@ def set_home_dashboard(api_key):
 
     res = json.loads(r.content)
 
-    r = requests.put('%s/api/user/stars/dashboard/%s' % (HOST,res['dashboard']['id']), headers=grafana_headers(api_key))
-    print ' * Home dashboard has started: %r %r' % (r.status_code, r.content)
+    r = requests.put('%s/api/user/stars/dashboard/%s' % (AUTH_HOST,res['dashboard']['id']), headers=grafana_headers(api_key))
+    print ' * Home dashboard has stared: %r %r' % (r.status_code, r.content)
 
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
     r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
