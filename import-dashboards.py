@@ -24,6 +24,7 @@ DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
+AUTH_HOST        = 'http://admin:admin@127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 
 def grafana_headers(api_key):
@@ -231,7 +232,7 @@ def import_apps(api_key):
 def set_home_dashboard(api_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
-    r = requests.get('%s/api/dashboards/db/home' % (HOST,), headers=grafana_headers(api_key))
+    r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
     print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
     if r.status_code != 200:
         # TODO sys.exit(-1)
@@ -239,9 +240,18 @@ def set_home_dashboard(api_key):
 
     res = json.loads(r.content)
 
+    r = requests.put('%s/api/user/stars/dashboard/%s' % (HOST,res['dashboard']['id']), headers=grafana_headers(api_key))
+    print ' * Home dashboard has started: %r %r' % (r.status_code, r.content)
+
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
     r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
-    print ' * Preferences set: %r %r' % (r.status_code, r.content)
+    print ' * User preferences set: %r %r' % (r.status_code, r.content)
+
+    r = requests.put('%s/api/user/preferences' % (AUTH_HOST,), data=data, headers=grafana_headers(api_key))
+    print ' * User homedashboard preference set: %r %r' % (r.status_code, r.content)
+
+    r = requests.put('%s/api/org/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
+    print ' * Organization homedashboard preference set: %r %r' % (r.status_code, r.content)
 
     # Copy pmm logo to the grafana directory
     if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
@@ -254,6 +264,18 @@ def set_home_dashboard(api_key):
     # cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
     #             "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
 
+def set_org_timezone(api_key):
+    r = requests.get('%s/api/org/preferences' % (HOST,), headers=grafana_headers(api_key))
+    print ' * Organization preferences: %r %r' % (r.status_code, r.content)
+    if r.status_code != 200:
+        # TODO sys.exit(-1)
+        return
+
+    res = json.loads(r.content)
+
+    data = json.dumps({'homeDashboardId': res['homeDashboardId'],'theme': res['theme'], 'timezone': "browser"})
+    r = requests.put('%s/api/org/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
+    print ' * Organization timezone preference set to browser: %r %r' % (r.status_code, r.content)
 
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
@@ -282,6 +304,7 @@ def main():
     time.sleep(10)
 
     set_home_dashboard(api_key)
+    set_org_timezone(api_key)
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
