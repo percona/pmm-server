@@ -137,6 +137,10 @@ scrape_configs:
       regex:         '.*,scheme_https,.*'
       target_label:  '__scheme__'
       replacement:   'https'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_http,.*'
+      target_label:  '__scheme__'
+      replacement:   'http'
 
 
   - job_name: mysql-mr
