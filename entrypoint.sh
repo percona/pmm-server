@@ -56,7 +56,7 @@ if [ -n "${SERVER_PASSWORD}" -a -z "${UPDATE_MODE}" ]; then
 fi
 
 # Hide update button
-if [[ $DISABLE_UPDATES =~ ^(1|t|T|TRUE|true|True)$ ]]; then
+if [[ $DISABLE_UPDATES =~ ^(1|t|T|TRUE|true|True)$ ]] && [[ -f /usr/share/pmm-server/landing-page/index.html ]]; then
     sed -i "s/fa-refresh/fa-refresh hidden/" /usr/share/pmm-server/landing-page/index.html
 fi
 
