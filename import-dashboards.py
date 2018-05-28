@@ -242,7 +242,7 @@ def add_folders(api_key):
             print ' * Cannot create %s folder' % folder
             sys.exit(-1)
 
-def move_into_folder():
+def move_into_folders():
     print ' * Moving dashboards into foldes'
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
@@ -307,7 +307,7 @@ def main():
     add_datasources(api_key)
     add_folders(api_key)
     import_apps(api_key)
-    move_into_folder()
+    move_into_folders()
 
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
