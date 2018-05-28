@@ -264,7 +264,7 @@ def move_into_folder():
     con.commit()
     con.close()
 
-def set_home_dashboard(ap_key):
+def set_home_dashboard(api_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
     r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
