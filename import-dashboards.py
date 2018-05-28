@@ -25,6 +25,7 @@ NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+SET_OF_TAGS 	 = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
 
 def grafana_headers(api_key):
     """
@@ -228,7 +229,42 @@ def import_apps(api_key):
             sys.exit(-1)
 
 
-def set_home_dashboard(api_key):
+def add_folders(api_key):
+    for folder in SET_OF_TAGS.keys():
+        print ' * Creating folder %r' % (folder,)
+        data = json.dumps({'title': folder})
+        r = requests.post('%s/api/folders' % (HOST), data=data, headers=grafana_headers(api_key))
+        print '   * Result: %r %r' % (r.status_code, r.content)
+        data = json.loads(r.text)
+        print '   * Folder ID: %r' % (data['id'])
+        SET_OF_TAGS[folder] = data['id']
+        if r.status_code != 200:
+            print ' * Cannot create %s folder' % folder
+            sys.exit(-1)
+
+def move_into_folder():
+
+    print ' * Moving dashboards into foldes'
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
+    cur = con.cursor()
+
+    found = False
+    cur.execute("SELECT data FROM dashboard WHERE is_folder = 0")
+    for row in cur.fetchall():
+        found = True
+	data = json.loads(row[0])
+	tag = data['tags'][0]
+	if tag == "Percona":
+	    tag = data['tags'][1]
+	print '   * Dashboard: %r, Tags: %r' % (data['title'],data['tags'])
+	print '   * First Tag: %s' % (tag)
+        cur.execute("UPDATE dashboard SET folder_id = ? WHERE title = ?", (SET_OF_TAGS[tag], data['title']))
+        print '   * Moved to the Folder with Id: %s' % (SET_OF_TAGS[tag])
+	print cur.fetchone()
+    con.commit()
+    con.close()
+
+def set_home_dashboard(ap_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
     r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
@@ -273,8 +309,9 @@ def main():
     wait_for_grafana_start()
 
     add_datasources(api_key)
+    add_folders(api_key)
     import_apps(api_key)
-
+    move_into_folder()
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
     start_grafana()
