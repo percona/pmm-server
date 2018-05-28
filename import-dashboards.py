@@ -248,15 +248,15 @@ def move_into_folders():
     cur = con.cursor()
     cur.execute("SELECT data FROM dashboard WHERE is_folder = 0")
     for row in cur.fetchall():
-	data = json.loads(row[0])
-	tag = data['tags'][0]
-	if tag == "Percona":
-	    tag = data['tags'][1]
-	print '   * Dashboard: %r, Tags: %r' % (data['title'],data['tags'])
-	print '   * First Tag: %s' % (tag)
+        data = json.loads(row[0])
+        tag = data['tags'][0]
+        if tag == "Percona":
+            tag = data['tags'][1]
+        print '   * Dashboard: %r, Tags: %r' % (data['title'],data['tags'])
+        print '   * First Tag: %s' % (tag)
         cur.execute("UPDATE dashboard SET folder_id = ? WHERE title = ?", (SET_OF_TAGS[tag], data['title']))
         print '   * Moved to the Folder with Id: %s' % (SET_OF_TAGS[tag])
-	print cur.fetchone()
+        print cur.fetchone()
     con.commit()
     con.close()
 
