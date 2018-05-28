@@ -243,15 +243,11 @@ def add_folders(api_key):
             sys.exit(-1)
 
 def move_into_folder():
-
     print ' * Moving dashboards into foldes'
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
-
-    found = False
     cur.execute("SELECT data FROM dashboard WHERE is_folder = 0")
     for row in cur.fetchall():
-        found = True
 	data = json.loads(row[0])
 	tag = data['tags'][0]
 	if tag == "Percona":
@@ -312,6 +308,7 @@ def main():
     add_folders(api_key)
     import_apps(api_key)
     move_into_folder()
+
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
     start_grafana()
