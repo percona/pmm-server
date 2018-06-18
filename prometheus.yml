@@ -1,3 +1,6 @@
+remote_read:
+  - url: "http://localhost:9094/api/v1/read"
+
 global:
   scrape_interval:     60s
   scrape_timeout:      10s
