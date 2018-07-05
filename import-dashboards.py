@@ -170,6 +170,17 @@ def add_datasources(api_key):
         if r.status_code != 200:
             print ' * Cannot add Prometheus Data Source'
             sys.exit(-1)
+    else:
+        print ' * Modifing Prometheus Data Source'
+        r = requests.get('%s/api/datasources/name/Prometheus' % (HOST,), headers=grafana_headers(api_key))
+        data = json.loads(r.content)
+        data['jsonData']['timeInterval']='1s'
+        data['readOnly'] = False
+        r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != 200:
+            print ' * Cannot modify Prometheus Data Source'
+            sys.exit(-1)
 
     if 'CloudWatch' not in ds:
         print ' * Adding CloudWatch Data Source'
