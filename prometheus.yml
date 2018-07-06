@@ -47,15 +47,14 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
     static_configs:
       - targets: ['localhost:9100']
         labels:
           instance: pmm-server
-
 
   - job_name: proxysql
     scrape_interval: 1s
@@ -78,9 +77,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mongodb
@@ -104,9 +103,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,cluster_([-\w:\.]+),.*'
       target_label:  'cluster'
@@ -166,9 +165,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mysql-mr
@@ -195,9 +194,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mysql-lr
@@ -224,6 +223,6 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
