@@ -25,7 +25,7 @@ else
     TOTAL_MEMORY=$(( $(grep MemTotal /proc/meminfo | awk '{print$2}') * 1024 ))
     MEMORY_AVAIABLE=$(printf "%i\n%i\n" "$MEMORY_LIMIT" "$TOTAL_MEMORY" | sort -n | grep -v "^0$" | head -1)
     METRICS_MEMORY_MULTIPLIED=$(( (${MEMORY_AVAIABLE} - 256*1024*1024) / 100 * 40 ))
-    if [[ $METRICS_MEMORY_MULTIPLIED < $((128*1024*1024)) ]]; then
+    if [[ $METRICS_MEMORY_MULTIPLIED -lt $((128*1024*1024)) ]]; then
         METRICS_MEMORY_MULTIPLIED=$((128*1024*1024))
     fi
 fi
