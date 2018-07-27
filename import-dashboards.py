@@ -266,7 +266,8 @@ def set_org_timezone(api_key):
 
     res = json.loads(r.content)
 
-    data = json.dumps({'homeDashboardId': res['homeDashboardId'],'theme': res['theme'], 'timezone': "browser"})
+    data = json.dumps({'homeDashboardId': res['homeDashboardId'],'theme': res['theme'], 'timezone': 'browser'})
+
     r = requests.put('%s/api/org/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
     print ' * Organization timezone preference set to browser: %r %r' % (r.status_code, r.content)
 
