@@ -14,6 +14,7 @@ import string
 import subprocess
 import sys
 import time
+import httplib
 
 import requests
 
@@ -168,7 +169,7 @@ def add_datasources(api_key):
         data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot add Prometheus Data Source'
             sys.exit(-1)
 
@@ -177,7 +178,7 @@ def add_datasources(api_key):
         data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': {'authType': 'keys'}, 'access': 'proxy', 'isDefault': False})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
@@ -196,7 +197,7 @@ def add_datasources(api_key):
         })
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot add QAN-API Data Source'
             sys.exit(-1)
 
@@ -217,14 +218,14 @@ def import_apps(api_key):
         data = json.dumps({'enabled': False})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
         print ' * Plugin disable result: %r %r' % (r.status_code, r.content)
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot dissable %s app' % app
             sys.exit(-1)
 
         data = json.dumps({'enabled': True})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
         print ' * Plugin enable result: %r %r' % (r.status_code, r.content)
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot enable %s app' % app
             sys.exit(-1)
 
@@ -232,15 +233,15 @@ def import_apps(api_key):
 def set_home_dashboard(api_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
-    r = requests.get('%s/api/dashboards/db/home' % (HOST,), headers=grafana_headers(api_key))
+    r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
     print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
-    if r.status_code != 200:
+    if r.status_code != httplib.OK:
         # TODO sys.exit(-1)
         return
 
     res = json.loads(r.content)
 
-    r = requests.put('%s/api/user/stars/dashboard/%s' % (AUTH_HOST,res['dashboard']['id']), headers=grafana_headers(api_key))
+    r = requests.post('%s/api/user/stars/dashboard/%s' % (AUTH_HOST,res['dashboard']['id']), headers=grafana_headers(api_key))
     print ' * Home dashboard has stared: %r %r' % (r.status_code, r.content)
 
     data = json.dumps({'homeDashboardId': res['dashboard']['id']})
@@ -267,7 +268,7 @@ def set_home_dashboard(api_key):
 def set_org_timezone(api_key):
     r = requests.get('%s/api/org/preferences' % (HOST,), headers=grafana_headers(api_key))
     print ' * Organization preferences: %r %r' % (r.status_code, r.content)
-    if r.status_code != 200:
+    if r.status_code != httplib.OK:
         # TODO sys.exit(-1)
         return
 
