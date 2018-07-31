@@ -14,6 +14,7 @@ import string
 import subprocess
 import sys
 import time
+import httplib
 
 import requests
 
@@ -26,6 +27,7 @@ OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS 	 = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+
 
 def grafana_headers(api_key):
     """
@@ -168,7 +170,7 @@ def add_datasources(api_key):
         data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot add Prometheus Data Source'
             sys.exit(-1)
 
@@ -177,7 +179,7 @@ def add_datasources(api_key):
         data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': {'authType': 'keys'}, 'access': 'proxy', 'isDefault': False})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
@@ -196,7 +198,7 @@ def add_datasources(api_key):
         })
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot add QAN-API Data Source'
             sys.exit(-1)
 
@@ -217,14 +219,14 @@ def import_apps(api_key):
         data = json.dumps({'enabled': False})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
         print ' * Plugin disable result: %r %r' % (r.status_code, r.content)
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot dissable %s app' % app
             sys.exit(-1)
 
         data = json.dumps({'enabled': True})
         r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
         print ' * Plugin enable result: %r %r' % (r.status_code, r.content)
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print ' * Cannot enable %s app' % app
             sys.exit(-1)
 
@@ -232,40 +234,47 @@ def import_apps(api_key):
 def add_folders(api_key):
     for folder in SET_OF_TAGS.keys():
         print ' * Creating folder %r' % (folder,)
+
         data = json.dumps({'title': folder})
         r = requests.post('%s/api/folders' % (HOST), data=data, headers=grafana_headers(api_key))
         print '   * Result: %r %r' % (r.status_code, r.content)
+
         data = json.loads(r.text)
         print '   * Folder ID: %r' % (data['id'])
         SET_OF_TAGS[folder] = data['id']
-        if r.status_code != 200:
+
+        if r.status_code != httplib.OK:
             print ' * Cannot create %s folder' % folder
             sys.exit(-1)
 
+
 def move_into_folders():
     print ' * Moving dashboards into foldes'
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level='EXCLUSIVE')
     cur = con.cursor()
-    cur.execute("SELECT data FROM dashboard WHERE is_folder = 0")
+    cur.execute('SELECT data FROM dashboard WHERE is_folder = 0')
     for row in cur.fetchall():
         data = json.loads(row[0])
         tag = data['tags'][0]
-        if tag == "Percona":
+        if tag == 'Percona':
             tag = data['tags'][1]
+
         print '   * Dashboard: %r, Tags: %r' % (data['title'],data['tags'])
         print '   * First Tag: %s' % (tag)
-        cur.execute("UPDATE dashboard SET folder_id = ? WHERE title = ?", (SET_OF_TAGS[tag], data['title']))
+        cur.execute('UPDATE dashboard SET folder_id = ? WHERE title = ?', (SET_OF_TAGS[tag], data['title']))
         print '   * Moved to the Folder with Id: %s' % (SET_OF_TAGS[tag])
         print cur.fetchone()
+
     con.commit()
     con.close()
+
 
 def set_home_dashboard(api_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
     r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
     print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
-    if r.status_code != 200:
+    if r.status_code != httplib.OK:
         # TODO sys.exit(-1)
         return
 
