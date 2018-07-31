@@ -113,6 +113,35 @@ scrape_configs:
       replacement:   '$1'
 
 
+  - job_name: postgresql
+    scrape_interval: 1s
+    scrape_timeout:  1s
+    metrics_path: /metrics
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
+
+    tls_config:
+      insecure_skip_verify: true
+
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      datacenter: dc1
+      services: ['postgresql:metrics']
+
+    relabel_configs:
+    - target_label:  'job'
+      replacement:   'postgresql'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
+      replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_https,.*'
+      target_label:  '__scheme__'
+      replacement:   'https'
+
+
   - job_name: mysql-hr
     scrape_interval: 1s
     scrape_timeout:  1s
