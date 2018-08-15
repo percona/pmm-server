@@ -282,10 +282,10 @@ def add_demo_footer():
     dirs = os.listdir(source_dir)
 
     for d_file in dirs:
-	    if fnmatch.fnmatch(d_file, 'pmm-*.json'):
+        if fnmatch.fnmatch(d_file, 'pmm-*.json'):
             continue
 
-	    with open(source_dir + d_file, 'r') as dashboard_file:
+        with open(source_dir + d_file, 'r') as dashboard_file:
             dashboard = json.loads(dashboard_file.read())
 
         add_item = {
