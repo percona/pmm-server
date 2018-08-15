@@ -243,7 +243,7 @@ def import_apps(api_key):
 def add_demo_footer():
     # Add Copyright&Legal footer into dashboards
     # It's used only for a pmmdemo installation
-    print ' * adding Copyright&Legal footer into dashboards
+    print ' * adding Copyright&Legal footer into dashboards'
     source_dir = '/usr/share/percona-dashboards/pmm-app/dist/dashboards/'
     dirs = os.listdir(source_dir)
 
