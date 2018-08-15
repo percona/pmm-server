@@ -282,10 +282,10 @@ def add_demo_footer():
     dirs = os.listdir(source_dir)
 
     for d_file in dirs:
-	if fnmatch.fnmatch(d_file, 'pmm-*.json'):
+	    if fnmatch.fnmatch(d_file, 'pmm-*.json'):
             continue
 
-	with open(source_dir + d_file, 'r') as dashboard_file:
+	    with open(source_dir + d_file, 'r') as dashboard_file:
             dashboard = json.loads(dashboard_file.read())
 
         add_item = {
@@ -357,14 +357,14 @@ def set_home_dashboard(api_key):
 
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
-##    upgrade = check_dashboards_version()
+    upgrade = check_dashboards_version()
 
     name, api_key, db_key = get_api_key()
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
     try:
-        add_demo_footer()
+      #  add_demo_footer()
         copy_apps()
         add_api_key(name, db_key)
         fix_cloudwatch_datasource()
