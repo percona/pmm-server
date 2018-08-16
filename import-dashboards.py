@@ -40,24 +40,7 @@ CONTENT          = '''<center>
 <script src='//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js'>
 </script>
 <script>
-function bbb(){  
-    setTimeout(function (){ 
-        window.cookieconsent.initialise(
-            {'palette': {'popup': {'background': '#eb6c44','text': '#ffffff'}, 
-                         'button': {'background': '#f5d948'}
-                        },
-             'theme': 'classic', 
-             'content': {'message': 'This site uses cookies and other tracking technologies to assist with navigation, 
-        analyze your use of our products and services, assist with promotional and marketing efforts, allow you to give feedback, 
-        and provide content from third parties. If you do not want to accept cookies, adjust your browser settings to deny cookies or exit this site.',
-            'dismiss': 'Allow cookies', 
-            'link': 'Cookie Policy', 
-            'href': 'https://www.percona.com/cookie-policy'}
-                        }
-            )
-    },3000)
-};
-window.addEventListener('load',bbb());
+function bbb(){setTimeout(function (){window.cookieconsent.initialise({'palette': {'popup': {'background': '#eb6c44','text': '#ffffff'},'button': {'background': '#f5d948'}},'theme': 'classic','content': {'message': 'This site uses cookies and other tracking technologies to assist with navigation, analyze your use of our products and services, assist with promotional and marketing efforts, allow you to give feedback, and provide content from third parties. If you do not want to accept cookies, adjust your browser settings to deny cookies or exit this site.','dismiss': 'Allow cookies', 'link': 'Cookie Policy', 'href': 'https://www.percona.com/cookie-policy'}})},3000)};window.addEventListener('load',bbb());
 </script>
 '''
 
