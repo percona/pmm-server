@@ -14,6 +14,7 @@ import string
 import subprocess
 import sys
 import time
+import fnmatch
 
 import requests
 
@@ -25,6 +26,23 @@ NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+CONTENT          = '''<center>
+<p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-2018 Percona LLC.</p>
+<div style='text-align:center;'>
+<a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> | 
+<a href='https://percona.com/privacy-policy' style='display: inline;'>Privacy</a> | 
+<a href='https://percona.com/copyright-policy' style='display: inline;'>Copyright</a> | 
+<a href='https://percona.com/legal' style='display: inline;'>Legal</a>
+</div>
+</center>
+<hr>
+<link rel='stylesheet' type='text/css' href='//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css' />
+<script src='//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js'>
+</script>
+<script>
+function bbb(){setTimeout(function (){window.cookieconsent.initialise({'palette': {'popup': {'background': '#eb6c44','text': '#ffffff'},'button': {'background': '#f5d948'}},'theme': 'classic','content': {'message': 'This site uses cookies and other tracking technologies to assist with navigation, analyze your use of our products and services, assist with promotional and marketing efforts, allow you to give feedback, and provide content from third parties. If you do not want to accept cookies, adjust your browser settings to deny cookies or exit this site.','dismiss': 'Allow cookies', 'link': 'Cookie Policy', 'href': 'https://www.percona.com/cookie-policy'}})},3000)};window.addEventListener('load',bbb());
+</script>
+'''
 
 def grafana_headers(api_key):
     """
@@ -239,6 +257,60 @@ def import_apps(api_key):
             sys.exit(-1)
 
 
+def add_demo_footer():
+    # Add Copyright&Legal footer into dashboards
+    # It's used only for a pmmdemo installation
+    print ' * adding Copyright&Legal footer into dashboards'
+    source_dir = '/usr/share/percona-dashboards/pmm-app/dist/dashboards/'
+    dirs = os.listdir(source_dir)
+
+    for d_file in dirs:
+        if fnmatch.fnmatch(d_file, 'pmm-*.json'):
+            continue
+
+        with open(source_dir + d_file, 'r') as dashboard_file:
+            dashboard = json.loads(dashboard_file.read())
+
+        add_item = {
+            'collapsed': False,
+            'gridPos': {
+                'h': 1,
+                'w': 24,
+                'x': 0,
+                'y': 99
+            },
+            'id': 9998,
+            'panels': [],
+            'title': 'Copyrights & Legal',
+            'type': 'row'
+        }
+        dashboard['panels'].append(add_item)
+
+        add_item = {
+            'content': CONTENT,
+            'gridPos': {
+                'h': 3,
+                'w': 24,
+                'x': 0,
+                'y': 99
+            },
+            'id': 9999,
+            'links': [],
+            'mode': 'html',
+            'title': '',
+            'transparent': True,
+            'type': 'text'
+        }
+        dashboard['panels'].append(add_item)
+
+        dashboard_json = json.dumps(dashboard, sort_keys=True, indent=4, separators=(',', ': '))
+
+        with open(source_dir + d_file, 'w') as dashboard_file:
+            dashboard_file.write(dashboard_json)
+            dashboard_file.write('\n')
+            print 'Dashboard -> %s - %s' % (d_file, 'Done')
+
+
 def set_home_dashboard(api_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
@@ -275,6 +347,7 @@ def main():
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
     try:
+      #  add_demo_footer()
         copy_apps()
         add_api_key(name, db_key)
         fix_cloudwatch_datasource()
