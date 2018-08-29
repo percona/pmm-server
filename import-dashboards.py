@@ -27,7 +27,7 @@ NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS 	 = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+SET_OF_TAGS 	 = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
 CONTENT          = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-2018 Percona LLC.</p>
 <div style='text-align:center;'>
