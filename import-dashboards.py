@@ -260,6 +260,12 @@ def import_apps(api_key):
             sys.exit(-1)
 
 
+def get_folders(api_key):
+    r = requests.get('%s/api/folders' % (HOST,), headers=grafana_headers(api_key))
+    for x in json.loads(r.content):
+        SET_OF_TAGS[x['title']] = x['id']
+
+
 def add_folders(api_key):
     for folder in SET_OF_TAGS.keys():
         print ' * Creating folder %r' % (folder,)
@@ -267,14 +273,12 @@ def add_folders(api_key):
         data = json.dumps({'title': folder})
         r = requests.post('%s/api/folders' % (HOST), data=data, headers=grafana_headers(api_key))
         print '   * Result: %r %r' % (r.status_code, r.content)
+        if r.status_code != httplib.OK:
+            continue
 
         data = json.loads(r.text)
         print '   * Folder ID: %r' % (data['id'])
         SET_OF_TAGS[folder] = data['id']
-
-        if r.status_code != httplib.OK:
-            print ' * Cannot create %s folder' % folder
-            sys.exit(-1)
 
 
 def move_into_folders():
@@ -283,16 +287,21 @@ def move_into_folders():
     cur = con.cursor()
     cur.execute('SELECT data FROM dashboard WHERE is_folder = 0')
     for row in cur.fetchall():
-        data = json.loads(row[0])
-        tag = data['tags'][0]
+        try:
+            data = json.loads(row[0])
+            tag = data['tags'][0]
+        except:
+            continue
         if tag == 'Percona':
-            tag = data['tags'][1]
+            try:
+                tag = data['tags'][1]
+            except:
+                continue
 
         print '   * Dashboard: %r, Tags: %r' % (data['title'],data['tags'])
         print '   * First Tag: %s' % (tag)
         cur.execute('UPDATE dashboard SET folder_id = ? WHERE title = ?', (SET_OF_TAGS[tag], data['title']))
         print '   * Moved to the Folder with Id: %s' % (SET_OF_TAGS[tag])
-        print cur.fetchone()
 
     con.commit()
     con.close()
@@ -399,6 +408,7 @@ def main():
 
     add_datasources(api_key)
     add_folders(api_key)
+    get_folders(api_key)
     import_apps(api_key)
     move_into_folders()
 
