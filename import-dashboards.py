@@ -272,11 +272,9 @@ def add_folders(api_key):
 
         data = json.dumps({'title': folder})
         r = requests.post('%s/api/folders' % (HOST), data=data, headers=grafana_headers(api_key))
-        if r.status_code != httplib.OK:
-            print '   * Cannot create %s folder. Is is already existed' % folder
-            continue
-
         print '   * Result: %r %r' % (r.status_code, r.content)
+        if r.status_code != httplib.OK:
+            continue
 
         data = json.loads(r.text)
         print '   * Folder ID: %r' % (data['id'])
