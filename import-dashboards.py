@@ -287,10 +287,16 @@ def move_into_folders():
     cur = con.cursor()
     cur.execute('SELECT data FROM dashboard WHERE is_folder = 0')
     for row in cur.fetchall():
-        data = json.loads(row[0])
-        tag = data['tags'][0]
+        try:
+            data = json.loads(row[0])
+            tag = data['tags'][0]
+        except:
+            continue
         if tag == 'Percona':
-            tag = data['tags'][1]
+            try:
+                tag = data['tags'][1]
+            except:
+                continue
 
         print '   * Dashboard: %r, Tags: %r' % (data['title'],data['tags'])
         print '   * First Tag: %s' % (tag)
