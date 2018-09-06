@@ -282,7 +282,7 @@ def add_folders(api_key):
 
 
 def move_into_folders():
-    print ' * Moving dashboards into foldes'
+    print ' * Moving dashboards into folders'
     con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level='EXCLUSIVE')
     cur = con.cursor()
     cur.execute('SELECT data FROM dashboard WHERE is_folder = 0')
