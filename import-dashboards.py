@@ -303,7 +303,7 @@ def move_into_folders():
             cur.execute('UPDATE dashboard SET folder_id = ? WHERE uid = ?', (SET_OF_TAGS[tag], data['uid']))
             print '   * Moved to the Folder with Id: %s' % (SET_OF_TAGS[tag])
         except Exception as err:
-            print('   * Moving dashboard %s is failed: %s' % (data['title'], str(err)))
+            print '   * Moving dashboard %s is failed: %s' % (data['title'], str(err))
 
     con.commit()
     con.close()
