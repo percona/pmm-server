@@ -3,18 +3,18 @@
 # Please double check if you made a build over all you changes and committed it.
 # Use --no-verify flag on your risk.
 
-# checks if dist/ is the newest againts node_modules/ and src/ folders.
-if [ `stat -f "%m" dist/` -ge `stat -f "%m" node_modules/` -a `stat -f "%m" dist/` -ge `stat -f "%m" src/` ] ; then
+# checks if password-page/dist/ is the newest againts node_modules/ and src/ folders.
+if [ `stat -f "%m" password-page/dist/` -ge `stat -f "%m" password-page/node_modules/` -a `stat -f "%m" password-page/dist/` -ge `stat -f "%m" password-page/src/` ] ; then
 	# checks if dist/ id added and commited.
-	if git status | grep dist/ ; then
-		echo "Please add and commit dist/ before push."
+	if git status | grep /password-page/dist/ ; then
+		echo "Please add and commit password-page/dist/ before push."
 		exit 1
 	else
-		echo "Looks like dist/ is up to date. Pushing to origin..."
+		echo "Looks like password-page/dist/ is up to date. Pushing to origin..."
 		exit 0
 	fi
 else
-	echo "Looks like dist/ is NOT up to date."
-	echo "Please do npm run build, add dist/ and commit."
+	echo "Looks like password-page/dist/ is NOT up to date."
+	echo "Please do npm run build, add /password-page/dist/ and commit."
 	exit 1
 fi
