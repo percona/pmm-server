@@ -1241,7 +1241,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/als/go/src/github.com/percona/pmm-server/password-page/src/main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! /Users/admin/WebstormProjects/pmm-server/password-page/src/main.ts */"./src/main.ts");
 
 
 /***/ })
