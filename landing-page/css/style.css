@@ -34,6 +34,11 @@ h2 span {
     font-weight: 800;
 }
 
+h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
 .product-logo {
     display: inline !important;
     margin-top: -20px;
@@ -47,8 +52,12 @@ h2 span {
 }
 
 .btn-prop {
-    margin-top: 30px;
-    margin-bottom: 20px !important;
+    color: white;
+    line-height: 1.3;
+}
+
+.btn-prop:hover {
+    color: white;
 }
 
 
@@ -104,6 +113,10 @@ h2 span {
 @media(max-width:767px) {
     h2 {
         font-size: 14px!important;
+    }
+
+    .btn-prop {
+        margin-bottom: 20px;
     }
 }
 
