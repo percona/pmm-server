@@ -5,11 +5,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build install-wizard --base-href '/password-page/' ",
-    "build:prod": "ng b install-wizard --base-href '/password-page/' --prod",
-    "build:ami": "ng b --base-href --progress  --aot --output-path dist/ --configuration=ami --output-hashing=all",
-    "build:ovf": "ng b --base-href --progress --aot --output-path dist/ --configuration=ovf --output-hashing=all",
-    "build:docker": "ng b --base-href --progress --aot --output-path dist/ --configuration=docker --output-hashing=all",
+    "build": "ng build install-wizard --base-href '/password-page/' --output-hashing=all --aot --build-optimizer",
+    "build:prod": "ng b install-wizard --base-href '/password-page/' --prod --output-hashing=all --build-optimizer",
+    "build:ami": "ng b --base-href --progress  --aot --output-path dist/ --configuration=ami --output-hashing=all --build-optimizer",
+    "build:ovf": "ng b --base-href --progress --aot --output-path dist/ --configuration=ovf --output-hashing=all --build-optimizer",
+    "build:docker": "ng b --base-href --progress --aot --output-path dist/ --configuration=docker --output-hashing=all --build-optimizer",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
