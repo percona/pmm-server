@@ -136,7 +136,7 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
       replacement:   'https'
 
