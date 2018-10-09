@@ -138,7 +138,7 @@ scrape_configs:
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mysql-hr
