@@ -88,7 +88,7 @@
 
 
     <!-- Path to data directory, with trailing slash. -->
-    <path>/srv/clickhouse/</path>
+    <path>/opt/clickhouse/</path>
 
     <!-- Path to temporary data for processing hard queries. -->
     <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
