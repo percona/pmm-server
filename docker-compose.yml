@@ -6,13 +6,7 @@ services:
     image: percona/pmm-server
     container_name: pmm-data
     volumes:
-      - /srv/prometheus/data
-      - /srv/consul
-      - /srv/clickhouse
-      - /srv/grafana
-      - /srv/pmm-managed
-      - /var/lib/mysql
-      - /srv/logs
+      - /srv
     entrypoint: /bin/true
 
   pmm-server:
