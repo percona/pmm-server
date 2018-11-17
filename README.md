@@ -1,5 +1,7 @@
 # Percona Monitoring and Management (PMM) Server
 
+[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
+
 See the [PMM docs](https://www.percona.com/doc/percona-monitoring-and-management/index.html) for more information.
 
 ## Submitting Bug Reports
