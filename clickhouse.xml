@@ -2,8 +2,8 @@
 <yandex>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
-        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <log>/var/log/clickhouse.log</log>
+        <errorlog>/var/log/clickhouse.log</errorlog>
         <size>100M</size>
         <count>2</count>
     </logger>
@@ -91,7 +91,7 @@
     <path>/srv/clickhouse/</path>
 
     <!-- Path to temporary data for processing hard queries. -->
-    <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+    <tmp_path>/srv/clickhouse/tmp/</tmp_path>
 
     <!-- Path to configuration file with users, access rights, profiles of settings, quotas. -->
     <users_config>users.xml</users_config>
