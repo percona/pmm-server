@@ -19,7 +19,7 @@ import fnmatch
 
 import requests
 
-GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/var/lib/grafana'
+GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
 GRAFANA_IMG_DR   = '/usr/share/grafana/public/img/'
 SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
