@@ -22,6 +22,13 @@ scrape_configs:
         labels:
           instance: pmm-server
 
+  - job_name: clickhouse
+    scrape_interval: 1s
+    scrape_timeout:  1s
+    static_configs:
+      - targets: ['localhost:9116']
+        labels:
+          instance: pmm-server
 
   - job_name: linux
     scrape_interval: 1s
