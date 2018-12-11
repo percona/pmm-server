@@ -1,0 +1,15 @@
+[Unit]
+Description=Prometheus Clickhouse Exporter Service
+After=network.target
+
+[Service]
+User=nobody
+Type=simple
+Environment=WEB_LISTEN_ADDRESS=":9116"
+EnvironmentFile=-/etc/sysconfig/clickhouse_exporter
+ExecStart=/usr/local/percona/pmm-client/clickhouse_exporter -telemetry.address $WEB_LISTEN_ADDRESS
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
