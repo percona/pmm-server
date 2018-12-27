@@ -1,0 +1,38 @@
+groups:
+- name: highMysqlConn
+  rules:
+  - alert: HighMySQLConnections
+    expr: mysql_global_status_max_used_connections{job="mysql"} > 5
+    for: 10m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "High Used Mysql Connections {{ $labels.instance }}"
+- name: InstanceDown
+  rules:
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Instance {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+- name: mediumCPUUsage
+  rules:
+  - alert: MediumCPUUsage
+    expr: (clamp_max(avg by (instance) (sum by (cpu,instance) ( (clamp_max(rate(node_cpu{mode!='idle',mode!="iowait"}[1m]),1)) or (clamp_max(irate(node_cpu{mode!='idle',mode!="iowait"}[5m]),1)) )),1) *100 or sum by (instance) (avg_over_time(node_cpu_average{mode!="idle", mode!="total",job="rds-enhanced"}[1m]) or avg_over_time(node_cpu_average{mode!="idle", mode!="total",job="rds-enhanced"}[5m]))) > 10
+    for: 1m
+    labels:
+      severity: "warning"
+    annotations:
+      summary: "Medium Used CPU {{ $labels.instance }}"
+- name: highCPUUsage
+  rules:
+  - alert: HighCPUUsage
+    expr: (clamp_max(avg by (instance) (sum by (cpu,instance) ( (clamp_max(rate(node_cpu{mode!='idle',mode!="iowait"}[1m]),1)) or (clamp_max(irate(node_cpu{mode!='idle',mode!="iowait"}[5m]),1)) )),1) *100 or sum by (instance) (avg_over_time(node_cpu_average{mode!="idle", mode!="total",job="rds-enhanced"}[1m]) or avg_over_time(node_cpu_average{mode!="idle", mode!="total",job="rds-enhanced"}[5m]))) > 90
+    for: 1m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "High Used CPU {{ $labels.instance }}"
