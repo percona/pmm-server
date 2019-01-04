@@ -13,6 +13,7 @@ alerting:
       - '127.0.0.1:9093'
     scheme: http
     timeout: 10s
+    path_prefix: /alertmanager
 
 scrape_configs:
   - job_name: prometheus
