@@ -8,9 +8,9 @@ groups:
       severity: "critical"
     annotations:
       summary: "High Used Mysql Connections {{ $labels.instance }}"
-- name: InstanceDown
+- name: JobDown
   rules:
-  - alert: InstanceDown
+  - alert: JobDown
     expr: up == 0
     for: 5m
     labels:
