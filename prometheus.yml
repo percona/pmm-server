@@ -5,11 +5,14 @@ global:
 
 rule_files:
   - alertRules.yml
+
 alerting:
   alertmanagers:
   - static_configs:
     - targets:
       - '127.0.0.1:9093'
+    scheme: http
+    timeout: 10s
 
 scrape_configs:
   - job_name: prometheus
@@ -21,6 +24,15 @@ scrape_configs:
         labels:
           instance: pmm-server
 
+  - job_name: alertmanager
+    scrape_interval: 1s
+    scrape_timeout:  1s
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets: ['localhost:9093']
+        labels:
+          instance: pmm-server
 
   - job_name: grafana
     scrape_interval: 5s
