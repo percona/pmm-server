@@ -1,3 +1,6 @@
+remote_read:
+  - url: "http://127.0.0.1:9094/prometheus1/api/v1/read"
+
 global:
   scrape_interval:     60s
   scrape_timeout:      10s
@@ -44,15 +47,14 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
     static_configs:
       - targets: ['localhost:9100']
         labels:
           instance: pmm-server
-
 
   - job_name: proxysql
     scrape_interval: 1s
@@ -75,9 +77,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mongodb
@@ -101,12 +103,41 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
       regex:         '.*,cluster_([-\w:\.]+),.*'
       target_label:  'cluster'
+      replacement:   '$1'
+
+
+  - job_name: postgresql
+    scrape_interval: 1s
+    scrape_timeout:  1s
+    metrics_path: /metrics
+    basic_auth:
+      username: ENV_SERVER_USER
+      password: ENV_SERVER_PASSWORD
+
+    tls_config:
+      insecure_skip_verify: true
+
+    consul_sd_configs:
+    - server:   'localhost:8500'
+      datacenter: dc1
+      services: ['postgresql:metrics']
+
+    relabel_configs:
+    - target_label:  'job'
+      replacement:   'postgresql'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,alias_([-\w:\.]+),.*'
+      target_label:  'instance'
+      replacement:   '$1'
+    - source_labels: ['__meta_consul_tags']
+      regex:         '.*,scheme_([\w]+),.*'
+      target_label:  '__scheme__'
       replacement:   '$1'
 
 
@@ -134,9 +165,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mysql-mr
@@ -163,9 +194,9 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'
 
 
   - job_name: mysql-lr
@@ -192,6 +223,6 @@ scrape_configs:
       target_label:  'instance'
       replacement:   '$1'
     - source_labels: ['__meta_consul_tags']
-      regex:         '.*,scheme_https,.*'
+      regex:         '.*,scheme_([\w]+),.*'
       target_label:  '__scheme__'
-      replacement:   'https'
+      replacement:   '$1'

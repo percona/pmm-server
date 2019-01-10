@@ -38,7 +38,7 @@ do_table() {
 
 ts "Starting to purge $DB data older than $INTERVAL days."
 
-do_table "agent_log" "FROM_UNIXTIME(sec) < NOW() - INTERVAL $INTERVAL DAY"
+do_table "agent_log" "sec < UNIX_TIMESTAMP(NOW() - INTERVAL $INTERVAL DAY)"
 do_table "query_examples" "period < NOW() - INTERVAL $INTERVAL DAY"
 do_table "query_global_metrics" "start_ts < NOW() - INTERVAL $INTERVAL DAY"
 do_table "query_class_metrics" "start_ts < NOW() - INTERVAL $INTERVAL DAY"

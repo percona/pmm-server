@@ -2,12 +2,11 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="img/favicon.ico" type="image/png" />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/favicon.ico" type="image/png"/>
     <link rel="stylesheet" href="css/Open_Sans_400_300_600_700_800.css">
     <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
@@ -22,126 +21,144 @@
         <nav>
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                        <a href="https://www.percona.com/" target="_blank">
-                            <img class="plogo img-responsive" src="img/percona-logo.svg" alt="Percona Logo">
-                        </a>
-                    </div>
+                    <div class="col-12"> <a href="https://www.percona.com/" target="_blank">
+
+                        <img class="plogo img-fluid" src="img/percona-logo.svg" alt="Percona Logo">
+
+                    </a>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
 
-    </header>
+</header>
 
-    <content>
+<content>
 
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3>Percona Monitoring and Management</h3>
+                <p>Percona Monitoring and Management (PMM) is a free and open-source solution for managing and
+                    monitoring performance on MySQL and MongoDB, and provides time-based analysis of performance to
+                    ensure that your data works as efficiently as possible.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p><a style="font-weight:600; color:#ff9630;" target="_blank"
+                      href="https://www.percona.com/doc/percona-monitoring-and-management/index.html">Review the
+                    documentation</a></p>
+                <p><a style="font-weight:600; color:#ff9630;" target="_blank"
+                      href="https://learn.percona.com/download-percona-monitoring-and-management-pmm-manual">Download
+                    User Manual</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-block">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h3>Percona Monitoring and Management</h3>
-                    <p>Percona Monitoring and Management (PMM) is a free and open-source solution for managing and monitoring performance on MySQL and MongoDB, and provides time-based analysis of performance to ensure that your data works as efficiently as possible.</p>
+            <div class="row d-flex align-items-center">
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    <img class="img-fluid" src="img/pmm-logo-color.svg" alt="Percona Monitoring and Management Tool">
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <p><a style="font-weight:600; color:#ff9630;" target="_blank" href="https://www.percona.com/doc/percona-monitoring-and-management/index.html">Review the documentation</a></p>
-                    <p><a style="font-weight:600; color:#ff9630;" target="_blank" href="https://learn.percona.com/download-percona-monitoring-and-management-pmm-manual">Download User Manual</a></p>
-                </div>
-            </div>
-        </div>
 
-        <div class="product-block">
-            <div class="container">
-                <div class="row">
-
-                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <img class="img-responsive" src="img/pmm-logo-color.svg" alt="Percona Monitoring and Management Tool">
-                    </div>
-
-                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                        <div class="col-lg-2 col-md-2 hidden-sm hidden-xs">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 offset-lg-2 offset-md-2 offset-sm-0 offset-xs-0">
+                    <div class="row d-flex">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block">
+                            <a target="_blank" href="/graph/dashboard/db/_pmm-query-analytics"
+                               class="btn btn-warning btn-prop w-100"><i class="fa fa-bar-chart" aria-hidden="true"></i><br>
+                                Query <br> Analytics</a>
                         </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 center-block">
-                            <a target="_blank" href="/graph/dashboard/db/_pmm-query-analytics" class="btn btn-warning btn-prop center-block"><i class="fa fa-bar-chart" aria-hidden="true"></i><br> Query <br> Analytics</a>
-                        </div>
-                        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 center-block">
-                            <a target="_blank" href="/graph/" class="btn btn-warning btn-prop center-block"><i class="fa fa-cogs" aria-hidden="true"></i><br> Metrics <br> Monitor</a>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block">
+                            <a target="_blank" href="/graph/" class="btn btn-warning btn-prop w-100"><i
+                                    class="fa fa-cogs" aria-hidden="true"></i><br> Metrics <br> Monitor</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-                    <h3>Tell us what you think</h3>
-                    <p>We welcome your feedback, questions and comments. Please visit our PMM forums for <a style="font-weight:600; color:#ff9630;" target="_blank" href="https://www.percona.com/forums/questions-discussions/percona-monitoring-and-management">questions and discussions</a>.</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Tell us what you think</h3>
+                <p>We welcome your feedback, questions and comments. Please visit our PMM forums for <a
+                        style="font-weight:600; color:#ff9630;" target="_blank"
+                        href="https://www.percona.com/forums/questions-discussions/percona-monitoring-and-management">questions
+                    and discussions</a>.</p>
+            </div>
+        </div>
+    </div>
+
+</content>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <hr style="margin-bottom: 5px;"/>
+                <p class="text-right small">v1.0.0 <a onclick="checkUpdate()" href="javascript:void(0);"><i
+                        class="fa fa-refresh" aria-hidden="true"></i></a></p>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal" id="updateModal" role="dialog">
+            <div id="updateDialog" class="modal-dialog modal-sm">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header d-flex justify-content-between">
+                        <h4 class="modal-title">Update</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <pre id="updateOutput" style="display: none;"></pre>
+                        <center id="checkLoader">
+                            <p id="checkText">Checking for the latest PMM update...</p>
+                            <div class="loader"></div>
+                        </center>
+                        <p id="updateText" style="display: none;"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="updateRunBtn" type="button" class="btn btn-default btn-light" style="display: none;"
+                                onclick="runUpdate()">Update
+                        </button>
+                        <button id="updateCloseBtn" type="button" class="btn btn-default btn-secondary"
+                                onclick="location.reload(true)">Close
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal" id="logsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div id="logsDialog" class="modal-dialog modal-lg">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Container Errors</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="logsText">The following error occurred during container initialization.<br/>Please remove
+                            (<tt>docker rm</tt>) and re-run (<tt>docker run</tt>) the pmm-server container.</p>
+                        <pre id="logsOutput" style="white-space: pre-wrap;"></pre>
+                    </div>
                 </div>
             </div>
         </div>
 
-    </content>
-
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <hr style="margin-bottom: 5px;" />
-                    <p class="text-right small">v1.0.0 <a onclick="checkUpdate()" href="javascript:void(0);"><i class="fa fa-refresh" aria-hidden="true"></i></a></p>
-                </div>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal" id="updateModal" role="dialog">
-                <div id="updateDialog" class="modal-dialog modal-sm">
-
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Update</h4>
-                        </div>
-                        <div class="modal-body">
-                            <pre id="updateOutput" style="display: none;"></pre>
-                            <center id="checkLoader">
-                                <p id="checkText">Checking for the latest PMM update...</p>
-                                <div class="loader"></div>
-                            </center>
-                            <p id="updateText" style="display: none;"></p>
-                        </div>
-                        <div class="modal-footer">
-                            <button id="updateRunBtn" type="button" class="btn btn-default" style="display: none;" onclick="runUpdate()">Update</button>
-                            <button id="updateCloseBtn" type="button" class="btn btn-default" onclick="location.reload(true)">Close</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal" id="logsModal" role="dialog" data-backdrop="static" data-keyboard="false">
-                <div id="logsDialog" class="modal-dialog modal-lg">
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Container Errors</h4>
-                        </div>
-                        <div class="modal-body">
-                            <p id="logsText">The following error occurred during container initialization.<br />Please remove (<tt>docker rm</tt>) and re-run (<tt>docker run</tt>) the pmm-server container.</p>
-                            <pre id="logsOutput" style="white-space: pre-wrap;"></pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </footer>
+    </div>
+</footer>
 
 </body>
 <script>
-    var updateLocation = ""
+    var updateLocation = "";
 
     function checkUpdate() {
         $("#checkLoader").show();
