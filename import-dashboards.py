@@ -14,6 +14,7 @@ import string
 import subprocess
 import sys
 import time
+import datetime
 import httplib
 import fnmatch
 
@@ -28,8 +29,9 @@ OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS 	 = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+YEAR             = str(datetime.date.today())[:4];
 CONTENT          = '''<center>
-<p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-2018 Percona LLC.</p>
+<p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
 <div style='text-align:center;'>
 <a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> | 
 <a href='https://percona.com/privacy-policy' style='display: inline;'>Privacy</a> | 
