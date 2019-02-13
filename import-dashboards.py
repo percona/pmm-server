@@ -30,7 +30,7 @@ GRAFANA_PROVISION_DIR = '/usr/share/grafana/conf/provisioning/dashboards/'
 PMM_PLUGIN_DIR        = '/var/lib/grafana/plugins/pmm-app/dist/dashboards/'
 HOST                  = 'http://127.0.0.1:3000'
 LOGO_FILE             = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS 	      = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+SET_OF_TAGS           = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
 YEAR                  = str(datetime.date.today())[:4]
 
 CONTENT               = '''<center>
@@ -252,28 +252,29 @@ def create_folders():
         path = PMM_PLUGIN_DIR + folder
         try:
             os.mkdir(path)
-        except OSError:
-            print ' * Creation of subfolder %s failed' % path
+        except OSError,e:
+            print ' * Faild of creating subfolder %s %s' % (path, e)
         else:
-            print ' * Successfully created subfolder %s' % path
+            print ' * Created subfolder %s' % path
 
 
 def move_dashboards_into_folders():
     for filename in os.listdir(PMM_PLUGIN_DIR):
-        if os.path.isfile(os.path.join(PMM_PLUGIN_DIR, filename)):
-            with open(PMM_PLUGIN_DIR + filename, 'r') as dashboard_file:
+        filename = os.path.join(PMM_PLUGIN_DIR, filename)
+        if os.path.isfile(filename):
+            with open(filename, 'r') as dashboard_file:
                 dashboard = json.loads(dashboard_file.read())
                 tag = dashboard['tags'][0]
                 if tag == 'Percona':
                     try:
                         tag = dashboard['tags'][1]
                     except:
-                        continue
+                        print ' * Only tag Percona is existed for dashboard %s' % (dashboard['title'])
                 try:
-                    shutil.move(os.path.join(PMM_PLUGIN_DIR, filename), PMM_PLUGIN_DIR + tag)
+                    shutil.move(filename, PMM_PLUGIN_DIR + tag)
                     print ' * Moved dashboard %s into subfolder %s' % (dashboard['title'], PMM_PLUGIN_DIR + tag)
-                except:
-                    continue
+                except IOError,e:
+                    print ' * Failed of moving dashboard %s into subfolder %s %s' % (dashboard['title'], PMM_PLUGIN_DIR + tag, e)
 
 
 def create_provisioning_configs():
@@ -284,8 +285,8 @@ def create_provisioning_configs():
             f.write('   options:\n     path: %s\n' % ('/var/lib/grafana/plugins/pmm-app/dist/dashboards/' + folder))
             f.close()
             print ' * Created provisioning config file %s.yaml' % (GRAFANA_PROVISION_DIR + folder)
-        except:
-            continue
+        except IOError,e:
+            print ' * Failed of creating provisioning config file %s.yaml %s' % (GRAFANA_PROVISION_DIR + folder,e)
 
 
 def import_apps(api_key):
