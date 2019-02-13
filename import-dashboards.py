@@ -13,6 +13,7 @@ import sqlite3
 import string
 import subprocess
 import sys
+import datetime
 import time
 import httplib
 import fnmatch
@@ -29,9 +30,12 @@ GRAFANA_PROVISION_DIR = '/usr/share/grafana/conf/provisioning/dashboards/'
 PMM_PLUGIN_DIR        = '/var/lib/grafana/plugins/pmm-app/dist/dashboards/'
 HOST                  = 'http://127.0.0.1:3000'
 LOGO_FILE             = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS 	      = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+SET_OF_TAGS 	        = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
 CONTENT               = '''<center>
-<p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-2018 Percona LLC.</p>
+YEAR                  = str(datetime.date.today())[:4]
+
+CONTENT               = '''<center>
+<p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
 <div style='text-align:center;'>
 <a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> | 
 <a href='https://percona.com/privacy-policy' style='display: inline;'>Privacy</a> | 
