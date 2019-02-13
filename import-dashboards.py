@@ -19,16 +19,18 @@ import fnmatch
 
 import requests
 
-GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
-GRAFANA_IMG_DR   = '/usr/share/grafana/public/img/'
-SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
-DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
-NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
-OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
-HOST             = 'http://127.0.0.1:3000'
-LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS 	 = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
-CONTENT          = '''<center>
+GRAFANA_DB_DIR        = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
+GRAFANA_IMG_DR        = '/usr/share/grafana/public/img/'
+SCRIPT_DIR            = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_DIR         = SCRIPT_DIR + '/dashboards/'
+NEW_VERSION_FILE      = SCRIPT_DIR + '/VERSION'
+OLD_VERSION_FILE      = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
+GRAFANA_PROVISION_DIR = '/usr/share/grafana/conf/provisioning/dashboards/'
+PMM_PLUGIN_DIR        = '/var/lib/grafana/plugins/pmm-app/dist/dashboards/'
+HOST                  = 'http://127.0.0.1:3000'
+LOGO_FILE             = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+SET_OF_TAGS 	      = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+CONTENT               = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-2018 Percona LLC.</p>
 <div style='text-align:center;'>
 <a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> | 
@@ -242,6 +244,47 @@ def copy_apps():
             shutil.copytree(source_dir, dest_dir)
 
 
+def create_folders():
+    for folder in SET_OF_TAGS.keys():
+        path = PMM_PLUGIN_DIR + folder
+        try:
+            os.mkdir(path)
+        except OSError:
+            print ' * Creation of subfolder %s failed' % path
+        else:
+            print ' * Successfully created subfolder %s' % path
+
+
+def move_dashboards_into_folders():
+    for filename in os.listdir(PMM_PLUGIN_DIR):
+        if os.path.isfile(os.path.join(PMM_PLUGIN_DIR, filename)):
+            with open(PMM_PLUGIN_DIR + filename, 'r') as dashboard_file:
+                dashboard = json.loads(dashboard_file.read())
+                tag = dashboard['tags'][0]
+                if tag == 'Percona':
+                    try:
+                        tag = dashboard['tags'][1]
+                    except:
+                        continue
+                try:
+                    shutil.move(os.path.join(PMM_PLUGIN_DIR, filename), PMM_PLUGIN_DIR + tag)
+                    print ' * Moved dashboard %s into subfolder %s' % (dashboard['title'], PMM_PLUGIN_DIR + tag)
+                except:
+                    continue
+
+
+def create_provisioning_configs():
+    for folder in SET_OF_TAGS.keys():
+        try:
+            f = open(GRAFANA_PROVISION_DIR + folder + '.yaml',"w+")
+            f.write('apiVersion: 1\n\nproviders:\n - name: %s\n   orgId: 1\n   folder: %s\n   type: file\n   updateIntervalSeconds: 360\n' % (folder,folder))
+            f.write('   options:\n     path: %s\n' % ('/var/lib/grafana/plugins/pmm-app/dist/dashboards/' + folder))
+            f.close()
+            print ' * Created provisioning config file %s.yaml' % (GRAFANA_PROVISION_DIR + folder)
+        except:
+            continue
+
+
 def import_apps(api_key):
     for app in ['pmm-app']:
         print ' * Importing %r' % (app,)
@@ -407,12 +450,12 @@ def main():
         start_grafana()
 
     wait_for_grafana_start()
+    create_folders()
+    move_dashboards_into_folders()
+    create_provisioning_configs()
 
     add_datasources(api_key)
-    add_folders(api_key)
-    get_folders(api_key)
     import_apps(api_key)
-    move_into_folders()
 
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
