@@ -677,7 +677,7 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.6.4' };
+var core = module.exports = { version: '2.6.5' };
 if (typeof __e == 'number')
     __e = core; // eslint-disable-line no-undef
 
@@ -5955,4 +5955,4 @@ module.exports = __webpack_require__(/*! /Users/admin/Projects/Percona/pmm-serve
 /***/ })
 
 },[[1,"runtime"]]]);
-//# sourceMappingURL=polyfills.f1a7cb7ec71a4a45d225.js.map
+//# sourceMappingURL=polyfills.370b2e22742293f63a12.js.map
