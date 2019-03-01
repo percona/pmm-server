@@ -1,2 +1,0 @@
-OPTIONS="-server -bootstrap -client=0.0.0.0 -advertise=127.0.0.1 -ui"
-DATA_DIR="/srv/consul"

@@ -53,8 +53,7 @@ rm -rf /tmp/purge-qan-data
 
 # Upgrade
 if [ -f /var/lib/grafana/grafana.db ]; then
-    chown -R pmm:pmm /opt/consul-data
-    chown -R pmm:pmm /opt/prometheus/data
+    chown -R pmm:pmm /srv/prometheus/data
     chown -R mysql:mysql /var/lib/mysql
     chown -R grafana:grafana /var/lib/grafana
 fi
