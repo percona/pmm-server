@@ -51,17 +51,6 @@ sed "s/^INTERVAL=.*/INTERVAL=${QUERIES_RETENTION:-8}/" /etc/cron.daily/purge-qan
 cat /tmp/purge-qan-data > /etc/cron.daily/purge-qan-data
 rm -rf /tmp/purge-qan-data
 
-# HTTP basic auth
-if [ -n "${SERVER_PASSWORD}" -a -z "${UPDATE_MODE}" ]; then
-	SERVER_USER=${SERVER_USER:-pmm}
-	cat > /srv/update/pmm-manage.yml <<-EOF
-		users:
-		- username: "${SERVER_USER//\"/\"}"
-		  password: "${SERVER_PASSWORD//\"/\"}"
-	EOF
-	pmm-configure -skip-prometheus-reload true -grafana-db-path /var/lib/grafana/grafana.db || :
-fi
-
 # Upgrade
 if [ -f /var/lib/grafana/grafana.db ]; then
     chown -R pmm:pmm /opt/consul-data
