@@ -1,4 +1,5 @@
 # Percona Monitoring and Management (PMM) Server
+[![CLA assistant](https://cla-assistant.percona.com/readme/badge/percona/pmm-server)](https://cla-assistant.percona.com/percona/pmm-server)
 
 See the [PMM docs](https://www.percona.com/doc/percona-monitoring-and-management/index.html) for more information.
 
