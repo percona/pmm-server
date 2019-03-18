@@ -35,14 +35,6 @@ else
 fi
 sed -i "s/ENV_METRICS_MEMORY_MULTIPLIED/${METRICS_MEMORY_MULTIPLIED}/" /tmp/pmm.ini
 
-# Orchestrator
-if [[ "${ORCHESTRATOR_ENABLED}" = "true" ]]; then
-    sed -i "s/autostart = false/autostart = true/" /tmp/pmm.ini
-    sed "s/orc_client_user/${ORCHESTRATOR_USER:-orc_client_user}/" /etc/orchestrator.conf.json > /tmp/orchestrator.conf.json
-    sed -i "s/orc_client_password/${ORCHESTRATOR_PASSWORD:-orc_client_password}/" /tmp/orchestrator.conf.json
-    cat /tmp/orchestrator.conf.json > /etc/orchestrator.conf.json
-    rm -rf /tmp/orchestrator.conf.json
-fi
 cat /tmp/pmm.ini > /etc/supervisord.d/pmm.ini
 rm -rf /tmp/pmm.ini
 
