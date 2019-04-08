@@ -216,23 +216,42 @@ def add_datasources(api_key):
             print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
-    if 'QAN-API' not in ds:
-        print ' * QAN-API Data Source'
+    if 'PostgreSQL' not in ds:
+        print ' * PostgreSQL Data Source'
         data = json.dumps({
-            'name': 'QAN-API',
-            'type': 'mysql',
-            'url': 'localhost:3306',
+            'name': 'PostgreSQL',
+            'type': 'postgres',
+            'url': 'localhost:5432',
             'access': 'proxy',
-            'jsonData': {},
-            'secureJsonFields': {},
-            'database': 'pmm',
-            'user': 'grafana',
-            'password': 'N9mutoipdtlxutgi9rHIFnjM'
+            'basicAuth': False,
+            'jsonData': {'postgresVersion': '1000', 'sslmode': 'disable'},
+            'password': '',
+            'database': 'pmm-managed',
+            'user': 'postgres'
         })
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
         if r.status_code != httplib.OK:
-            print ' * Cannot add QAN-API Data Source'
+            print ' * Cannot add PostgreSQL Data Source'
+            sys.exit(-1)
+
+    if 'ClickHouse' not in ds:
+        print ' * ClickHouse Data Source'
+        data = json.dumps({
+            'name': 'ClickHouse',
+            'type': 'vertamedia-clickhouse-datasource',
+            'url': 'localhost:8123',
+            'access': 'proxy',
+            'basicAuth': False,
+            'jsonData': {'keepCookies': []},
+            'password': '',
+            'database': '',
+            'user': ''
+        })
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != httplib.OK:
+            print ' * Cannot add ClickHouse Data Source'
             sys.exit(-1)
 
 
