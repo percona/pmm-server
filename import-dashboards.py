@@ -216,10 +216,10 @@ def add_datasources(api_key):
             print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
-    if 'QAN-API' not in ds:
-        print ' * QAN-API Data Source'
+    if 'PostgreSQL' not in ds:
+        print ' * PostgreSQL Data Source'
         data = json.dumps({
-            'name': 'QAN-API',
+            'name': 'PostgreSQL',
             'type': 'postgres',
             'url': 'localhost:5432',
             'access': 'proxy',
@@ -232,7 +232,7 @@ def add_datasources(api_key):
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
         if r.status_code != httplib.OK:
-            print ' * Cannot add QAN-API Data Source'
+            print ' * Cannot add PostgreSQL Data Source'
             sys.exit(-1)
 
     if 'ClickHouse' not in ds:
