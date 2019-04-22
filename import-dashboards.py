@@ -240,7 +240,7 @@ def add_datasources(api_key):
         data = json.dumps({
             'name': 'ClickHouse',
             'type': 'vertamedia-clickhouse-datasource',
-            'url': 'localhost:8123',
+            'url': 'http://localhost:8123',
             'access': 'proxy',
             'basicAuth': False,
             'jsonData': {'keepCookies': []},
