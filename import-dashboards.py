@@ -29,7 +29,7 @@ NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS      = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
+SET_OF_TAGS      = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Insight': 0, 'PMM': 0}
 YEAR             = str(datetime.date.today())[:4]
 
 CONTENT          = '''<center>
@@ -205,15 +205,6 @@ def add_datasources(api_key):
         print r.status_code, r.content
         if r.status_code != 200:
             print ' * Cannot modify Prometheus Data Source'
-            sys.exit(-1)
-
-    if 'CloudWatch' not in ds:
-        print ' * Adding CloudWatch Data Source'
-        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': {'authType': 'keys'}, 'access': 'proxy', 'isDefault': False})
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add CloudWatch Data Source'
             sys.exit(-1)
 
     if 'PostgreSQL' not in ds:
@@ -425,7 +416,7 @@ def main():
       #  add_demo_footer()
         copy_apps()
         add_api_key(name, db_key)
-        fix_cloudwatch_datasource()
+      #  fix_cloudwatch_datasource()
     finally:
         start_grafana()
 
