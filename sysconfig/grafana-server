@@ -1,3 +1,0 @@
-OPTIONS="cfg:default.server.root_url=%(protocol)s://%(domain)s:%(http_port)s/graph"
-DATA_DIR=/srv/grafana
-PLUGINS_DIR=/var/lib/grafana/plugins
