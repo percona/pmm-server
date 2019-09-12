@@ -1,3 +1,0 @@
-WEB_LISTEN_ADDRESS=:9090
-OPTIONS="--storage.tsdb.retention=720h --web.enable-lifecycle --web.enable-admin-api --web.external-url=http://localhost:9090/prometheus/"
-STORAGE_LOCAL_PATH="/srv/prometheus"

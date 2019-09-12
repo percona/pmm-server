@@ -15,6 +15,7 @@ import subprocess
 import sys
 import datetime
 import time
+import datetime
 import httplib
 import fnmatch
 
@@ -28,12 +29,12 @@ NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 GRAFANA_PROVISION_DIR = '/usr/share/grafana/conf/provisioning/dashboards/'
 PMM_PLUGIN_DIR = '/var/lib/grafana/plugins/pmm-app/dist/dashboards/'
-HOST = 'http://127.0.0.1:3000'
-LOGO_FILE = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Cloud': 0, 'Insight': 0, 'PMM': 0}
-YEAR = str(datetime.date.today())[:4]
+HOST             = 'http://127.0.0.1:3000'
+LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+SET_OF_TAGS      = {'QAN': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Insight': 0, 'PMM': 0}
+YEAR             = str(datetime.date.today())[:4]
 
-CONTENT = '''<center>
+CONTENT          = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
 <div style='text-align:center;'>
 <a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> | 
@@ -208,32 +209,42 @@ def add_datasources(api_key):
             print ' * Cannot modify Prometheus Data Source'
             sys.exit(-1)
 
-    if 'CloudWatch' not in ds:
-        print ' * Adding CloudWatch Data Source'
-        data = json.dumps({'name': 'CloudWatch', 'type': 'cloudwatch', 'jsonData': {'authType': 'keys'}, 'access': 'proxy', 'isDefault': False})
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add CloudWatch Data Source'
-            sys.exit(-1)
-
-    if 'QAN-API' not in ds:
-        print ' * QAN-API Data Source'
+    if 'PostgreSQL' not in ds:
+        print ' * PostgreSQL Data Source'
         data = json.dumps({
-            'name': 'QAN-API',
-            'type': 'mysql',
-            'url': 'localhost:3306',
+            'name': 'PostgreSQL',
+            'type': 'postgres',
+            'url': 'localhost:5432',
             'access': 'proxy',
-            'jsonData': {},
-            'secureJsonFields': {},
-            'database': 'pmm',
-            'user': 'grafana',
-            'password': 'N9mutoipdtlxutgi9rHIFnjM'
+            'basicAuth': False,
+            'jsonData': {'postgresVersion': '1000', 'sslmode': 'disable'},
+            'password': '',
+            'database': 'pmm-managed',
+            'user': 'postgres'
         })
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
         if r.status_code != httplib.OK:
-            print ' * Cannot add QAN-API Data Source'
+            print ' * Cannot add PostgreSQL Data Source'
+            sys.exit(-1)
+
+    if 'ClickHouse' not in ds:
+        print ' * ClickHouse Data Source'
+        data = json.dumps({
+            'name': 'ClickHouse',
+            'type': 'vertamedia-clickhouse-datasource',
+            'url': 'http://localhost:8123',
+            'access': 'proxy',
+            'basicAuth': False,
+            'jsonData': {'keepCookies': []},
+            'password': '',
+            'database': '',
+            'user': ''
+        })
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != httplib.OK:
+            print ' * Cannot add ClickHouse Data Source'
             sys.exit(-1)
 
 
@@ -449,7 +460,7 @@ def main():
       #  add_demo_footer()
         copy_apps()
         add_api_key(name, db_key)
-        fix_cloudwatch_datasource()
+      #  fix_cloudwatch_datasource()
     finally:
         start_grafana()
 
