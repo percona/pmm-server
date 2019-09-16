@@ -16,6 +16,3 @@ reimport:
 
 rm:
 	docker rm -f pmm-server-tmp
-
-build-password-page:
-	cd password-page/ && npm ci && npm run build
