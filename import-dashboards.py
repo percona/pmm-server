@@ -18,6 +18,7 @@ import time
 import datetime
 import httplib
 import fnmatch
+import re
 
 import requests
 
@@ -29,7 +30,7 @@ NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST             = 'http://127.0.0.1:3000'
 LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS      = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'HA': 0, 'Insight': 0, 'PMM': 0}
+SET_OF_TAGS      = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR             = str(datetime.date.today())[:4]
 
 CONTENT          = '''<center>
@@ -311,6 +312,20 @@ def move_into_folders():
                 tag = data['tags'][1]
             except:
                 continue
+        compare_pattern = re.compile(r'^.*_Compare$')
+        compare_tags  = [s for s in data['tags'] if compare_pattern.match(s)]
+        ha_pattern = re.compile(r'^.*_HA$')
+        ha_tags  = [s for s in data['tags'] if ha_pattern.match(s)]
+        if len(compare_tags) > 0:
+            match_compare = re.match("(MySQL|PostgreSQL|MongoDB|OS)", compare_tags[0]);
+            if match_compare:
+                print '   * Compare dashboard is detected for the service %s' % match_compare.group(0);
+                tag = match_compare.group(0);
+        if len(ha_tags) > 0:
+            match_ha = re.match("(MySQL|PostgreSQL|MongoDB)", ha_tags[0]);
+            if match_ha:
+                print '   * HA dashboard is detected for the service %s' % match_ha.group(0);
+                tag = match_ha.group(0);
         try:
             print '   * Uid: %r, Dashboard: %r, Tags: %r' % (data['uid'],data['title'],data['tags'])
             print '   * First Tag: %s' % (tag)
