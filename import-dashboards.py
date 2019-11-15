@@ -19,6 +19,7 @@ import datetime
 import httplib
 import fnmatch
 import re
+import zipfile
 
 import requests
 
@@ -247,6 +248,24 @@ def add_datasources(api_key):
             sys.exit(-1)
 
 
+def add_panels():
+    for app in ['panels']:
+        print ' * Adding %r' % (app,)
+        source_dir = '/usr/share/percona-dashboards/' + app
+        dest_dir = '/var/lib/grafana/plugins/'
+        if os.path.isdir(source_dir):
+            files_list = os.listdir(source_dir)
+            print '  * Copying %r' % (app,)
+            shutil.rmtree(dest_dir, True)
+            shutil.copytree(source_dir, dest_dir)
+            print '  * Unzipping %r' % (app,)
+            for file in files_list:
+                with zipfile.ZipFile(dest_dir + file, 'r') as zip_ref:
+                    print '   * Unzip %r' % (file,)
+                    zip_ref.extractall(dest_dir)
+                os.remove(dest_dir + file)
+
+
 def copy_apps():
     for app in ['pmm-app']:
         source_dir = '/usr/share/percona-dashboards/' + app
@@ -429,6 +448,7 @@ def main():
     stop_grafana()
     try:
       #  add_demo_footer()
+        add_panels()
         copy_apps()
         add_api_key(name, db_key)
       #  fix_cloudwatch_datasource()
