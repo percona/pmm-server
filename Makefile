@@ -16,3 +16,6 @@ reimport:
 
 rm:
 	docker rm -f pmm-server-tmp
+
+build-installation-wizard-page:
+	cd installation-wizard/ && npm i && npm run build

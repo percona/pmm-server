@@ -1,0 +1,9 @@
+.instance-id-form {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1f1d1e;
+  color: white;
+}
