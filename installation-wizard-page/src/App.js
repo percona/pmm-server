@@ -1,19 +1,32 @@
 import React, { useState } from "react";
-
+import { message } from "antd";
+import axios from "axios";
 import "./App.css";
+import "antd/dist/antd.css";
+import Button from "antd/es/button";
 
 function App() {
   const [instanceId, setInstanceId] = useState("");
-  const [checkError, setCheckError] = useState("");
+  const [loading, setLoading] = useState(false);
   const checkInstance = async () => {
-    const response = await fetch("/v1/AWSInstanceCheck", {
-      method: "POST",
-      body: JSON.stringify({ instance_id: instanceId })
-    });
-    if (!response.ok) {
-      return setCheckError("Something went wrong");
-    }
-    window.location.href = "/";
+    setLoading(true);
+    axios
+      .post("/v1/AWSInstanceCheck", { instance_id: instanceId })
+      .then(function(response) {
+        // handle success
+        window.location.href = "/";
+      })
+      .catch(function(error) {
+        // handle error
+        message.error(
+          error.response.data.message
+            ? error.response.data.message
+            : error.message
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -32,15 +45,16 @@ function App() {
               placeholder={"Instance ID"}
               className={"instance-id-input-field"}
             />
-            <button
-              type={"button"}
-              className={"instance-id-submit-button"}
+            <Button
               onClick={checkInstance}
+              type="primary"
+              loading={loading}
+              disabled={loading}
+              className={"instance-id-submit-button"}
             >
               Submit
-            </button>
+            </Button>
           </p>
-          <span className={'check-error'}>{checkError}</span>
           <a href="/">Where should i get my instance ID</a>
         </p>
       </div>
