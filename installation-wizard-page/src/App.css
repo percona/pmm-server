@@ -7,3 +7,42 @@
   background-color: #1f1d1e;
   color: white;
 }
+
+.instance-id-input-field {
+  background-color: black;
+  color: white;
+  border: 1px solid gray;
+  height: 36px;
+  width: 100%;
+  margin-right: 10px;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.instance-id-submit-button {
+  color: white;
+  background-color: gray;
+  border-radius: 0px;
+  border: 1px solid gray;
+  height: 40px;
+  width: 100px;
+}
+
+a {
+  color: #8a5131;
+  text-decoration: none;
+}
+
+.check-error {
+  min-height: 30px;
+  /*margin-bottom: 10px;*/
+  color: indianred;
+}
