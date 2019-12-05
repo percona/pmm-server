@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-import { message } from "antd";
-import axios from "axios";
-import "./App.css";
-import "antd/dist/antd.css";
-import Button from "antd/es/button";
+import React, { useState } from 'react';
+import { message } from 'antd';
+import axios from 'axios';
+import './App.css';
+import 'antd/dist/antd.css';
+import Button from 'antd/es/button';
 
 function App() {
-  const [instanceId, setInstanceId] = useState("");
+  const [instanceId, setInstanceId] = useState('');
   const [loading, setLoading] = useState(false);
   const checkInstance = async () => {
     setLoading(true);
 
     try {
-      await axios.post("/v1/AWSInstanceCheck", { instance_id: instanceId });
-      window.location.href = "/";
+      await axios.post('/v1/AWSInstanceCheck', { instance_id: instanceId });
+      // eslint-disable-next-line no-undef
+      window.location.href = '/';
     } catch (error) {
       message.error(
         error.response.data.message
           ? error.response.data.message
-          : error.message
+          : error.message,
       );
     }
     setLoading(false);
@@ -32,20 +33,20 @@ function App() {
           <br />
           It uses the format of i-abc123def
         </p>
-        <p className={"form-wrapper"}>
-          <p className={"input-field-wrapper"}>
+        <p className="form-wrapper">
+          <p className="input-field-wrapper">
             <input
-              onChange={e => setInstanceId(e.target.value)}
+              onChange={(e) => setInstanceId(e.target.value)}
               type="text"
-              placeholder={"Instance ID"}
-              className={"instance-id-input-field"}
+              placeholder="Instance ID"
+              className="instance-id-input-field"
             />
             <Button
               onClick={checkInstance}
               type="primary"
               loading={loading}
               disabled={loading}
-              className={"instance-id-submit-button"}
+              className="instance-id-submit-button"
             >
               Submit
             </Button>
