@@ -10,23 +10,18 @@ function App() {
   const [loading, setLoading] = useState(false);
   const checkInstance = async () => {
     setLoading(true);
-    axios
-      .post("/v1/AWSInstanceCheck", { instance_id: instanceId })
-      .then(function(response) {
-        // handle success
-        window.location.href = "/";
-      })
-      .catch(function(error) {
-        // handle error
-        message.error(
-          error.response.data.message
-            ? error.response.data.message
-            : error.message
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+
+    try {
+      await axios.post("/v1/AWSInstanceCheck", { instance_id: instanceId });
+      window.location.href = "/";
+    } catch (error) {
+      message.error(
+        error.response.data.message
+          ? error.response.data.message
+          : error.message
+      );
+    }
+    setLoading(false);
   };
 
   return (
@@ -55,7 +50,7 @@ function App() {
               Submit
             </Button>
           </p>
-          <a href="/">Where should i get my instance ID</a>
+          <a href="/">Where should I get my instance ID?</a>
         </p>
       </div>
     </div>
