@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #1f1d1e;
+  background-color: #141414;
   color: white;
 }
 
@@ -34,4 +34,26 @@
   border: 1px solid gray !important;
   height: 36px !important;
   width: 100px !important;
+}
+
+.instance-id-pane {
+  position: relative;
+  background-color: #1f1d1e;
+  padding: 150px 200px;
+  border: 1px solid gray;
+}
+
+.instance-id-header {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  color: white;
+}
+
+.container-fluid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 10vh;
 }
