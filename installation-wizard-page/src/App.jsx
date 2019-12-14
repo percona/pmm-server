@@ -29,12 +29,13 @@ function App() {
     <div className="instance-id-form">
       <div className="container-fluid header">
         <Row>
-          <Col span={8}>
-            {" "}
+          <Col span={3}>
             <img src={logo} className="header-logo" alt="pmm-logo" />
-            <div className="col-10">Percona Monitoring and Management</div>
           </Col>
-          <Col span={16}>
+          <Col span={8}>
+            <h3>Percona Monitoring and Management</h3>
+          </Col>
+          <Col span={13}>
             <p>Installation</p>
           </Col>
         </Row>
