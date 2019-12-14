@@ -4,7 +4,7 @@ import axios from "axios";
 import "./App.css";
 import "antd/dist/antd.css";
 import Button from "antd/es/button";
-
+import logo from "./assets/pmm-logo.png";
 function App() {
   const [instanceId, setInstanceId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,11 +31,7 @@ function App() {
         <Row>
           <Col span={8}>
             {" "}
-            <img
-              src="./assets/pmm-logo.png"
-              className="header-logo"
-              alt="pmm-logo"
-            />
+            <img src={logo} className="header-logo" alt="pmm-logo" />
             <div className="col-10">Percona Monitoring and Management</div>
           </Col>
           <Col span={16}>
