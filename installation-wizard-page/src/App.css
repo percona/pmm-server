@@ -55,5 +55,87 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 10vh;
+  height: 50px;
+  margin-bottom: 90px;
+  color: #cccccc;
+  background-color: #292929;
+}
+
+body {
+  background-color: #141414;
+}
+
+.header {
+}
+
+.header div {
+  height: inherit;
+}
+
+.header .row > div {
+  display: flex;
+  align-items: center;
+}
+
+.header p {
+  margin-bottom: 0;
+}
+
+.header .border-right {
+  border-right: 1px solid #141414 !important;
+}
+
+.header .header-logo {
+  width: 35px;
+  height: 35px;
+}
+
+.main p {
+  font-weight: 300;
+  color: #ffffff;
+  margin-bottom: 25px;
+}
+
+.main .nav-tabs {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.main .nav-tabs > li.active {
+  border-bottom: 5px solid #292929;
+}
+
+.main .nav-tabs > li.active > a,
+.main .nav-tabs > li.active > a:focus,
+.main .nav-tabs > li.active > a:hover,
+.main .nav-tabs > li > a,
+.main .nav-tabs > li > a:focus,
+.main .nav-tabs > li > a:hover,
+.main .nav-tabs > li > i {
+  padding: 10px 15px 5px;
+  display: block;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+.main .tab-content {
+  padding-top: 85px;
+  padding-bottom: 60px;
+  border: 1px solid #2a2a2a;
+  background-color: #1f1d1e;
+}
+
+@media screen and (max-width: 768px) {
+  .main p {
+    font-size: 14px;
+  }
+
+  .tab-content {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
 }
