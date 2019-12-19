@@ -139,3 +139,12 @@ body {
     padding-bottom: 40px;
   }
 }
+
+.ant-notification-notice-content .ant-notification-notice-message {
+  color: white !important;
+  margin-bottom: 0 !important;
+}
+
+.ant-notification-notice-close {
+  color: white !important;
+}
