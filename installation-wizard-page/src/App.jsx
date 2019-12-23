@@ -83,10 +83,12 @@ function App() {
             </Button>
           </p>
           <a
-              href='http://www.percona.com/doc/percona-monitoring-and-management/2.x/install/aws.html#pmm-server-aws-running-instance'
-              target='_blank'
-              rel='noopener noreferrer'
+            href='http://www.percona.com/doc/percona-monitoring-and-management/2.x/install/aws.html#pmm-server-aws-running-instance'
+            target='_blank'
+            rel='noopener noreferrer'
           >
+            Where should I get my instance ID?
+          </a>
         </p>
       </div>
     </div>
