@@ -237,6 +237,22 @@ def add_panels():
                     print '   * Unzip %r' % (file,)
                     zip_ref.extractall(dest_dir)
                 os.remove(dest_dir + file)
+            rename_panels()
+
+
+def rename_panels():
+    for app in ['panels']:
+        print '  * Renaming %r' % (app,)
+        panels_dir = '/var/lib/grafana/plugins/'
+        panels_list = os.listdir(panels_dir)
+        for panel in panels_list:
+            print '   * %r -> ' % (panel),
+            panel_path = panels_dir + panel + '/dist/plugin.json'
+            if os.path.exists(panel_path):
+                with open(panel_path, 'r') as f:
+                    panel_params = json.loads(f.read())
+                    print '\'%s\'' % (panel_id['id'])
+                    os.rename(panels_dir + panel, panels_dir + panel_params['id'])
 
 
 def copy_apps():
