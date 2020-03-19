@@ -175,6 +175,7 @@ def add_datasources(api_key):
         r = requests.get('%s/api/datasources/name/Prometheus' % (HOST,), headers=grafana_headers(api_key))
         data = json.loads(r.content)
         data['jsonData']['timeInterval']='1s'
+        data['jsonData']['httpMethod']='POST'
         data['readOnly'] = False
         r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
         print r.status_code, r.content
