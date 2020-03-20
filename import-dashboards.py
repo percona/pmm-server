@@ -164,7 +164,7 @@ def add_datasources(api_key):
     ds = [x['name'] for x in json.loads(r.content)]
     if 'Prometheus' not in ds:
         print ' * Adding Prometheus Data Source'
-        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
+        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod'='POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
         if r.status_code != httplib.OK:
