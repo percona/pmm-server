@@ -37,9 +37,9 @@ YEAR             = str(datetime.date.today())[:4]
 CONTENT          = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
 <div style='text-align:center;'>
-<a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> | 
-<a href='https://percona.com/privacy-policy' style='display: inline;'>Privacy</a> | 
-<a href='https://percona.com/copyright-policy' style='display: inline;'>Copyright</a> | 
+<a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> |
+<a href='https://percona.com/privacy-policy' style='display: inline;'>Privacy</a> |
+<a href='https://percona.com/copyright-policy' style='display: inline;'>Copyright</a> |
 <a href='https://percona.com/legal' style='display: inline;'>Legal</a>
 </div>
 </center>
@@ -229,7 +229,10 @@ def add_panels():
         if os.path.isdir(source_dir):
             files_list = os.listdir(source_dir)
             print '  * Copying %r' % (app,)
-            shutil.rmtree(dest_dir, True)
+            try:
+                shutil.rmtree(dest_dir, False)
+            except Exception as err:
+                print '  * Failed to remove %s: %s' % (dest_dir, err)
             shutil.copytree(source_dir, dest_dir)
             print '  * Unzipping %r' % (app,)
             for file in files_list:
@@ -245,7 +248,10 @@ def copy_apps():
         dest_dir = '/var/lib/grafana/plugins/' + app
         if os.path.isdir(source_dir):
             print ' * Copying %r' % (app,)
-            shutil.rmtree(dest_dir, True)
+            try:
+                shutil.rmtree(dest_dir, False)
+            except Exception as err:
+                print '  * Failed to remove %s: %s' % (dest_dir, err)
             shutil.copytree(source_dir, dest_dir)
 
 
