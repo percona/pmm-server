@@ -232,8 +232,11 @@ def add_panels():
             try:
                 shutil.rmtree(dest_dir, False)
             except Exception as err:
-                print '  * Failed to remove %s: %s' % (dest_dir, err)
-            shutil.copytree(source_dir, dest_dir)
+                print '   * Failed to remove %s: %s' % (dest_dir, err,)
+            try:
+                shutil.copytree(source_dir, dest_dir)
+            except Exception as err:
+                print '   * Failed to copy %s -> %s: %s' % (source_dir, dest_dir, err,)
             print '  * Unzipping %r' % (app,)
             for file in files_list:
                 with zipfile.ZipFile(dest_dir + file, 'r') as zip_ref:
@@ -249,10 +252,9 @@ def copy_apps():
         if os.path.isdir(source_dir):
             print ' * Copying %r' % (app,)
             try:
-                shutil.rmtree(dest_dir, False)
+                shutil.copytree(source_dir, dest_dir)
             except Exception as err:
-                print '  * Failed to remove %s: %s' % (dest_dir, err)
-            shutil.copytree(source_dir, dest_dir)
+                print '  * Failed to copy %s -> %s: %s' % (source_dir, dest_dir, err,)
 
 
 def import_apps(api_key):
