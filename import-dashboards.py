@@ -229,20 +229,18 @@ def add_panels():
         if os.path.isdir(source_dir):
             files_list = os.listdir(source_dir)
             print '  * Copying %r' % (app,)
-            try:
-                shutil.rmtree(dest_dir, False)
-            except Exception as err:
-                print '   * Failed to remove %s: %s' % (dest_dir, err,)
-            try:
-                shutil.copytree(source_dir, dest_dir)
-            except Exception as err:
-                print '   * Failed to copy %s -> %s: %s' % (source_dir, dest_dir, err,)
+            shutil.rmtree(dest_dir, True)
+            if not os.path.isdir(dest_dir):
+                os.mkdir(dest_dir)
+            for file in files_list:
+                print '   * Copy %r' % (file,)
+                shutil.copy(os.path.join(source_dir,file), dest_dir)
             print '  * Unzipping %r' % (app,)
             for file in files_list:
-                with zipfile.ZipFile(dest_dir + file, 'r') as zip_ref:
+                with zipfile.ZipFile(os.path.join(dest_dir,file), 'r') as zip_ref:
                     print '   * Unzip %r' % (file,)
                     zip_ref.extractall(dest_dir)
-                os.remove(dest_dir + file)
+                os.remove(os.path.join(dest_dir,file))
 
 
 def copy_apps():
@@ -251,10 +249,8 @@ def copy_apps():
         dest_dir = '/var/lib/grafana/plugins/' + app
         if os.path.isdir(source_dir):
             print ' * Copying %r' % (app,)
-            try:
-                shutil.copytree(source_dir, dest_dir)
-            except Exception as err:
-                print '  * Failed to copy %s -> %s: %s' % (source_dir, dest_dir, err,)
+            shutil.rmtree(dest_dir, True)
+            shutil.copytree(source_dir, dest_dir)
 
 
 def import_apps(api_key):
