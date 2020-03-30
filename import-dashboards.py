@@ -23,18 +23,19 @@ import zipfile
 
 import requests
 
-GRAFANA_DB_DIR   = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
-GRAFANA_IMG_DR   = '/usr/share/grafana/public/img/'
-SCRIPT_DIR       = os.path.dirname(os.path.abspath(__file__))
-DASHBOARD_DIR    = SCRIPT_DIR + '/dashboards/'
-NEW_VERSION_FILE = SCRIPT_DIR + '/VERSION'
-OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
-HOST             = 'http://127.0.0.1:3000'
-LOGO_FILE        = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS      = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
-YEAR             = str(datetime.date.today())[:4]
+GRAFANA_DB_DIR     = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
+GRAFANA_IMG_DR     = '/usr/share/grafana/public/img/'
+GRAFANA_PLUGINS_DR = '/var/lib/grafana/plugins/'
+SCRIPT_DIR         = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_DIR      = SCRIPT_DIR + '/dashboards/'
+NEW_VERSION_FILE   = SCRIPT_DIR + '/VERSION'
+OLD_VERSION_FILE   = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
+HOST               = 'http://127.0.0.1:3000'
+LOGO_FILE          = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+SET_OF_TAGS        = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
+YEAR               = str(datetime.date.today())[:4]
 
-CONTENT          = '''<center>
+CONTENT            = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
 <div style='text-align:center;'>
 <a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> |
@@ -164,7 +165,7 @@ def add_datasources(api_key):
     ds = [x['name'] for x in json.loads(r.content)]
     if 'Prometheus' not in ds:
         print ' * Adding Prometheus Data Source'
-        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
+        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
         print r.status_code, r.content
         if r.status_code != httplib.OK:
@@ -175,6 +176,7 @@ def add_datasources(api_key):
         r = requests.get('%s/api/datasources/name/Prometheus' % (HOST,), headers=grafana_headers(api_key))
         data = json.loads(r.content)
         data['jsonData']['timeInterval']='1s'
+        data['jsonData']['httpMethod']='POST'
         data['readOnly'] = False
         r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
         print r.status_code, r.content
@@ -241,6 +243,21 @@ def add_panels():
                     print '   * Unzip %r' % (file,)
                     zip_ref.extractall(dest_dir)
                 os.remove(os.path.join(dest_dir,file))
+            rename_panels()
+
+
+def rename_panels():
+    for app in ['panels']:
+        print '  * Renaming %r' % (app,)
+        panels_list = os.listdir(GRAFANA_PLUGINS_DR)
+        for panel in panels_list:
+            print '   * %r -> ' % (panel,),
+            panel_path = os.path.join(GRAFANA_PLUGINS_DR, panel, 'dist/plugin.json')
+            if os.path.exists(panel_path):
+                with open(panel_path, 'r') as f:
+                    panel_params = json.loads(f.read())
+                    print '%r' % (panel_params['id'],)
+                    os.rename(os.path.join(GRAFANA_PLUGINS_DR, panel), os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']))
 
 
 def copy_apps():
