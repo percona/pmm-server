@@ -52,7 +52,7 @@
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
     "kind-of": "^6.0.3",
-    "minimist": "^1.2.2",
+    "minimist": "^1.2.3",
     "protractor": "^5.4.2",
     "set-value": "^2.0.1",
     "ts-node": "~4.1.0",
