@@ -1,1 +1,1 @@
-See full PMM changelog [here](https://www.percona.com/doc/percona-monitoring-and-management/release-notes/index.html).
+See PMM release notes [here](https://www.percona.com/doc/percona-monitoring-and-management/2.x/release-notes/index.html).

@@ -1,4 +1,0 @@
-#!/bin/sh
-# This pre-post git hook makes only basic check of a build.
-# Please double check if you made a build over all you changes and committed it.
-# Use --no-verify flag on your risk.
