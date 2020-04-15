@@ -18,6 +18,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "homepage": "/setup",
   "browserslist": {
     "production": [
       ">0.2%",
