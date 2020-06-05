@@ -7,9 +7,9 @@
     "start": "ng serve",
     "build": "ng build install-wizard --base-href '/password-page/' --output-hashing=all --aot --build-optimizer",
     "build:prod": "ng b install-wizard --base-href '/password-page/' --prod --output-hashing=all --build-optimizer",
-    "build:ami": "ng b --base-href --progress  --aot --output-path dist-ami/ --configuration=ami --output-hashing=all --build-optimizer",
-    "build:ovf": "ng b --base-href --progress --aot --output-path dist-ovf/ --configuration=ovf --output-hashing=all --build-optimizer",
-    "build:docker": "ng b --base-href --progress --aot --output-path dist-docker/ --configuration=docker --output-hashing=all --build-optimizer",
+    "build:ami": "ng b --base-href --progress  --aot --output-path dist/ami/ --configuration=ami --output-hashing=all --build-optimizer",
+    "build:ovf": "ng b --base-href --progress --aot --output-path dist/ovf/ --configuration=ovf --output-hashing=all --build-optimizer",
+    "build:docker": "ng b --base-href --progress --aot --output-path dist/docker/ --configuration=docker --output-hashing=all --build-optimizer",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
