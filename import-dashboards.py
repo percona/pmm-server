@@ -231,11 +231,11 @@ def add_panels():
         if os.path.isdir(source_dir):
             files_list = os.listdir(source_dir)
             print '  * Copying %r' % (app,)
-            try:
-                shutil.rmtree(dest_dir, False)
-            except Exception as err:
-                print '  * Failed to remove %s: %s' % (dest_dir, err)
-            shutil.copytree(source_dir, dest_dir)
+            if not os.path.isdir(dest_dir):
+                shutil.copytree(source_dir, dest_dir)
+            else:
+                for file in files_list:
+                    shutil.copyfile(source_dir + "/" + file, dest_dir + file)
             print '  * Unzipping %r' % (app,)
             for file in files_list:
                 with zipfile.ZipFile(dest_dir + file, 'r') as zip_ref:
@@ -255,8 +255,19 @@ def rename_panels():
             if os.path.exists(panel_path):
                 with open(panel_path, 'r') as f:
                     panel_params = json.loads(f.read())
+                    if panel == panel_params['id']:
+                        print 'skipped'
+                        continue
                     print '%r' % (panel_params['id'],)
+                    if os.path.isdir(os.path.join(GRAFANA_PLUGINS_DR, panel_params['id'])):
+                        try:
+                            shutil.rmtree(os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']))
+                        except Exception as err:
+                            print '  * Failed to remove %s: %s' % (os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']), err)
+                            continue
                     os.rename(os.path.join(GRAFANA_PLUGINS_DR, panel), os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']))
+            else:
+                print 'skipped'
 
 
 def copy_apps():
