@@ -235,13 +235,13 @@ def add_panels():
                 shutil.copytree(source_dir, dest_dir)
             else:
                 for file in files_list:
-                    shutil.copyfile(source_dir + "/" + file, dest_dir + file)
+                    shutil.copyfile(os.path.join(source_dir,file), os.path.join(dest_dir,file))
             print '  * Unzipping %r' % (app,)
             for file in files_list:
-                with zipfile.ZipFile(dest_dir + file, 'r') as zip_ref:
+                with zipfile.ZipFile(os.path.join(dest_dir,file), 'r') as zip_ref:
                     print '   * Unzip %r' % (file,)
                     zip_ref.extractall(dest_dir)
-                os.remove(dest_dir + file)
+                os.remove(os.path.join(dest_dir,file))
             rename_panels()
 
 
