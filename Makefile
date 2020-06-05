@@ -17,5 +17,21 @@ reimport:
 rm:
 	docker rm -f pmm-server-tmp
 
-build-password-page:
-	cd password-page/ && npm ci && npm run build
+
+build-password-page: build-password-page-docker build-password-page-ami build-password-page-ovf
+
+build-password-page-docker:
+	cd password-page/ \
+	&& npm ci \
+	&& npm run build:docker
+
+build-password-page-ami:
+	cd password-page/ \
+	&& npm ci \
+	&& npm run build:ami
+
+build-password-page-ovf:
+	cd password-page/ \
+	&& npm ci \
+	&& npm run build:ovf
+
