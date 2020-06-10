@@ -23,20 +23,20 @@ import zipfile
 
 import requests
 
-GRAFANA_DB_DIR            = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
-GRAFANA_IMG_DR            = '/usr/share/grafana/public/img/'
-GRAFANA_PLUGINS_DR        = '/var/lib/grafana/plugins/'
-GRAFANA_SOURCE_PLUGINS_DR = '/usr/share/percona-dashboards/panels/'
-SCRIPT_DIR                = os.path.dirname(os.path.abspath(__file__))
-DASHBOARD_DIR             = SCRIPT_DIR + '/dashboards/'
-NEW_VERSION_FILE          = SCRIPT_DIR + '/VERSION'
-OLD_VERSION_FILE          = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
-HOST                      = 'http://127.0.0.1:3000'
-LOGO_FILE                 = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
-SET_OF_TAGS               = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
-YEAR                      = str(datetime.date.today())[:4]
+GRAFANA_DB_DIR             = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
+GRAFANA_IMG_DIR            = '/usr/share/grafana/public/img/'
+GRAFANA_PLUGINS_DIR        = '/var/lib/grafana/plugins/'
+GRAFANA_SOURCE_PLUGINS_DIR = '/usr/share/percona-dashboards/panels/'
+SCRIPT_DIR                 = os.path.dirname(os.path.abspath(__file__))
+DASHBOARD_DIR              = SCRIPT_DIR + '/dashboards/'
+NEW_VERSION_FILE           = SCRIPT_DIR + '/VERSION'
+OLD_VERSION_FILE           = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
+HOST                       = 'http://127.0.0.1:3000'
+LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
+SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
+YEAR                       = str(datetime.date.today())[:4]
 
-CONTENT                   = '''<center>
+CONTENT                    = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
 <div style='text-align:center;'>
 <a href='https://percona.com/terms-use' style='display: inline;'>Terms of Use</a> |
@@ -226,29 +226,29 @@ def add_datasources(api_key):
 
 def add_panels():
     print ' * Adding panels'
-    if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DR):
-        files_list = os.listdir(GRAFANA_SOURCE_PLUGINS_DR)
+    if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DIR):
+        files_list = os.listdir(GRAFANA_SOURCE_PLUGINS_DIR)
         print '  * Copying panels'
-        if not os.path.isdir(GRAFANA_PLUGINS_DR):
-            shutil.copytree(GRAFANA_SOURCE_PLUGINS_DR, GRAFANA_PLUGINS_DR)
-        else:
-            for file in files_list:
-                shutil.copyfile(os.path.join(GRAFANA_SOURCE_PLUGINS_DR, file), os.path.join(GRAFANA_PLUGINS_DR, file))
-        print '  * Unzipping panels'
+        if not os.path.isdir(GRAFANA_PLUGINS_DIR):
+            os.makedirs(GRAFANA_PLUGINS_DIR)
+            print '   * Grafana panel folder %r is missed -> created' % (GRAFANA_PLUGINS_DIR,)
         for file in files_list:
-            with zipfile.ZipFile(os.path.join(GRAFANA_PLUGINS_DR, file), 'r') as zip_ref:
-                print '   * Unzip %r' % (file,)
-                zip_ref.extractall(GRAFANA_PLUGINS_DR)
-            os.remove(os.path.join(GRAFANA_PLUGINS_DR, file))
+            shutil.copyfile(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, file), os.path.join(GRAFANA_PLUGINS_DIR, file))
+        print '   * Unzipping panels'
+        for file in files_list:
+            with zipfile.ZipFile(os.path.join(GRAFANA_PLUGINS_DIR, file), 'r') as zip_ref:
+                print '    * Unzip %r' % (file,)
+                zip_ref.extractall(GRAFANA_PLUGINS_DIR)
+            os.remove(os.path.join(GRAFANA_PLUGINS_DIR, file))
         rename_panels()
 
 
 def rename_panels():
-    print '  * Renaming panels'
-    panels_list = os.listdir(GRAFANA_PLUGINS_DR)
+    print '   * Renaming panels'
+    panels_list = os.listdir(GRAFANA_PLUGINS_DIR)
     for panel in panels_list:
-        print '   * %r -> ' % (panel,),
-        panel_path = os.path.join(GRAFANA_PLUGINS_DR, panel, 'dist/plugin.json')
+        print '    * %r -> ' % (panel,),
+        panel_path = os.path.join(GRAFANA_PLUGINS_DIR, panel, 'dist/plugin.json')
         if os.path.exists(panel_path):
             with open(panel_path, 'r') as f:
                 panel_params = json.loads(f.read())
@@ -257,13 +257,13 @@ def rename_panels():
                     print 'skipped (panel already has the correct name)'
                     continue
                 print '%r' % (panel_params['id'],)
-                if os.path.isdir(os.path.join(GRAFANA_PLUGINS_DR, panel_params['id'])):
+                if os.path.isdir(os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id'])):
                     try:
-                        shutil.rmtree(os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']))
+                        shutil.rmtree(os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']))
                     except Exception as err:
-                        print '  * Failed to remove %s: %s' % (os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']), err)
+                        print '   * Failed to remove %s: %s' % (os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']), err)
                         continue
-                os.rename(os.path.join(GRAFANA_PLUGINS_DR, panel), os.path.join(GRAFANA_PLUGINS_DR, panel_params['id']))
+                os.rename(os.path.join(GRAFANA_PLUGINS_DIR, panel), os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']))
         else:
             print 'skipped (%r file does not exist)' % (panel_path,)
 
@@ -273,11 +273,11 @@ def copy_apps():
         source_dir = '/usr/share/percona-dashboards/' + app
         dest_dir = '/var/lib/grafana/plugins/' + app
         if os.path.isdir(source_dir):
-            print ' * Copying %r' % (app,)
+            print '  * Copying %r' % (app,)
             try:
                 shutil.rmtree(dest_dir, False)
             except Exception as err:
-                print '  * Failed to remove %s: %s' % (dest_dir, err)
+                print '   * Failed to remove %s: %s' % (dest_dir, err)
             shutil.copytree(source_dir, dest_dir)
 
 
@@ -433,8 +433,8 @@ def set_home_dashboard(api_key):
 
     # Copy pmm logo to the grafana directory
     if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
-        print ' * Copying %r to grafana directory %r' % (LOGO_FILE, GRAFANA_IMG_DR)
-        shutil.copy(LOGO_FILE, GRAFANA_IMG_DR)
+        print ' * Copying %r to grafana directory %r' % (LOGO_FILE, GRAFANA_IMG_DIR)
+        shutil.copy(LOGO_FILE, GRAFANA_IMG_DIR)
 
     # # Set home dashboard.
     # cur.execute("REPLACE INTO star (user_id, dashboard_id) "
