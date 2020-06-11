@@ -22,16 +22,16 @@ build-password-page: build-password-page-docker build-password-page-ami build-pa
 
 build-password-page-docker:
 	cd password-page/ \
-	&& npm ci \
+	&& npm install \
 	&& npm run build:docker
 
 build-password-page-ami:
 	cd password-page/ \
-	&& npm ci \
+	&& npm install \
 	&& npm run build:ami
 
 build-password-page-ovf:
 	cd password-page/ \
-	&& npm ci \
+	&& npm install \
 	&& npm run build:ovf
 
