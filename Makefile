@@ -1,5 +1,5 @@
 init:
-    git config core.hooksPath .githooks
+	git config core.hooksPath .githooks
 	docker run -d -p 443:443 --name pmm-server-tmp percona/pmm-server:1.7.0
 	docker exec -it pmm-server-tmp sed -i'' -e 's^/pmm/^/laboratory/^' /etc/yum.repos.d/pmm.repo
 	docker exec -it pmm-server-tmp yum-config-manager --enable percona-testing-x86_64
