@@ -18,7 +18,7 @@ rm:
 	docker rm -f pmm-server-tmp
 
 
-build-password-page: build-password-page-docker build-password-page-ami build-password-page-ovf
+build-password-page: build-password-page-ami build-password-page-ovf
 
 build-password-page-docker:
 	cd password-page/ \
