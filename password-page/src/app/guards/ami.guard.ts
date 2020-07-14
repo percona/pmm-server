@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { AppService } from '../app.service';
 import { environment } from '../../environments/environment';
 
+@Injectable()
 export class AmiGuard implements CanActivate {
     INSTALLATION_TYPE = 'ami';
 

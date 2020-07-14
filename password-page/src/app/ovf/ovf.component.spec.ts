@@ -1,16 +1,17 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
 
-import { AppOvfComponent } from './ovf.component';
+import { AppOvfComponent } from "./ovf.component";
 
-describe('AddOvfComponent', () => {
+describe("AddOvfComponent", () => {
   let component: AppOvfComponent;
   let fixture: ComponentFixture<AppOvfComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AppOvfComponent ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule],
+      declarations: [AppOvfComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +20,7 @@ describe('AddOvfComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

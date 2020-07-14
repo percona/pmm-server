@@ -1,16 +1,27 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from "@angular/router/testing";
+import { HttpClient, HttpHandler } from "@angular/common/http";
+import { FormsModule } from "@angular/forms";
 
-import { AppInstanceIdComponent } from './instance-id.component';
+import { AppInstanceIdComponent } from "./instance-id.component";
+import { AppService } from "../../app.service";
 
-describe('AppInstanceIdComponent', () => {
+describe("AppInstanceIdComponent", () => {
   let component: AppInstanceIdComponent;
   let fixture: ComponentFixture<AppInstanceIdComponent>;
 
   beforeEach(async(() => {
+    const checkUserData = () => Promise.resolve(true);
+
     TestBed.configureTestingModule({
-      declarations: [ AppInstanceIdComponent ]
-    })
-    .compileComponents();
+      imports: [FormsModule, RouterTestingModule],
+      declarations: [AppInstanceIdComponent],
+      providers: [
+        HttpClient,
+        HttpHandler,
+        { provide: AppService, useValue: { checkUserData } },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +30,7 @@ describe('AppInstanceIdComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
