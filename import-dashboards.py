@@ -420,16 +420,22 @@ def set_home_dashboard(api_key):
     # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
     r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
-    print ' * "home" dashboard: %r %r' % (r.status_code, r.content)
+    print ' * PMM "home" dashboard: %r %r' % (r.status_code, r.content)
     if r.status_code != httplib.OK:
         # TODO sys.exit(-1)
         return
 
-    res = json.loads(r.content)
+    # Get parameters of current home dashboard
+    h = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
 
-    data = json.dumps({'homeDashboardId': res['dashboard']['id']})
-    r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
-    print ' * Preferences set: %r %r' % (r.status_code, r.content)
+    # Check if any dashboard has set as the home dashboard
+    if not 'redirectUri' in json.loads(h.content):
+        res = json.loads(r.content)
+        data = json.dumps({'homeDashboardId': res['dashboard']['id']})
+        r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
+        print ' * Preferences set: %r %r' % (r.status_code, r.content)
+    else:
+        print ' * "home" dashboard has already set'
 
     # Copy pmm logo to the grafana directory
     if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
