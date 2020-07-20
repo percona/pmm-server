@@ -1,5 +1,3 @@
-et_ho
-/set_ho
 !/usr/bin/env python
 
 # Grafana dashboard importer script.
