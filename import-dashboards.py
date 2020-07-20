@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+et_ho
+/set_ho
+!/usr/bin/env python
 
 # Grafana dashboard importer script.
 
@@ -429,6 +431,8 @@ def set_home_dashboard(api_key):
     homeDashboard = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
 
     # Check if any dashboard has set as the home dashboard
+    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned. 
+    # Next snippet sets pmm home dashboard as default grafana home dashboad.
     if not 'redirectUri' in homeDashboard.content:
         res = json.loads(r.content)
         data = json.dumps({'homeDashboardId': res['dashboard']['id']})
