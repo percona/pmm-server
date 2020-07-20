@@ -426,10 +426,10 @@ def set_home_dashboard(api_key):
         return
 
     # Get parameters of current home dashboard
-    h = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
+    homeDashboard = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
 
     # Check if any dashboard has set as the home dashboard
-    if not 'redirectUri' in json.loads(h.content):
+    if not 'redirectUri' in homeDashboard.content:
         res = json.loads(r.content)
         data = json.dumps({'homeDashboardId': res['dashboard']['id']})
         r = requests.put('%s/api/user/preferences' % (HOST,), data=data, headers=grafana_headers(api_key))
