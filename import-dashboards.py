@@ -229,7 +229,7 @@ def add_datasources(api_key):
             'name': 'PTSummary',
             'type': 'pmm-pt-summary-datasource',
             'url': '',
-            'access': '',
+            'access': 'proxy',
             'basicAuth': False,
             'jsonData': {},
             'password': '',
