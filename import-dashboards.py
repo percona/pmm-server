@@ -223,6 +223,25 @@ def add_datasources(api_key):
             print ' * Cannot add ClickHouse Data Source'
             sys.exit(-1)
 
+    if 'PTSummary' not in ds:
+        print ' * PTSummary Data Source'
+        data = json.dumps({
+            'name': 'PTSummary',
+            'type': 'pmm-pt-summary-datasource',
+            'url': '',
+            'access': 'proxy',
+            'basicAuth': False,
+            'jsonData': {},
+            'password': '',
+            'database': '',
+            'user': ''
+        })
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != httplib.OK:
+            print ' * Cannot add PTSummary Data Source'
+            sys.exit(-1)
+
 
 def add_panels():
     print ' * Adding panels'
