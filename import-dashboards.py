@@ -242,6 +242,25 @@ def add_datasources(api_key):
             print ' * Cannot add PTSummary Data Source'
             sys.exit(-1)
 
+    if 'Prometheus AlertManager' not in ds:
+        print ' * Prometheus AlertManager Data Source'
+        data = json.dumps({
+            'name': 'Prometheus AlertManager',
+            'type': 'camptocamp-prometheus-alertmanager-datasource',
+            'url': 'http://localhost/alertmanager',
+            'access': 'proxy',
+            'basicAuth': False,
+            'jsonData': {'keepCookies': ['grafana_session']},
+            'password': '',
+            'database': '',
+            'user': ''
+        })
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != httplib.OK:
+            print ' * Cannot add Prometheus AlertManager Data Source'
+            sys.exit(-1)
+
 
 def add_panels():
     print ' * Adding panels'
