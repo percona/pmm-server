@@ -250,7 +250,7 @@ def add_datasources(api_key):
             'url': 'http://localhost:9093/alertmanager/',
             'access': 'proxy',
             'basicAuth': False,
-            'jsonData': {'keepCookies': ['grafana_session']},
+            'jsonData': {'keepCookies': []},
             'password': '',
             'database': '',
             'user': ''
