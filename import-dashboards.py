@@ -247,7 +247,7 @@ def add_datasources(api_key):
         data = json.dumps({
             'name': 'Prometheus AlertManager',
             'type': 'camptocamp-prometheus-alertmanager-datasource',
-            'url': 'http://localhost/alertmanager',
+            'url': 'http://localhost:9093/alertmanager/',
             'access': 'proxy',
             'basicAuth': False,
             'jsonData': {'keepCookies': ['grafana_session']},
