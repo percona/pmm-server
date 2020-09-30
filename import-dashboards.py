@@ -276,7 +276,13 @@ def add_panels():
         for file in files_list:
             with zipfile.ZipFile(os.path.join(GRAFANA_PLUGINS_DIR, file), 'r') as zip_ref:
                 print '    * Unzip %r' % (file,)
-                zip_ref.extractall(GRAFANA_PLUGINS_DIR)
+                for info in zip_ref.infolist():
+                    extracted_path = zip_ref.extract(info, GRAFANA_PLUGINS_DIR)
+                    # file permissions are not preserved by ZipFile
+                    # https://bugs.python.org/issue15795
+                    unix_attributes = info.external_attr >> 16
+                    if unix_attributes:
+                        os.chmod(extracted_path, unix_attributes)
             os.remove(os.path.join(GRAFANA_PLUGINS_DIR, file))
         rename_panels()
 
