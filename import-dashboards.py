@@ -278,6 +278,8 @@ def add_panels():
                 print '    * Unzip %r' % (file,)
                 for info in zip_ref.infolist():
                     extracted_path = zip_ref.extract(info, GRAFANA_PLUGINS_DIR)
+                    # file permissions are not preserved by ZipFile
+                    # https://bugs.python.org/issue15795
                     unix_attributes = info.external_attr >> 16
                     if unix_attributes:
                         os.chmod(extracted_path, unix_attributes)
