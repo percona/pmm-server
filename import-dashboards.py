@@ -164,6 +164,27 @@ def add_datasources(api_key):
     r = requests.get('%s/api/datasources' % (HOST,), headers=grafana_headers(api_key))
     print ' * Datasources: %r %r' % (r.status_code, r.content)
     ds = [x['name'] for x in json.loads(r.content)]
+    if 'Metrics' not in ds:   # https://jira.percona.com/browse/PMM-6518
+        print ' * Adding Metrics Data Source'
+        data = json.dumps({'name': 'Metrics', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != httplib.OK:
+            print ' * Cannot add Metrics Data Source'
+            sys.exit(-1)
+    else:
+        print ' * Modifing Metrics Data Source'
+        r = requests.get('%s/api/datasources/name/Prometheus' % (HOST,), headers=grafana_headers(api_key))
+        data = json.loads(r.content)
+        data['jsonData']['timeInterval']='1s'
+        data['jsonData']['httpMethod']='POST'
+        data['readOnly'] = False
+        r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
+        print r.status_code, r.content
+        if r.status_code != 200:
+            print ' * Cannot modify Metrics Data Source'
+            sys.exit(-1)
+
     if 'Prometheus' not in ds:
         print ' * Adding Prometheus Data Source'
         data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
