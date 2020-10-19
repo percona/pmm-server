@@ -160,18 +160,31 @@ def delete_api_key(db_key, upgrade):
     con.close()
 
 
-def add_datasources(api_key):
-    r = requests.get('%s/api/datasources' % (HOST,), headers=grafana_headers(api_key))
-    print ' * Datasources: %r %r' % (r.status_code, r.content)
-    ds = [x['name'] for x in json.loads(r.content)]
+def _add_metrics_datasource(api_key, ds):
+    if 'Metrics' not in ds:   # https://jira.percona.com/browse/PMM-6518
+        print ' * Adding Metrics Data Source'
+        data = json.dumps({'name': 'Metrics', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
+        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
+    else:
+        print ' * Modifing Metrics Data Source'
+        r = requests.get('%s/api/datasources/name/Metrics' % (HOST,), headers=grafana_headers(api_key))
+        data = json.loads(r.content)
+        data['jsonData']['timeInterval']='1s'
+        data['jsonData']['httpMethod']='POST'
+        data['readOnly'] = False
+        data['isDefault'] = True
+        r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
+    print r.status_code, r.content
+    if r.status_code != httplib.OK:
+        print ' * Cannot process Metrics Data Source'
+        sys.exit(-1)
+
+
+def _add_prometheus_datasource(api_key, ds):
     if 'Prometheus' not in ds:
         print ' * Adding Prometheus Data Source'
-        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
+        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': False})
         r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add Prometheus Data Source'
-            sys.exit(-1)
     else:
         print ' * Modifing Prometheus Data Source'
         r = requests.get('%s/api/datasources/name/Prometheus' % (HOST,), headers=grafana_headers(api_key))
@@ -179,12 +192,15 @@ def add_datasources(api_key):
         data['jsonData']['timeInterval']='1s'
         data['jsonData']['httpMethod']='POST'
         data['readOnly'] = False
+        data['isDefault'] = False
         r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != 200:
-            print ' * Cannot modify Prometheus Data Source'
-            sys.exit(-1)
+    print r.status_code, r.content
+    if r.status_code != httplib.OK:
+        print ' * Cannot process Prometheus Data Source'
+        sys.exit(-1)
 
+
+def _add_postgresql_datasource(api_key, ds):
     if 'PostgreSQL' not in ds:
         print ' * PostgreSQL Data Source'
         data = json.dumps({
@@ -204,6 +220,8 @@ def add_datasources(api_key):
             print ' * Cannot add PostgreSQL Data Source'
             sys.exit(-1)
 
+
+def _add_clickhouse_datasource(api_key, ds):
     if 'ClickHouse' not in ds:
         print ' * ClickHouse Data Source'
         data = json.dumps({
@@ -223,6 +241,8 @@ def add_datasources(api_key):
             print ' * Cannot add ClickHouse Data Source'
             sys.exit(-1)
 
+
+def _add_ptsummary_datasource(api_key, ds):
     if 'PTSummary' not in ds:
         print ' * PTSummary Data Source'
         data = json.dumps({
@@ -242,6 +262,8 @@ def add_datasources(api_key):
             print ' * Cannot add PTSummary Data Source'
             sys.exit(-1)
 
+
+def _add_prometheus_alertmanager_datasource(api_key, ds):
     if 'Prometheus AlertManager' not in ds:
         print ' * Prometheus AlertManager Data Source'
         data = json.dumps({
@@ -260,6 +282,18 @@ def add_datasources(api_key):
         if r.status_code != httplib.OK:
             print ' * Cannot add Prometheus AlertManager Data Source'
             sys.exit(-1)
+
+
+def add_datasources(api_key):
+    r = requests.get('%s/api/datasources' % (HOST,), headers=grafana_headers(api_key))
+    print ' * Datasources: %r %r' % (r.status_code, r.content)
+    ds = [x['name'] for x in json.loads(r.content)]
+    _add_metrics_datasource(api_key, ds)
+    _add_prometheus_datasource(api_key, ds)
+    _add_postgresql_datasource(api_key, ds)
+    _add_clickhouse_datasource(api_key, ds)
+    _add_ptsummary_datasource(api_key, ds)
+    _add_prometheus_alertmanager_datasource(api_key, ds)
 
 
 def add_panels():
