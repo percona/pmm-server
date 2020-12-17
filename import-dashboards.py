@@ -35,6 +35,7 @@ HOST                       = 'http://127.0.0.1:3000'
 LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR                       = str(datetime.date.today())[:4]
+DBAAS                      = os.getenv('PERCONA_TEST_DBAAS')
 
 CONTENT                    = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
@@ -529,6 +530,20 @@ def set_home_dashboard(api_key):
     #             "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
 
 
+def remove_dbaas_dashboard(api_key):
+    if DBAAS:
+        print ' * DBaaS is enabled'
+        return
+
+    print ' * DBaaS is disabled'
+    r = requests.get('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
+    if r.status_code == httplib.OK:
+        print '   * Removing DBaaS dashboard'
+        r = requests.delete('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
+        if r.status_code != 200:
+            print r.status_code, r.content
+
+
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
     upgrade = check_dashboards_version()
@@ -552,6 +567,7 @@ def main():
     get_folders(api_key)
     import_apps(api_key)
     move_into_folders()
+    remove_dbaas_dashboard(api_key)
 
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
