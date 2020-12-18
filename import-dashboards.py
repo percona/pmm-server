@@ -35,7 +35,7 @@ HOST                       = 'http://127.0.0.1:3000'
 LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR                       = str(datetime.date.today())[:4]
-DBAAS                      = os.getenv('PERCONA_TEST_DBAAS')
+DBAAS                      = os.getenv('PERCONA_TEST_DBAAS') is not None
 
 CONTENT                    = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
@@ -540,7 +540,7 @@ def remove_dbaas_dashboard(api_key):
     if r.status_code == httplib.OK:
         print '   * Removing DBaaS dashboard'
         r = requests.delete('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
-        if r.status_code != 200:
+        if r.status_code != httplib.OK:
             print r.status_code, r.content
 
 
