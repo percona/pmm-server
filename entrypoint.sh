@@ -7,3 +7,5 @@ pmm-managed-init
 
 # Start supervisor in foreground
 exec supervisord -n -c /etc/supervisord.conf
+
+exec /opt/import-dbass-dashboard.py
