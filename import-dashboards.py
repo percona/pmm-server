@@ -561,7 +561,7 @@ def check_active_process(processname):
     proccount = ps.count(processname)
 
     if proccount > 0:
-        print'%s service is running' % (processname,)
+        print' * %s service is running' % (processname,)
         return 1
 
 
@@ -571,7 +571,7 @@ def main():
         # wait till grafana will be run
         while not check_active_process(GRAFANA_PROCESS):
             time.sleep(1)
-            print'no %s service has run yet' % (GRAFANA_PROCESS,)
+            print' * no %s service has run yet' % (GRAFANA_PROCESS,)
         # modify database when Grafana is stopped to avoid a data race
         stop_grafana()
         name, api_key, db_key = get_api_key()
