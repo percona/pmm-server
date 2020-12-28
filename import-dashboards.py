@@ -35,7 +35,7 @@ HOST                       = 'http://127.0.0.1:3000'
 LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR                       = str(datetime.date.today())[:4]
-DBAAS                      = os.getenv('PERCONA_TEST_DBAAS') is not None
+DBAAS                      = os.getenv('PERCONA_TEST_DBAAS', default = None)
 GRAFANA_PROCESS            = 'grafana-server'
 
 CONTENT                    = '''<center>
@@ -532,7 +532,7 @@ def set_home_dashboard(api_key):
 
 
 def dbaas_dashboard(api_key):
-    if not DBAAS:
+    if not DBAAS or DBAAS.lower() in ('0','false','f'):
         print ' * DBaaS is disabled'
         r = requests.get('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
         if r.status_code == httplib.OK:
@@ -553,7 +553,7 @@ def dbaas_dashboard(api_key):
         if r.status_code != httplib.OK:
             print r.status_code, r.content
     else:
-       print '   * DBaaS dashboard has already been added'
+        print '   * DBaaS dashboard has already been added'
 
 
 def check_active_process(processname):
