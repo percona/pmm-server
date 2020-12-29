@@ -20,17 +20,16 @@ import httplib
 import fnmatch
 import re
 import zipfile
+import argparse
 
 import requests
 
-GRAFANA_DB_DIR             = sys.argv[1] if (len(sys.argv) > 1 and sys.argv[1] != '-d') else '/srv/grafana'
 GRAFANA_IMG_DIR            = '/usr/share/grafana/public/img/'
 GRAFANA_PLUGINS_DIR        = '/var/lib/grafana/plugins/'
 GRAFANA_SOURCE_PLUGINS_DIR = '/usr/share/percona-dashboards/panels/'
 SCRIPT_DIR                 = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR              = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE           = SCRIPT_DIR + '/VERSION'
-OLD_VERSION_FILE           = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST                       = 'http://127.0.0.1:3000'
 LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
@@ -532,7 +531,7 @@ def set_home_dashboard(api_key):
 
 
 def dbaas_dashboard(api_key):
-    if not DBAAS or DBAAS.lower() in ('0','false','f'):
+    if DBAAS is None or DBAAS.lower() in ('0','false','f'):
         print ' * DBaaS is disabled'
         r = requests.get('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
         if r.status_code == httplib.OK:
@@ -562,16 +561,36 @@ def check_active_process(processname):
 
     if proccount > 0:
         print' * %s service is running' % (processname,)
-        return 1
+        return True
+
+
+def args_parser():
+   global GRAFANA_DB_DIR
+   global OLD_VERSION_FILE
+
+   parser = argparse.ArgumentParser()
+   parser.add_argument("grafana_db_dir", type=str, nargs='?', default="/srv/grafana", help="Set Grafana DB folder")
+   parser.add_argument("-d", "--dbaas", required=False, help="Perform only operation of add/remove dbass dashboard", action="store_true")
+   args = parser.parse_args()
+
+   GRAFANA_DB_DIR = args.grafana_db_dir
+   OLD_VERSION_FILE = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
+
+   return args.dbaas
 
 
 def main():
     # Add/Remove DBaaS dashboard PMM-7085
-    if (len(sys.argv) > 1 and sys.argv[1] == '-d'):
+    if args_parser():
+        waitingperiod = float(0)
         # wait till grafana will be run
         while not check_active_process(GRAFANA_PROCESS):
             time.sleep(1)
-            print' * no %s service has run yet' % (GRAFANA_PROCESS,)
+            print ' * no %s service has run yet' % (GRAFANA_PROCESS,)
+            waitingperiod += 1
+            if (waitingperiod / 30).is_integer():
+                print '   * %s has not run over %s seconds ' % (GRAFANA_PROCESS, waitingperiod)
+
         # modify database when Grafana is stopped to avoid a data race
         stop_grafana()
         name, api_key, db_key = get_api_key()
