@@ -574,6 +574,7 @@ def args_parser():
 
 def main():
     # Add/Remove DBaaS dashboard PMM-7085
+    # TODO: remove this section when DBaaS is ready to deploy
     is_dbaas, grafana_db_dir = args_parser()
     if is_dbaas:
         # wait if dashboard-upgrade process is active
