@@ -35,7 +35,8 @@ LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.sv
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR                       = str(datetime.date.today())[:4]
 DBAAS                      = os.getenv('PERCONA_TEST_DBAAS', default = None)
-GRAFANA_PROCESS            = 'grafana-server'
+GRAFANA_PROCESS            = 'grafana'
+DASHBOARD_UPGRADE_PROCESS  = 'dashboard-upgrade'
 
 CONTENT                    = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
@@ -556,18 +557,17 @@ def dbaas_dashboard(api_key):
 
 
 def check_active_process(processname):
-    ps = os.popen("ps -Af").read()
-    proccount = ps.count(processname)
+    process = subprocess.Popen(['supervisorctl', 'status ' + processname], stdout=subprocess.PIPE)
+    status = process.communicate()[0].split()[1]
 
-    if proccount > 0:
-        print' * %s service is running' % (processname,)
+    if status == "RUNNING":
         return True
 
 
 def args_parser():
    parser = argparse.ArgumentParser()
    parser.add_argument("grafana_db_dir", type=str, nargs='?', default="/srv/grafana", help="Set Grafana DB folder")
-   parser.add_argument("-d", "--dbaas", required=False, help="Perform only operation of add/remove dbass dashboard", action="store_true")
+   parser.add_argument("--dbaas", required=False, help="Perform only operation of add/remove dbass dashboard", action="store_true")
    args = parser.parse_args()
    return (args.dbaas, args.grafana_db_dir)
 
@@ -576,14 +576,23 @@ def main():
     # Add/Remove DBaaS dashboard PMM-7085
     is_dbaas, grafana_db_dir = args_parser()
     if is_dbaas:
-        waitingperiod = float(0)
+        # wait if dashboard-upgrade process is active
+        wait_for = float(0)
+        while check_active_process(DASHBOARD_UPGRADE_PROCESS):
+            time.sleep(1)
+            print ' * %s service is still active' % (DASHBOARD_UPGRADE_PROCESS,)
+            wait_for += 1
+            if (wait_for / 30).is_integer():
+                print '   * %s has run over %s seconds ' % (DASHBOARD_UPGRADE_PROCESS, wait_for)
+
         # wait till grafana will be run
+        wait_for = float(0)
         while not check_active_process(GRAFANA_PROCESS):
             time.sleep(1)
             print ' * no %s service has run yet' % (GRAFANA_PROCESS,)
-            waitingperiod += 1
-            if (waitingperiod / 30).is_integer():
-                print '   * %s has not run over %s seconds ' % (GRAFANA_PROCESS, waitingperiod)
+            wait_for += 1
+            if (wait_for / 30).is_integer():
+                print '   * %s has not run over %s seconds ' % (GRAFANA_PROCESS, wait_for)
 
         # modify database when Grafana is stopped to avoid a data race
         stop_grafana()
