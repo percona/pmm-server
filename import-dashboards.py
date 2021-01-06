@@ -556,6 +556,7 @@ def dbaas_dashboard(api_key):
         print '   * DBaaS dashboard has already been added'
 
 
+# TODO: remove this function when DBaaS is ready to deploy
 def check_active_process(processname):
     process = subprocess.Popen(['supervisorctl', 'status ' + processname], stdout=subprocess.PIPE)
     status = process.communicate()[0].split()[1]
@@ -567,15 +568,16 @@ def check_active_process(processname):
 def args_parser():
    parser = argparse.ArgumentParser()
    parser.add_argument("grafana_db_dir", type=str, nargs='?', default="/srv/grafana", help="Set Grafana DB folder")
+   # TODO: remove argument --dbass when DBaaS is ready to deploy
    parser.add_argument("--dbaas", required=False, help="Perform only operation of add/remove dbass dashboard", action="store_true")
    args = parser.parse_args()
    return (args.dbaas, args.grafana_db_dir)
 
 
 def main():
+    is_dbaas, grafana_db_dir = args_parser()
     # Add/Remove DBaaS dashboard PMM-7085
     # TODO: remove this section when DBaaS is ready to deploy
-    is_dbaas, grafana_db_dir = args_parser()
     if is_dbaas:
         # wait if dashboard-upgrade process is active
         wait_for = float(0)
