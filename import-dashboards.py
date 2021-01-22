@@ -20,23 +20,21 @@ import httplib
 import fnmatch
 import re
 import zipfile
-import argparse
 
 import requests
 
+GRAFANA_DB_DIR             = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
 GRAFANA_IMG_DIR            = '/usr/share/grafana/public/img/'
 GRAFANA_PLUGINS_DIR        = '/var/lib/grafana/plugins/'
 GRAFANA_SOURCE_PLUGINS_DIR = '/usr/share/percona-dashboards/panels/'
 SCRIPT_DIR                 = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR              = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE           = SCRIPT_DIR + '/VERSION'
+OLD_VERSION_FILE           = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST                       = 'http://127.0.0.1:3000'
 LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR                       = str(datetime.date.today())[:4]
-DBAAS                      = os.getenv('PERCONA_TEST_DBAAS', default = None)
-GRAFANA_PROCESS            = 'grafana'
-DASHBOARD_UPGRADE_PROCESS  = 'dashboard-upgrade'
 
 CONTENT                    = '''<center>
 <p>MySQL and InnoDB are trademarks of Oracle Corp. Proudly running Percona Server. Copyright (c) 2006-'''+YEAR+''' Percona LLC.</p>
@@ -83,16 +81,16 @@ def get_api_key():
     return (name, api_key, db_key)
 
 
-def check_dashboards_version(grafana_db_dir):
+def check_dashboards_version():
     upgrade = False
 
     with open(NEW_VERSION_FILE, 'r') as f:
         new_ver = f.read().strip()
 
     old_ver = 'N/A'
-    if os.path.exists(grafana_db_dir + '/PERCONA_DASHBOARDS_VERSION'):
+    if os.path.exists(OLD_VERSION_FILE):
         upgrade = True
-        with open(grafana_db_dir + '/PERCONA_DASHBOARDS_VERSION', 'r') as f:
+        with open(OLD_VERSION_FILE, 'r') as f:
             old_ver = f.read().strip()
             print ' * Dashboards upgrade from version %s to %s.' % (old_ver, new_ver)
 
@@ -141,8 +139,8 @@ def wait_for_grafana_start():
     sys.exit(-1)
 
 
-def add_api_key(name, db_key, grafana_db_dir):
-    con = sqlite3.connect(grafana_db_dir + '/grafana.db', isolation_level="EXCLUSIVE")
+def add_api_key(name, db_key):
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
@@ -152,8 +150,8 @@ def add_api_key(name, db_key, grafana_db_dir):
     con.close()
 
 
-def delete_api_key(db_key, grafana_db_dir):
-    con = sqlite3.connect(grafana_db_dir + '/grafana.db', isolation_level="EXCLUSIVE")
+def delete_api_key(db_key, upgrade):
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
     cur = con.cursor()
 
     cur.execute("DELETE FROM api_key WHERE key = ?", (db_key,))
@@ -400,9 +398,9 @@ def add_folders(api_key):
         SET_OF_TAGS[folder] = data['id']
 
 
-def move_into_folders(grafana_db_dir):
+def move_into_folders():
     print ' * Moving dashboards into folders'
-    con = sqlite3.connect(grafana_db_dir + '/grafana.db', isolation_level='EXCLUSIVE')
+    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level='EXCLUSIVE')
     cur = con.cursor()
     cur.execute('SELECT data FROM dashboard WHERE is_folder = 0')
     for row in cur.fetchall():
@@ -531,95 +529,9 @@ def set_home_dashboard(api_key):
     #             "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
 
 
-def dbaas_dashboard(api_key):
-    if DBAAS is None or DBAAS.lower() in ('0','false','f'):
-        print ' * DBaaS is disabled'
-        r = requests.get('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
-        if r.status_code == httplib.OK:
-            print '   * Removing DBaaS dashboard'
-            r = requests.delete('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
-            if r.status_code != httplib.OK:
-                print r.status_code, r.content
-        return
-
-    print ' * DBaaS is enabled'
-    r = requests.get('%s/api/dashboards/uid/pmm-dbaas' % (HOST,), headers=grafana_headers(api_key))
-    if r.status_code != httplib.OK:
-        print '   * Adding DBaaS dashboard'
-        with open('/usr/share/percona-dashboards/pmm-app/dist/dashboards/pmm-dbaas.json', 'r') as dashboard_file:
-            dashboard = json.loads(dashboard_file.read())
-        data = json.dumps({'dashboard': dashboard})
-        r = requests.post('%s/api/dashboards/import' % (HOST,), data=data, headers=grafana_headers(api_key))
-        if r.status_code != httplib.OK:
-            print r.status_code, r.content
-    else:
-        print '   * DBaaS dashboard has already been added'
-
-
-# TODO: remove this function when DBaaS is ready to deploy
-def check_active_process(processname):
-    process = subprocess.Popen(['supervisorctl', 'status ' + processname], stdout=subprocess.PIPE)
-    status = process.communicate()[0].split()[1]
-
-    if status == "RUNNING":
-        return True
-
-
-def args_parser():
-   parser = argparse.ArgumentParser()
-   parser.add_argument("grafana_db_dir", type=str, nargs='?', default="/srv/grafana", help="Set Grafana DB folder")
-   # TODO: remove argument --dbass when DBaaS is ready to deploy
-   parser.add_argument("--dbaas", required=False, help="Perform only operation of add/remove dbass dashboard", action="store_true")
-   args = parser.parse_args()
-   return (args.dbaas, args.grafana_db_dir)
-
-
 def main():
-    is_dbaas, grafana_db_dir = args_parser()
-    # Add/Remove DBaaS dashboard PMM-7085
-    # TODO: remove this section when DBaaS is ready to deploy
-    if is_dbaas:
-        # wait if dashboard-upgrade process is active
-        wait_for = float(0)
-        while check_active_process(DASHBOARD_UPGRADE_PROCESS):
-            time.sleep(1)
-            print ' * %s service is still active' % (DASHBOARD_UPGRADE_PROCESS,)
-            wait_for += 1
-            if (wait_for / 30).is_integer():
-                print '   * %s has run over %s seconds ' % (DASHBOARD_UPGRADE_PROCESS, wait_for)
-
-        # wait till grafana will be run
-        wait_for = float(0)
-        while not check_active_process(GRAFANA_PROCESS):
-            time.sleep(1)
-            print ' * no %s service has run yet' % (GRAFANA_PROCESS,)
-            wait_for += 1
-            if (wait_for / 30).is_integer():
-                print '   * %s has not run over %s seconds ' % (GRAFANA_PROCESS, wait_for)
-
-        # modify database when Grafana is stopped to avoid a data race
-        stop_grafana()
-        name, api_key, db_key = get_api_key()
-
-        try:
-            add_api_key(name, db_key, grafana_db_dir)
-        finally:
-            start_grafana()
-
-        wait_for_grafana_start()
-
-        dbaas_dashboard(api_key)
-
-        # modify database when Grafana is stopped to avoid a data race
-        stop_grafana()
-        try:
-            delete_api_key(db_key, grafana_db_dir)
-        finally:
-            start_grafana()
-        return
-
-    print "Grafana database directory: %s" % (grafana_db_dir,)
-    upgrade = check_dashboards_version(grafana_db_dir)
+    print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
+    upgrade = check_dashboards_version()
 
     name, api_key, db_key = get_api_key()
 
@@ -629,7 +541,7 @@ def main():
       #  add_demo_footer()
         add_panels()
         copy_apps()
-        add_api_key(name, db_key, grafana_db_dir)
+        add_api_key(name, db_key)
     finally:
         start_grafana()
 
@@ -639,8 +551,7 @@ def main():
     add_folders(api_key)
     get_folders(api_key)
     import_apps(api_key)
-    move_into_folders(grafana_db_dir)
-    dbaas_dashboard(api_key)
+    move_into_folders()
 
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
@@ -653,11 +564,11 @@ def main():
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
     try:
-        delete_api_key(db_key, grafana_db_dir)
+        delete_api_key(db_key, upgrade)
     finally:
         start_grafana()
 
-    shutil.copyfile(NEW_VERSION_FILE, grafana_db_dir + '/PERCONA_DASHBOARDS_VERSION')
+    shutil.copyfile(NEW_VERSION_FILE, OLD_VERSION_FILE)
 
 
 if __name__ == '__main__':
