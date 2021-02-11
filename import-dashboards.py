@@ -385,6 +385,7 @@ def move_into_folders(api_key):
                 tag = item['tags'][0]
             except:
                 continue
+
             if tag == 'Percona':
                 try:
                     tag = item['tags'][1]
@@ -395,11 +396,13 @@ def move_into_folders(api_key):
             compare_tags  = [s for s in item['tags'] if compare_pattern.match(s)]
             ha_pattern = re.compile(r'^.*_HA$')
             ha_tags  = [s for s in item['tags'] if ha_pattern.match(s)]
+
             if len(compare_tags) > 0:
                 match_compare = re.match('(MySQL|PostgreSQL|MongoDB|OS)', compare_tags[0]);
                 if match_compare:
                     print '     * Compare dashboard is detected for the service %s' % match_compare.group(0);
                     tag = match_compare.group(0);
+
             if len(ha_tags) > 0:
                 match_ha = re.match('(MySQL|PostgreSQL|MongoDB)', ha_tags[0]);
                 if match_ha:
