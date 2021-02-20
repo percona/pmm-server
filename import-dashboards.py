@@ -180,26 +180,6 @@ def _add_metrics_datasource(api_key, ds):
         sys.exit(-1)
 
 
-def _add_prometheus_datasource(api_key, ds):
-    if 'Prometheus' not in ds:
-        print ' * Adding Prometheus Data Source'
-        data = json.dumps({'name': 'Prometheus', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': False})
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-    else:
-        print ' * Modifing Prometheus Data Source'
-        r = requests.get('%s/api/datasources/name/Prometheus' % (HOST,), headers=grafana_headers(api_key))
-        data = json.loads(r.content)
-        data['jsonData']['timeInterval']='1s'
-        data['jsonData']['httpMethod']='POST'
-        data['readOnly'] = False
-        data['isDefault'] = False
-        r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
-    print r.status_code, r.content
-    if r.status_code != httplib.OK:
-        print ' * Cannot process Prometheus Data Source'
-        sys.exit(-1)
-
-
 def _add_postgresql_datasource(api_key, ds):
     if 'PostgreSQL' not in ds:
         print ' * PostgreSQL Data Source'
@@ -289,7 +269,6 @@ def add_datasources(api_key):
     print ' * Datasources: %r %r' % (r.status_code, r.content)
     ds = [x['name'] for x in json.loads(r.content)]
     _add_metrics_datasource(api_key, ds)
-    _add_prometheus_datasource(api_key, ds)
     _add_postgresql_datasource(api_key, ds)
     _add_clickhouse_datasource(api_key, ds)
     _add_ptsummary_datasource(api_key, ds)
