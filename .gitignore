@@ -1,0 +1,12 @@
+.idea/
+.DS_Store
+
+rhel/BUILD
+rhel/BUILDROOT
+rhel/RPMS
+rhel/SRPMS
+!rhel/SOURCES/*
+!rhel/SOURCES/*-node_modules-*
+!rhel/SOURCES/*.service
+!rhel/SOURCES/*.patch
+!rhel/SOURCES/*.ico

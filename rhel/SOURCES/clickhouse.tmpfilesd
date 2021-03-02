@@ -1,0 +1,1 @@
+d /var/run/clickhouse 0755 clickhouse clickhouse -
