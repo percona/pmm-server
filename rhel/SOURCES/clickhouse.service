@@ -1,0 +1,23 @@
+[Unit]
+Description=An open-source column-oriented database management syste.
+Documentation=https://clickhouse.yandex/
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/clickhouse-server --daemon \
+  --config-file=/etc/clickhouse-server/config.xml \
+  --pidfile=/var/run/clickhouse-server/clickhouse-server.pid \
+  --log-file=/var/log/clickhouse-server/clickhouse-server.log \
+  --errorlog-file=/var/log/clickhouse-server/clickhouse-server.err.log
+User=clickhouse
+Group=clickhouse
+Restart=on-failure
+
+TimeoutStopSec=600
+LimitNOFILE=55555
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
+
