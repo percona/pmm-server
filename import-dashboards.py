@@ -24,7 +24,6 @@ import zipfile
 import requests
 
 GRAFANA_DB_DIR             = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
-GRAFANA_IMG_DIR            = '/usr/share/grafana/public/img/'
 GRAFANA_PLUGINS_DIR        = '/var/lib/grafana/plugins/'
 GRAFANA_SOURCE_PLUGINS_DIR = '/usr/share/percona-dashboards/panels/'
 SCRIPT_DIR                 = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +31,6 @@ DASHBOARD_DIR              = SCRIPT_DIR + '/dashboards/'
 NEW_VERSION_FILE           = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE           = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST                       = 'http://127.0.0.1:3000'
-LOGO_FILE                  = '/usr/share/pmm-server/landing-page/img/pmm-logo.svg'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
 YEAR                       = str(datetime.date.today())[:4]
 
@@ -516,17 +514,6 @@ def set_home_dashboard(api_key):
         print ' * Preferences set: %r %r' % (r.status_code, r.content)
     else:
         print ' * "home" dashboard has already set'
-
-    # Copy pmm logo to the grafana directory
-    if os.path.isfile(LOGO_FILE) and os.access(LOGO_FILE, os.R_OK):
-        print ' * Copying %r to grafana directory %r' % (LOGO_FILE, GRAFANA_IMG_DIR)
-        shutil.copy(LOGO_FILE, GRAFANA_IMG_DIR)
-
-    # # Set home dashboard.
-    # cur.execute("REPLACE INTO star (user_id, dashboard_id) "
-    #             "SELECT 1, id from dashboard WHERE slug='home'")
-    # cur.execute("REPLACE INTO preferences (id, org_id, user_id, version, home_dashboard_id, timezone, theme, created, updated) "
-    #             "SELECT 1, 1, 0, 0, id, '', '', datetime('now'), datetime('now') from dashboard WHERE slug='home'")
 
 
 def main():
