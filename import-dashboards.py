@@ -474,9 +474,9 @@ def add_demo_footer():
 
 
 def set_home_dashboard(api_key):
-    # Get dashboard information by dashboard slug (name) which is "home-dashboard" in our case
+    # Get dashboard information by dashboard slug (name) which is "environments-overview" in our case
     # This API is different from /api/dashboards/home which returns home dashboard
-    r = requests.get('%s/api/dashboards/db/home-dashboard' % (HOST,), headers=grafana_headers(api_key))
+    r = requests.get('%s/api/dashboards/db/environments-overview' % (HOST,), headers=grafana_headers(api_key))
     print ' * PMM "home" dashboard: %r %r' % (r.status_code, r.content)
     if r.status_code != httplib.OK:
         # TODO sys.exit(-1)
