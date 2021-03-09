@@ -11,7 +11,7 @@
 %global pmm_prefix      %{provider}.%{provider_tld}/%{project}/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         21
+%define release         22
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -56,9 +56,7 @@ install -d %{buildroot}%{_sysconfdir}/clickhouse-server
 install -d %{buildroot}%{_sysconfdir}/supervisord.d
 mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
 
-install -d %{buildroot}%{_datadir}/%{name}/landing-page/img
 cp -pav ./entrypoint.sh %{buildroot}%{_datadir}/%{name}/entrypoint.sh
-cp -pav ./landing-page/img/pmm-logo.svg %{buildroot}%{_datadir}/%{name}/landing-page/img/pmm-logo.svg
 cp -pav ./installation-wizard-page/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
 cp -pav ./%{pmm_repo}-%{pmm_commit}/api/swagger %{buildroot}%{_datadir}/%{name}/swagger
 install -d %{buildroot}%{_datadir}/%{name}/static
@@ -79,6 +77,9 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
+* Tue Mar  9 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.15.1-22
+- PMM-6017 merge pmm-server-packaging to pmm-server
+
 * Mon Jun 22 2020 Andrii Skomorokhov <andrii.sokmorokhov@percona.com> - 2.7.1-21
 - PMM-6153 PMM 2.7 nginx restarts when there is no outbound internet connectivity
 
