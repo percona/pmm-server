@@ -1,6 +1,7 @@
 .idea/
 .DS_Store
 
+installation-wizard/node_modules
 rhel/BUILD
 rhel/BUILDROOT
 rhel/RPMS

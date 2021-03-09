@@ -1,14 +1,10 @@
-%global provider	github
-%global provider_tld	com
-%global project		percona
-%global repo		pmm-server
-%global provider_prefix	%{provider}.%{provider_tld}/%{project}/%{repo}
-%global import_path	%{provider_prefix}
-%global commit	        0dbbc0ca255591000f0371012cd4e7515624a059
-%global shortcommit	%(c=%{commit}; echo ${c:0:7})
+%global repo            pmm-server
+%global provider        github.com/percona/%{repo}
+%global commit          0dbbc0ca255591000f0371012cd4e7515624a059
+%global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
 %global pmm_repo        pmm
-%global pmm_prefix      %{provider}.%{provider_tld}/%{project}/%{pmm_repo}
+%global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
 %define release         22
@@ -20,9 +16,9 @@ Release:	%{rpm_release}
 Summary:	Percona Monitoring and Management Server
 
 License:	AGPLv3
-URL:		https://%{provider_prefix}
-Source0:	https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-Source1:	https://%{pmm_prefix}/archive/%{pmm_commit}/%{pmm_repo}-%{pmm_shortcommit}.tar.gz
+URL:		https://%{provider}
+Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+Source1:	https://%{pmm_provider}/archive/%{pmm_commit}/%{pmm_repo}-%{pmm_shortcommit}.tar.gz
 
 BuildArch:	noarch
 Requires:	nginx ansible git bats
@@ -38,7 +34,7 @@ See the PMM docs for more information.
 
 
 %build
-make build-installation-wizard-page
+make build-installation-wizard
 
 %install
 tar -zxvf %SOURCE1
@@ -56,8 +52,9 @@ install -d %{buildroot}%{_sysconfdir}/clickhouse-server
 install -d %{buildroot}%{_sysconfdir}/supervisord.d
 mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
 
+install -d %{buildroot}%{_datadir}/%{name}
 cp -pav ./entrypoint.sh %{buildroot}%{_datadir}/%{name}/entrypoint.sh
-cp -pav ./installation-wizard-page/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
+cp -pav ./installation-wizard/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
 cp -pav ./%{pmm_repo}-%{pmm_commit}/api/swagger %{buildroot}%{_datadir}/%{name}/swagger
 install -d %{buildroot}%{_datadir}/%{name}/static
 cp -pav ./local-rss.xml %{buildroot}%{_datadir}/%{name}/static/local-rss.xml
