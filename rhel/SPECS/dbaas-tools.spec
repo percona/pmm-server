@@ -19,8 +19,8 @@ Release:        %{rpm_release}
 Summary:        A set of tools for Percona DBaaS
 License:        ASL 2.0
 URL:            https://github.com/kubernetes-sigs/aws-iam-authenticator
-# Git tag can be moved and pointed to different commit hash which will broke reproducibility of the build
-# As by using exact commit hash, we can ensure that each time source will be identic
+# Git tag can be moved and pointed to different commit hash which may brake reproducibility of the build
+# As by using an exact commit hash, we can ensure that each time source will be identical
 Source0:        https://github.com/kubernetes-sigs/aws-iam-authenticator/archive/%{commit_aws}/aws-iam-authenticator-%{shortcommit_aws}.tar.gz
 Source1:        https://github.com/kubernetes/kubernetes/archive/%{commit_k8s}/kubernetes-%{shortcommit_k8s}.tar.gz
 
