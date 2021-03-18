@@ -7,12 +7,8 @@
 %doc %{*} \
 %endif
 
-%global provider        github
-%global provider_tld    com
-%global project         VictoriaMetrics
 %global repo            VictoriaMetrics
-%global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
-%global import_path     %{provider_prefix}
+%global provider        github.com/VictoriaMetrics/%{repo}
 %global commit          pmm-6401-v1.53.1
 
 Name:           percona-victoriametrics
@@ -20,8 +16,8 @@ Version:        1.53.1
 Release:        1%{?dist}
 Summary:        VictoriaMetrics monitoring solution and time series database
 License:        Apache-2.0
-URL:            https://%{provider_prefix}
-Source0:        https://%{provider_prefix}/archive/%{commit}.tar.gz
+URL:            https://%{provider}
+Source0:        https://%{provider}/archive/%{commit}.tar.gz
 
 
 %description
