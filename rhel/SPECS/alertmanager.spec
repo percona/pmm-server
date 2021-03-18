@@ -1,11 +1,7 @@
 %define debug_package %{nil}
 
-%global provider        github
-%global provider_tld    com
-%global project         prometheus
 %global repo            alertmanager
-%global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
-%global import_path     %{provider_prefix}
+%global provider        github.com/prometheus/%{repo}
 %global commit          f74be0400a6243d10bb53812d6fa408ad71ff32d
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
@@ -16,11 +12,11 @@ Version:        0.20.0
 Release:        3%{?dist}
 Summary:        The Prometheus monitoring system and time series database
 License:        ASL 2.0
-URL:            https://%{provider_prefix}
-Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+URL:            https://%{provider}
+Source0:        https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
 %if %{install_golang}
-BuildRequires:   golang >= 1.12.0
+BuildRequires:   golang >= 1.14.0
 %endif
 
 %description
