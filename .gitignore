@@ -1,0 +1,13 @@
+.idea/
+.DS_Store
+
+installation-wizard/node_modules
+rhel/BUILD
+rhel/BUILDROOT
+rhel/RPMS
+rhel/SRPMS
+rhel/SOURCES/*
+!rhel/SOURCES/*-node_modules-*
+!rhel/SOURCES/*.service
+!rhel/SOURCES/*.patch
+!rhel/SOURCES/*.ico

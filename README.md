@@ -1,6 +1,6 @@
 # Percona Monitoring and Management (PMM) Server
 
-See the [PMM docs](https://www.percona.com/doc/percona-monitoring-and-management/index.html) for more information.
+See the [PMM docs](https://www.percona.com/doc/percona-monitoring-and-management/2.x/index.html) for more information.
 
 ## Submitting Bug Reports
 
@@ -18,7 +18,7 @@ An excellent resource is [Elika Etemad's article on filing good bug reports.](ht
 
 As a general rule of thumb, please try to create bug reports that are:
 
-- *Reproducible.* Include steps to reproduce the problem.
-- *Specific.* Include as much detail as possible: which version, what environment, etc.
-- *Unique.* Do not duplicate existing tickets.
-- *Scoped to a Single Bug.* One bug per report.
+- _Reproducible._ Include steps to reproduce the problem.
+- _Specific._ Include as much detail as possible: which version, what environment, etc.
+- _Unique._ Do not duplicate existing tickets.
+- _Scoped to a Single Bug._ One bug per report.
