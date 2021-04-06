@@ -48,8 +48,6 @@ mkdir -p src/github.com/percona
 ln -s $(pwd) src/%{provider}
 
 %build
-export GOPATH=$(pwd)/
-
 export PMM_RELEASE_VERSION=%{full_pmm_version}
 export PMM_RELEASE_FULLCOMMIT=%{commit}
 export PMM_RELEASE_BRANCH=""
