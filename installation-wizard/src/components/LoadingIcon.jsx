@@ -8,5 +8,4 @@ export const LoadingIcon = () => (
       </svg>
     </span>
   </span>
-
 );

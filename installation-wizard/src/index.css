@@ -257,6 +257,15 @@ a {
   color: white;
   transform: translateY(-50%);
   line-height: 1;
+  padding: 4px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.notification-notice-close:hover,
+.notification-notice-close:focus {
+  background-color: #ec465a;
 }
 
 .notification-close-icon {
