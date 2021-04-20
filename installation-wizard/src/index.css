@@ -260,7 +260,7 @@ a {
   padding: 4px;
   border-radius: 50%;
   background-color: transparent;
-  transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .notification-notice-close:hover,
