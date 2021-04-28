@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { LoadingIcon, NavBar, Notification } from './components';
+import { docUrl, messages } from './App.constants';
 
 const App = () => {
   const [instanceId, setInstanceId] = useState('');
@@ -34,21 +35,19 @@ const App = () => {
       <NavBar />
 
       <div className="instance-id-form">
-        <h2 className="instance-id-header">Amazon Instance ID verification</h2>
+        <h2 className="instance-id-header">{messages.header}</h2>
         <div className="instance-id-pane">
           <p>
-            Please provide the Amazon Instance ID (AMI ID) from the AWS Console.
+            {messages.helpLine1}
             <br />
-            It should be in the format of
+            {messages.helpLine2}
             {' '}
-            <i className="ami-id">i-abc123def</i>
+            <i className="ami-id">{messages.amiId}</i>
           </p>
           <div className="form-wrapper">
             <p className="input-field-wrapper">
               <input
-                onChange={(e) => {
-                  setInstanceId(e.target.value);
-                }}
+                onChange={(e) => setInstanceId(e.target.value)}
                 type="text"
                 placeholder="Instance ID"
                 className="instance-id-input-field"
@@ -60,15 +59,15 @@ const App = () => {
                 onClick={checkInstance}
               >
                 {loading && <LoadingIcon />}
-                Submit
+                {messages.submit}
               </button>
             </p>
             <a
-              href="https://www.percona.com/doc/percona-monitoring-and-management/2.x/setting-up/client/aws.html#pmm-server-aws-running-instance"
+              href={docUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Where can I get my instance ID?
+              {messages.helpLine3}
             </a>
           </div>
         </div>
