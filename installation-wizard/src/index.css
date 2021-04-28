@@ -136,7 +136,7 @@ a {
 }
 
 .instance-id-pane .ami-id {
-  color: #b93aec;
+  color: #727ee1;
 }
 
 .instance-id-header {
@@ -144,11 +144,11 @@ a {
   text-align: left;
   align-self: flex-start;
   color: #bcbcbc;
-  font-size: 1.6em;
+  font-size: 1.4em;
   font-weight: 400;
 }
 
-.nav-wrapper {
+.header {
   position: absolute;
   top: 0;
   left: 0;
@@ -185,6 +185,12 @@ a {
 .header .header-logo {
   width: 35px;
   height: 35px;
+}
+
+.header .app-title {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 20px;
 }
 
 .notification-wrapper {
@@ -251,6 +257,15 @@ a {
   color: white;
   transform: translateY(-50%);
   line-height: 1;
+  padding: 4px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.notification-notice-close:hover,
+.notification-notice-close:focus {
+  background-color: #ec465a;
 }
 
 .notification-close-icon {
@@ -342,6 +357,7 @@ a {
 .btn[disabled]:active {
   cursor: default;
   color: rgba(255, 255, 255, 0.65);
+  background-color: #62636a;
   text-shadow: none;
   box-shadow: none;
 }

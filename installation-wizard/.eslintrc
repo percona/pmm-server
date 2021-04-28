@@ -1,1 +1,12 @@
-{ "extends": ["airbnb", "airbnb/hooks"] }
+{ 
+  "extends": ["airbnb", "airbnb/hooks"],
+  "overrides": [
+    {
+      "files": ["*.jsx", "*.js"],
+      "rules": {
+        "import/prefer-default-export": "off",
+        "react/prop-types": "off"
+      }
+    }
+  ]
+}
