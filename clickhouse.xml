@@ -2,10 +2,7 @@
 <yandex>
     <logger>
         <level>trace</level>
-        <log>/var/log/clickhouse.log</log>
-        <errorlog>/var/log/clickhouse.log</errorlog>
-        <size>100M</size>
-        <count>2</count>
+        <console>1</console>
     </logger>
 
 
