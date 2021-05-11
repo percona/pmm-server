@@ -101,6 +101,7 @@ cd build
 %{__install} -D -m 0644 -p %{SOURCE2} \
    %{buildroot}%{_sysconfdir}/tmpfiles.d/clickhouse.conf
 %{__mkdir} -p %{buildroot}%{_sysconfdir}/clickhouse
+%endif
 
 %clean
 %{__rm} -rf %{buildroot}
