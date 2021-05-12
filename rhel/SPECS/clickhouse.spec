@@ -93,7 +93,6 @@ cd build
 %{__rm} -rf %{buildroot}%{_sysconfdir}/clickhouse-server/config.xml
 
 %if 0%{?rhel}  == 7
-%{__mkdir} -p %{buildroot}%{_localstatedir}/log/clickhouse-server
 %{__mkdir} -p %{buildroot}%{_localstatedir}/lib/clickhouse/tmp
 %{__mkdir} -p %{buildroot}%{_localstatedir}/run/clickhouse-server
 %{__install} -D -m 0644 -p %{SOURCE1} \
@@ -151,7 +150,6 @@ exit 0
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_sysconfdir}/clickhouse
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/lib/clickhouse
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/lib/clickhouse/tmp
-%attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/log/clickhouse-server
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/run/clickhouse-server
 %endif
 
