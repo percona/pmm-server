@@ -160,7 +160,7 @@ exit 0
 
 
 %changelog
-* Tue May  11 2021 Alex Tymchuk <alexander.tymchuk@percona.com> - 19.7.5.27-stable-4
+* Sat May 15 2021 Alex Tymchuk <alexander.tymchuk@percona.com> - 19.7.5.27-stable-5
 - PMM-7627 Rotate logs using supervisord
 
 * Thu Jul  2 2020 Mykyta Solomko <mykyta.solomko@percona.com> - 19.7.5.27-stable-1
