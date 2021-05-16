@@ -264,8 +264,8 @@ mkdir -p %{buildroot}/usr/share/clickhouse/headers
 cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/debian/clickhouse-server.init   %{buildroot}/etc/init.d/clickhouse-server
 ## cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/debian/clickhouse-server.cron.d %{buildroot}/etc/cron.d/clickhouse-server
 cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/debian/clickhouse.limits        %{buildroot}/etc/security/limits.d/clickhouse.conf
-19.x cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/dbms/programs/server/config.xml %{buildroot}/etc/clickhouse-server/
-19.x cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/dbms/programs/server/users.xml  %{buildroot}/etc/clickhouse-server/
+cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/dbms/programs/server/config.xml %{buildroot}/etc/clickhouse-server/
+cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/dbms/programs/server/users.xml  %{buildroot}/etc/clickhouse-server/
 ## 20.x
 ## cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/programs/server/config.xml %{buildroot}/etc/clickhouse-server/
 ## cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/programs/server/users.xml  %{buildroot}/etc/clickhouse-server/
