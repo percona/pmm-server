@@ -11,3 +11,4 @@ rhel/SOURCES/*
 !rhel/SOURCES/*.service
 !rhel/SOURCES/*.patch
 !rhel/SOURCES/*.ico
+!rhel/SOURCES/*.in

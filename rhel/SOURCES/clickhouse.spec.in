@@ -1,0 +1,430 @@
+#
+# RPM build specification file for Yandex ClickHouse DBMS
+#
+# Copyright (C) 2016 Red Soft LLC
+# Copyright (C) 2017 Altinity Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# All RPMs 'magic' is described here:
+# https://fedoraproject.org/wiki/How_to_create_an_RPM_package
+
+# rpm --showrc will show you all of the macros
+
+# Macros available:
+# @CH_VERSION@="18.10.3"
+# @CH_TAG@="stable"
+
+# CentOS 7 makes dist as ".el7.centos", we'd like to have dist=".el7", in order to use packages for RHEL as well, without renaming
+%if 0%{?rhel} != 0
+%define dist .el%{rhel}
+%endif
+
+Summary: Yandex ClickHouse DBMS
+Name: clickhouse
+Version: @CH_VERSION@
+Release: 1%{?dist}
+# Source0: %{name}-%{unmangled_version}.tar.gz
+Source: ClickHouse-@CH_VERSION@-@CH_TAG@.zip
+License: Apache License 2.0
+Group: Applications/Databases
+#BuildRoot: %{_tmppath}/%{name}-%{version}-build
+# Prefix: %{_prefix}
+Vendor: Yandex
+Packager: Altinity
+Url: https://clickhouse.yandex/
+
+%description
+ClickHouse is an open-source column-oriented database management
+system that allows generating analytical data reports in real time.
+
+#
+# clickhouse-client
+#
+%package client
+Summary: %{name} client binary
+Requires: %{name}-server = %{version}-%{release}
+
+%description client
+This package contains client binary for ClickHouse DBMS.
+
+#
+# clickhouse-common-static
+#
+%package common-static
+Summary: %{name} common static binaries
+
+%description common-static
+This package contains static binaries for ClickHouse DBMS
+
+#
+# clickhouse-server-common
+#
+%package server-common
+Summary: Common configuration files for %{name}
+
+%description server-common
+This package contains common configuration files for ClickHouse DBMS.
+
+#
+# clickhouse-server
+#
+%package server
+Summary: Server files for %{name}
+Requires: %{name}-common-static = %{version}-%{release}
+Requires: %{name}-server-common = %{version}-%{release}
+
+%description server
+This package contains server files for ClickHouse DBMS.
+
+#
+# clickhouse-test
+#
+%package test
+Summary: %{name} test suite
+Requires: %{name}-server = %{version}-%{release}
+
+%description test
+This package contains test suite for ClickHouse DBMS
+
+##
+## prep stage
+##
+
+%prep
+
+echo "'prep' started."
+#read -p "'prep' started. Press enter to continue"
+# @CH_VERSION@="18.10.3"
+# @CH_TAG@="stable"
+
+# Ensure source code is in BUILD/ClickHouse-%{version}-@CH_TAG@ folder
+# Prepare source code for being built
+
+if [ "${REBUILD_RPMS}" == "yes" ]; then
+	echo "Rebuild RPMs from existing sources in rpmbuild/BUILD"
+	# Prepare sources 'as is', for example, from 'git clone'
+	# Sources are already expected to be located in BUILD/ClickHouse-%{version}-@CH_TAG@
+	# and would be used 'as is'. This is the way to go in case you need to modify sources
+
+	# 1. Do not delete BUILD/ClickHouse-%{version}-@CH_TAG@ folder
+	# 2. Do not copy sources .zip from SOURCES, do not unpack .zip archive into BUILD/, 
+	# 3. just cd into BUILD/ClickHouse-%{version}-@CH_TAG@ - it has to be here
+	# And after that prepare sources for debuginfo RPMs to be built
+%setup -D -T -n ClickHouse-%{version}-@CH_TAG@
+	# What this setup directive actually does:
+	# cd into rpmbuild/BUILD
+	# cd "${BUILD_DIR}"
+	# Jump into rpmbuild/BUILD/ch_sources_dir and fix flags
+	# cd ClickHouse-%{version}-@CH_TAG@
+	# chmod -Rf a+rX,u+w,g-w,o-w .
+	# And registers debiginfo packages
+	# IMPORTANT - debug packages are not built without 'setup' called
+
+else
+	echo "Build RPMs from SOURCES/.zip file"
+	# Prepare sources from .zip release source file
+	# 1. Delete BUILD/ClickHouse-%{version}-@CH_TAG@ folder
+	# 2. copy .zip file from SOURSES to BUILD, unpack .zip file. Important .zip file has to have ClickHouse-%{version}-@CH_TAG@ folder inside
+	# 3. cd into BUILD/ClickHouse-%{version}-@CH_TAG@, which is expected to be in .zip file
+	# And after that prepare sources for debuginfo RPMs to be built
+%setup -q -n ClickHouse-%{version}-@CH_TAG@
+	# What this setup directive actually does:
+	# cd into rpmbuild/BUILD
+	# cd "${BUILD_DIR}"
+	# Remove dir and .zip file
+	# rm -rf ClickHouse-%{version}-@CH_TAG@
+	# unzip from rpmbuild/SOURCES/src.zip into rpmbuild/BUILD
+	# unzip -qq "${SOURCES_DIR}"/ClickHouse-%{version}-@CH_TAG@.zip
+	# STATUS=$?
+	# if [ $STATUS -ne 0 ]; then
+	#	exit $STATUS
+	# fi
+	# Jump into rpmbuild/BUILD/ch_sources_dir and fix flags
+	# cd ClickHouse-%{version}-@CH_TAG@
+	# chmod -Rf a+rX,u+w,g-w,o-w .
+	# And registers debiginfo packages
+	# IMPORTANT - debug packages are not built without 'setup' called
+fi
+
+echo "'prep' completed."
+#read -p "'prep' completed. Press enter to continue"
+
+
+##
+## build stage
+##
+
+%build
+
+echo "'build' started."
+#read -p "'build' started. Press enter to continue"
+
+# Jump into rpmbuild/BUILD/ClickHouse-%{version}-@CH_TAG@ folder now
+cd "${BUILD_DIR}"
+cd ClickHouse-%{version}-@CH_TAG@
+
+# Clear build folder, but keep 'rpmbuild' subfolder in it (if exists)
+mkdir -p build
+cd build
+ls | grep -v 'rpmbuild' | xargs rm -rf
+
+echo "********"
+echo "* MAKE *"
+echo "********"
+
+if [ "${FLAG_DEBUGINFO}" == "yes" ]; then
+	if [ ! -z "${FLAG_CMAKE_BUILD_TYPE}" ]; then
+		# Explicitly specified --cmake-build-type
+		CMAKE_BUILD_TYPE="${FLAG_CMAKE_BUILD_TYPE}"
+	else
+		# --cmake-build-typw not specified, use default value
+		CMAKE_BUILD_TYPE="RelWithDebInfo"
+	fi
+else
+	# No debuginfo requested
+	CMAKE_BUILD_TYPE="Release"
+fi
+echo "CMAKE_BUILD_TYPE==${CMAKE_BUILD_TYPE}"
+
+if [ ! -z $USE_NINJA_BUILD ]; then
+	# use ninja-build
+	$CMAKE .. -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE:STRING="${CMAKE_BUILD_TYPE}" @CMAKE_OPTIONS@
+	ninja-build @MAKE_OPTIONS@
+else
+	# use original cmake
+	$CMAKE .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE:STRING="${CMAKE_BUILD_TYPE}" @CMAKE_OPTIONS@
+	make %{?_smp_mflags} @MAKE_OPTIONS@
+fi
+
+MAKE_EXIT_CODE=$?
+
+echo "make reported exit code ${MAKE_EXIT_CODE}"
+
+if [ "${TEST_BINARIES}" == "yes" ]; then
+	echo "Running test"
+	set +e
+	bash -c "ctest3 -j8"
+	CTEST_EXIT_CODE=$?
+	echo "ctest reported exit code ${CTEST_EXIT_CODE}"
+fi
+
+cd ..
+
+echo "'build' completed."
+#read -p "'build' completed. Press enter to continue"
+
+##
+## install stage
+##
+
+%install
+
+echo "'install' started."
+#read -p "'install' started. Press enter to continue"
+
+# %{buildroot} = rpmbuild/BUILDROOT/clickhouse-18.14.15-1.el7.x86_64
+rm -rf %{buildroot}
+
+# Jump into rpmbuild/BUILD/ClickHouse-%{version}-@CH_TAG@ folder now
+cd "${BUILD_DIR}"
+cd ClickHouse-%{version}-@CH_TAG@
+
+cd build
+DAEMONS="clickhouse clickhouse-test clickhouse-compressor clickhouse-client clickhouse-server"
+for daemon in $DAEMONS; do
+	DESTDIR=%{buildroot} $CMAKE -DCOMPONENT=$daemon -P cmake_install.cmake
+done
+cd ..
+
+# Create folders structure to be distributed
+# %{buildroot} = rpmbuild/BUILDROOT/clickhouse-18.14.15-1.el7.x86_64
+mkdir -p %{buildroot}/etc/clickhouse-server
+mkdir -p %{buildroot}/etc/clickhouse-client
+mkdir -p %{buildroot}/etc/init.d
+## mkdir -p %{buildroot}/etc/cron.d
+mkdir -p %{buildroot}/etc/security/limits.d
+
+mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}/usr/share/clickhouse/bin
+mkdir -p %{buildroot}/usr/share/clickhouse/headers
+
+# Copy files from source into folders structure for distribution
+# BUILDDIR = rpmbuild/BUILD
+cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/debian/clickhouse-server.init   %{buildroot}/etc/init.d/clickhouse-server
+## cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/debian/clickhouse-server.cron.d %{buildroot}/etc/cron.d/clickhouse-server
+cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/debian/clickhouse.limits        %{buildroot}/etc/security/limits.d/clickhouse.conf
+19.x cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/dbms/programs/server/config.xml %{buildroot}/etc/clickhouse-server/
+19.x cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/dbms/programs/server/users.xml  %{buildroot}/etc/clickhouse-server/
+## 20.x
+## cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/programs/server/config.xml %{buildroot}/etc/clickhouse-server/
+## cp "${BUILD_DIR}"/ClickHouse-%{version}-@CH_TAG@/programs/server/users.xml  %{buildroot}/etc/clickhouse-server/
+
+echo "'install' completed."
+#read -p "'install' completed. Press enter to continue"
+
+##
+## clean stage
+##
+
+%clean
+
+echo "'clean' started."
+#read -p "'clean' started. Press enter to continue"
+
+# %{buildroot} = rpmbuild/BUILDROOT/clickhouse-18.14.15-1.el7.x86_64
+rm -rf %{buildroot}
+
+echo "'clean' completed."
+#read -p "'clean' completed. Press enter to continue"
+
+##
+## clickhouse-client package
+##
+
+%files client
+/usr/bin/clickhouse-client
+/usr/bin/clickhouse-local
+/usr/bin/clickhouse-compressor
+/usr/bin/clickhouse-benchmark
+%config(noreplace) /etc/clickhouse-client/config.xml
+/usr/bin/clickhouse-extract-from-config
+
+%post client
+# include/source spec functions
+@CLICKHOUSE_SPEC_FUNCS_SH@
+
+create_system_user $CLICKHOUSE_USER $CLICKHOUSE_GROUP $CLICKHOUSE_DATADIR
+
+mkdir -p /etc/clickhouse-client/conf.d
+
+# user created by clickhouse-server package
+chown -R ${CLICKHOUSE_USER}:${CLICKHOUSE_GROUP} /etc/clickhouse-client || true
+
+##
+## clickhouse-common-static package
+##
+
+%files common-static
+/usr/bin/clickhouse
+%config(noreplace) /etc/security/limits.d/clickhouse.conf
+# folder
+/usr/share/clickhouse
+
+##
+## server-common package
+##
+
+%files server-common
+%config(noreplace) /etc/clickhouse-server/config.xml
+%config(noreplace) /etc/clickhouse-server/users.xml
+
+##
+## server package
+##
+
+%files server
+/usr/bin/clickhouse-server
+#/usr/bin/clickhouse-clang # https://github.com/ClickHouse/ClickHouse/pull/6646
+#/usr/bin/clickhouse-lld
+/usr/bin/clickhouse-copier
+/usr/bin/clickhouse-odbc-bridge
+/usr/bin/clickhouse-report
+/usr/bin/clickhouse-obfuscator
+# TODO
+#/etc/systemd/system/clickhouse-server.service
+/etc/init.d/clickhouse-server
+## /etc/cron.d/clickhouse-server
+# folder
+/usr/share/clickhouse
+%config(noreplace) /etc/security/limits.d/clickhouse.conf
+# append file that seems to be obsoleted
+/usr/bin/clickhouse-format
+
+%post server
+if [ $1 = 1 ]; then
+	/sbin/chkconfig --add clickhouse-server
+#   if [ -x "/bin/systemctl" ] && [ -f /etc/systemd/system/clickhouse-server.service ]; then
+#        /bin/systemctl daemon-reload
+#        /bin/systemctl enable clickhouse-server
+#    else
+#        if [ -x "/etc/init.d/clickhouse-ser
+
+fi
+
+# include/source spec functions
+@CLICKHOUSE_SPEC_FUNCS_SH@
+
+create_system_user $CLICKHOUSE_USER $CLICKHOUSE_GROUP $CLICKHOUSE_DATADIR
+
+# Ensure required folders are in place
+if [ ! -d ${CLICKHOUSE_DATADIR} ]; then
+	mkdir -p ${CLICKHOUSE_DATADIR}
+	chown ${CLICKHOUSE_USER}:${CLICKHOUSE_GROUP} ${CLICKHOUSE_DATADIR}
+	chmod 700 ${CLICKHOUSE_DATADIR}
+fi
+
+if [ ! -d ${CLICKHOUSE_LOGDIR} ]; then
+	mkdir -p ${CLICKHOUSE_LOGDIR}
+	chown root:${CLICKHOUSE_GROUP} ${CLICKHOUSE_LOGDIR}
+	# Allow everyone to read logs, root and clickhouse to read-write
+	chmod 775 ${CLICKHOUSE_LOGDIR}
+fi
+
+# Clean old dynamic compilation results
+if [ -d "${CLICKHOUSE_DATADIR}/build" ]; then
+	rm -f ${CLICKHOUSE_DATADIR}/build/*.cpp ${CLICKHOUSE_DATADIR}/build/*.so ||:
+fi
+
+%preun server
+if [ $1 = 0 ]; then
+	/sbin/service clickhouse-server stop > /dev/null 2>&1
+	/sbin/chkconfig --del clickhouse-server
+fi
+
+%postun server
+if [ $1 -ge 1 ]; then
+	/sbin/service clickhouse-server restart >/dev/null 2>&1
+fi
+
+
+##
+## test package
+##
+
+%files test
+/usr/bin/clickhouse-test
+/usr/bin/clickhouse-test-server
+#/usr/bin/clickhouse-performance-test
+# folder
+/usr/share/clickhouse-test
+%config(noreplace) /etc/clickhouse-client/client-test.xml
+%config(noreplace) /etc/clickhouse-server/server-test.xml
+
+##
+##
+##
+
+%changelog
+* Wed May 17 2017 Vadim Tkachenko
+- Adjust to build 54231 release
+* Fri Mar 31 2017 Nikolay Samofatov <nikolay.samofatov@red-soft.biz>
+- fix issue #5 - error with creating clickhouse user
+* Wed Mar 01 2017 Nikolay Samofatov <nikolay.samofatov@red-soft.biz>
+- update for 1.1.54165
+* Fri Feb 10 2017 Nikolay Samofatov <nikolay.samofatov@red-soft.biz>
+- update for 1.1.54159
+* Fri Jan 13 2017 Nikolay Samofatov <nikolay.samofatov@red-soft.biz>
+- update for 1.1.54127
+* Mon Nov 14 2016 Nikolay Samofatov <nikolay.samofatov@red-soft.biz> 
+- create spec file
