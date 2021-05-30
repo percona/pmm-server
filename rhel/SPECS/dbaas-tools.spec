@@ -3,18 +3,22 @@
 %global commit_aws          d7c0b2e9131faabb2b09dd804a35ee03822f8447
 %global shortcommit_aws     %(c=%{commit_aws}; echo ${c:0:7})
 
-%global commit_k8s          ec6eb119b81be488b030e849b9e64fda4caaf33c
-%global shortcommit_k8s     %(c=%{commit_k8s}; echo ${c:0:7})
-%global version_k8s         v1.16.8
+%global commit_k8s_116          ec6eb119b81be488b030e849b9e64fda4caaf33c
+%global shortcommit_k8s_116     %(c=%{commit_k8s_116}; echo ${c:0:7})
+%global version_k8s_116         v1.16.8
+
+%global commit_k8s_121          5e58841cce77d4bc13713ad2b91fa0d961e69192
+%global shortcommit_k8s_121     %(c=%{commit_k8s_121}; echo ${c:0:7})
+%global version_k8s_121         v1.21.1
 
 %global install_golang 1
 
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         4
+%define release         1
 %define rpm_release     %{release}.%{build_timestamp}%{?dist}
 
 Name:           dbaas-tools
-Version:        0.5.1
+Version:        0.6.0
 Release:        %{rpm_release}
 Summary:        A set of tools for Percona DBaaS
 License:        ASL 2.0
@@ -22,7 +26,8 @@ URL:            https://github.com/kubernetes-sigs/aws-iam-authenticator
 # Git tag can be moved and pointed to different commit hash which may brake reproducibility of the build
 # As by using an exact commit hash, we can ensure that each time source will be identical
 Source0:        https://github.com/kubernetes-sigs/aws-iam-authenticator/archive/%{commit_aws}/aws-iam-authenticator-%{shortcommit_aws}.tar.gz
-Source1:        https://github.com/kubernetes/kubernetes/archive/%{commit_k8s}/kubernetes-%{shortcommit_k8s}.tar.gz
+Source1:        https://github.com/kubernetes/kubernetes/archive/%{commit_k8s_116}/kubernetes-%{shortcommit_k8s_116}.tar.gz
+Source2:        https://github.com/kubernetes/kubernetes/archive/%{commit_k8s_121}/kubernetes-%{shortcommit_k8s_121}.tar.gz
 
 %if %{install_golang}
 BuildRequires:   golang >= 1.13.0
@@ -42,10 +47,14 @@ BuildRequires: which
 mkdir -p src/github.com/kubernetes-sigs/
 mv aws-iam-authenticator-%{commit_aws} src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
 
-%setup -T -c -n kubernetes-%{commit_k8s}
-%setup -q -c -a 1 -n kubernetes-%{commit_k8s}
+%setup -T -c -n kubernetes-%{commit_k8s_116}
+%setup -q -c -a 1 -n kubernetes-%{commit_k8s_116}
 mkdir -p src/github.com/kubernetes/
-mv kubernetes-%{commit_k8s} src/github.com/kubernetes/kubernetes-%{commit_k8s}
+mv kubernetes-%{commit_k8s_116} src/github.com/kubernetes/kubernetes-%{commit_k8s_116}
+
+%setup -T -c -n kubernetes-%{commit_k8s_121}
+%setup -q -c -a 2 -n kubernetes-%{commit_k8s_121}
+mv kubernetes-%{commit_k8s_121} src/github.com/kubernetes/kubernetes-%{commit_k8s_121}
 
 %build
 cd %{_builddir}/aws-iam-authenticator-%{commit_aws}
@@ -57,25 +66,42 @@ cd src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
 sed -i '/dockers:/,+35d' .goreleaser.yaml
 make build
 
-cd %{_builddir}/kubernetes-%{commit_k8s}/
+# build kubectl 1.16.x
+cd %{_builddir}/kubernetes-%{commit_k8s_116}/
 export GOPATH="$(pwd)"
 
-cd src/github.com/kubernetes/kubernetes-%{commit_k8s}
+cd src/github.com/kubernetes/kubernetes-%{commit_k8s_116}
+make WHAT="cmd/kubectl"
+
+# build kubectl 1.21.x
+cd %{_builddir}/kubernetes-%{commit_k8s_121}/
+export GOPATH="$(pwd)"
+
+cd src/github.com/kubernetes/kubernetes-%{commit_k8s_121}
 make WHAT="cmd/kubectl"
 
 %install
 cd %{_builddir}/aws-iam-authenticator-%{commit_aws}/src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
 install -D -p -m 0755 dist/authenticator_linux_amd64/aws-iam-authenticator %{buildroot}/opt/dbaas-tools/bin/aws-iam-authenticator
 
-cd %{_builddir}/kubernetes-%{commit_k8s}/src/github.com/kubernetes/kubernetes-%{commit_k8s}
+# install kubectl 1.16.x
+cd %{_builddir}/kubernetes-%{commit_k8s_116}/src/github.com/kubernetes/kubernetes-%{commit_k8s_116}
 install -D -p -m 0775 _output/local/go/bin/kubectl %{buildroot}/opt/dbaas-tools/bin/kubectl-1.16
+
+# install kubectl 1.21.x
+cd %{_builddir}/kubernetes-%{commit_k8s_121}/src/github.com/kubernetes/kubernetes-%{commit_k8s_121}
+install -D -p -m 0775 _output/local/go/bin/kubectl %{buildroot}/opt/dbaas-tools/bin/kubectl-1.21
 
 
 %files
 /opt/dbaas-tools/bin/aws-iam-authenticator
 /opt/dbaas-tools/bin/kubectl-1.16
+/opt/dbaas-tools/bin/kubectl-1.21
 
 %changelog
+* Sun May 30 2021 Nurlan Moldomurov <nurlan.moldomurov@percona.com> - 0.6.0-1
+- Added kubectl 1.21.1
+
 * Thu Aug 27 2020 Illia Pshonkin <illia.pshonkin@percona.com> - 0.5.1-1
 - Initial packaging for dbaas-tools
 
