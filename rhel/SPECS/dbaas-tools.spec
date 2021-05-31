@@ -54,6 +54,7 @@ mv kubernetes-%{commit_k8s_116} src/github.com/kubernetes/kubernetes-%{commit_k8
 
 %setup -T -c -n kubernetes-%{commit_k8s_121}
 %setup -q -c -a 2 -n kubernetes-%{commit_k8s_121}
+mkdir -p src/github.com/kubernetes/
 mv kubernetes-%{commit_k8s_121} src/github.com/kubernetes/kubernetes-%{commit_k8s_121}
 
 %build
