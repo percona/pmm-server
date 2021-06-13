@@ -98,7 +98,7 @@ exit 0
 
 %changelog
 * Sat Jun 12 2021 Alex Tymchuk <alexander.tymchuk@percona.com> - 7.5.7-1
-- PMM-6695 Update grafana to version 7.3.7
+- PMM-6695 Update grafana to version 7.5.7
 
 * Thu Feb 18 2021 Roman Misyurin <roman.misyurin@percona.com> - 7.3.7-92
 - PMM-6695 Update grafana to version 7.3.7
