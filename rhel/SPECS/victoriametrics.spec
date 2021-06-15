@@ -9,10 +9,10 @@
 
 %global repo            VictoriaMetrics
 %global provider        github.com/VictoriaMetrics/%{repo}
-%global commit          pmm-6401-v1.53.1
+%global commit          pmm-6401-v1.60.0
 
 Name:           percona-victoriametrics
-Version:        1.53.1
+Version:        1.60.0
 Release:        1%{?dist}
 Summary:        VictoriaMetrics monitoring solution and time series database
 License:        Apache-2.0
@@ -50,6 +50,9 @@ install -D -p -m 0755 ./bin/vmalert-pure %{buildroot}%{_sbindir}/vmalert
 
 
 %changelog
+* Thu Jun  3 2021 Vadim Yalovets <vadim.yalovets@percona.com> - 1.60.0-1
+- upgrade victoriametrics to 1.60.0 release
+
 * Wed Feb 10 2021 Vadim Yalovets <vadim.yalovets@percona.com> - 1.53.1-1
 - upgrade victoriametrics to 1.53.1 release
 
