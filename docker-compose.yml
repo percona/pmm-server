@@ -1,0 +1,56 @@
+version: "3.5"
+
+services:
+  pmm-server:
+    image: percona/pmm-server:2
+    hostname: ${HOSTNAME}
+    container_name: pmm-server
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - pmm-data:/srv
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.postfixadmin.rule=Host(`pmm.example.com`)"
+      - "traefik.http.routers.postfixadmin.entrypoints=websecure"
+      - "traefik.http.routers.postfixadmin.tls.certresolver=myresolver"
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesResolvers.myresolver.acme.email=postmaster@example.com"
+      - "--certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      - "traefik.enable=true"
+      # Middleware Redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # Global Redirect to HTTPS
+      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirs.entrypoints=web"
+      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+    volumes:
+      - "./data/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+volumes:
+  pmm-data:
+    name: PMM-Data
+    external: false
