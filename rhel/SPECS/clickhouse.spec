@@ -16,6 +16,7 @@ Source0:        https://github.com/yandex/ClickHouse/archive/%{commit}/ClickHous
 %if 0%{?rhel}  == 7
 Source1:        clickhouse.service
 Source2:        clickhouse.tmpfilesd
+Source3:        clickhouse.logrotate
 
 BuildRequires:  cmake
 BuildRequires:  devtoolset-6-gcc-c++
@@ -93,13 +94,17 @@ cd build
 %{__rm} -rf %{buildroot}%{_sysconfdir}/clickhouse-server/config.xml
 
 %if 0%{?rhel}  == 7
+%{__mkdir} -p %{buildroot}%{_localstatedir}/log/clickhouse-server
 %{__mkdir} -p %{buildroot}%{_localstatedir}/lib/clickhouse/tmp
 %{__mkdir} -p %{buildroot}%{_localstatedir}/run/clickhouse-server
 %{__install} -D -m 0644 -p %{SOURCE1} \
    %{buildroot}%{_unitdir}/clickhouse.service
 %{__install} -D -m 0644 -p %{SOURCE2} \
    %{buildroot}%{_sysconfdir}/tmpfiles.d/clickhouse.conf
+%{__mkdir} -p %{buildroot}%{_sysconfdir}/logrotate.d
 %{__mkdir} -p %{buildroot}%{_sysconfdir}/clickhouse
+%{__install} -m 644 -p %{SOURCE3} \
+    %{buildroot}%{_sysconfdir}/logrotate.d/clickhouse-server
 %endif
 
 %clean
@@ -144,13 +149,16 @@ exit 0
 %{_bindir}/clickhouse-zookeeper-cli
 %{_bindir}/corrector_utf8
 %if 0%{?rhel}  == 7
+#config(noreplace) %{_sysconfdir}/clickhouse-server/config.xml
 %config(noreplace) %{_sysconfdir}/clickhouse-server/users.xml
 %{_unitdir}/clickhouse.service
 %{_sysconfdir}/tmpfiles.d/clickhouse.conf
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_sysconfdir}/clickhouse
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/lib/clickhouse
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/lib/clickhouse/tmp
+%attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/log/clickhouse-server
 %attr(0755, %{clickhouse_user}, %{clickhouse_group}) %dir %{_localstatedir}/run/clickhouse-server
+%config(noreplace) %{_sysconfdir}/logrotate.d/clickhouse-server
 %endif
 
 %files client
@@ -160,9 +168,6 @@ exit 0
 
 
 %changelog
-* Sat May 15 2021 Alex Tymchuk <alexander.tymchuk@percona.com> - 19.7.5.27-stable-2
-- PMM-7627 Rotate logs using supervisord
-
 * Thu Jul  2 2020 Mykyta Solomko <mykyta.solomko@percona.com> - 19.7.5.27-stable-1
 - PMM-5645 Built using Golang 1.14
 
