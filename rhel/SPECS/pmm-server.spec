@@ -72,8 +72,8 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
-* Tue June 22 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
-- PMM-7627 manage nginx logs with supervisord
+* Tue Jun 22 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
+- - PMM-7627 manage nginx logs with supervisord
 
 * Tue Mar  9 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.15.1-22
 - PMM-6017 merge pmm-server-packaging to pmm-server
