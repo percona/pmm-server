@@ -7,7 +7,7 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         23
+%define release         22
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -74,9 +74,6 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
-* Sat May 15 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
-- PMM-7627 manage nginx logs using supervisor
-
 * Tue Mar  9 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.15.1-22
 - PMM-6017 merge pmm-server-packaging to pmm-server
 
