@@ -72,7 +72,7 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
-* Tue June 24 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.19.1-1
+* Tue Jun 24 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.19.1-1
 - PMM-8266 remove prometheus config
 
 * Tue Mar  9 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.15.1-22
