@@ -47,8 +47,6 @@ mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashbo
 mv prometheus.yml %{buildroot}%{_sysconfdir}/prometheus.yml
 mv alertmanager.yml %{buildroot}%{_sysconfdir}/alertmanager.yml
 
-install -d %{buildroot}%{_sysconfdir}/clickhouse-server
-
 install -d %{buildroot}%{_sysconfdir}/supervisord.d
 mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
 
