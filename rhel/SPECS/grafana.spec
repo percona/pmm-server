@@ -2,7 +2,7 @@
 %global commit          33423d34f211ce1ce5ce0a265a38f0709ec44360
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         92
+%define release         93
 %define grafana_version 7.3.7
 %define full_pmm_version 2.0.0
 %define full_version    v%{grafana_version}-%{full_pmm_version}
@@ -75,7 +75,6 @@ install -p -m 0644 packaging/rpm/init.d/grafana-server %{buildroot}%{_initddir}/
 %endif
 
 install -d -p %{buildroot}%{_sharedstatedir}/grafana
-install -d -p %{buildroot}/var/log/grafana
 
 %files
 %defattr(-, grafana, grafana, -)
@@ -97,6 +96,9 @@ getent passwd grafana >/dev/null || \
 exit 0
 
 %changelog
+* Sun Jun 27 2021 Alex Tymchuk <alexander.tymchuk@percona.com> - 7.3.7-93
+- PMM-7627 Manage all logs with supervisor
+
 * Thu Feb 18 2021 Roman Misyurin <roman.misyurin@percona.com> - 7.3.7-92
 - PMM-6695 Update grafana to version 7.3.7
 
