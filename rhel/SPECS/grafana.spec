@@ -86,7 +86,6 @@ install -d -p %{buildroot}%{_sharedstatedir}/grafana
 %{_sysconfdir}/grafana/grafana.ini
 %{_sysconfdir}/grafana/ldap.toml
 %dir %{_sharedstatedir}/grafana
-%dir /var/log/grafana
 
 %pre
 getent group grafana >/dev/null || groupadd -r grafana
