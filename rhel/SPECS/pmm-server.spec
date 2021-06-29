@@ -46,8 +46,6 @@ mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashbo
 
 mv alertmanager.yml %{buildroot}%{_sysconfdir}/alertmanager.yml
 
-install -d %{buildroot}%{_sysconfdir}/clickhouse-server
-
 install -d %{buildroot}%{_sysconfdir}/supervisord.d
 mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
 
@@ -72,7 +70,10 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
-* Tue Jun 24 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.19.1-1
+* Tue Jun 29 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
+- PMM-7627 manage nginx logs with supervisord
+
+* Thu Jun 24 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.19.1-1
 - PMM-8266 remove prometheus config
 
 * Tue Mar  9 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.15.1-22
