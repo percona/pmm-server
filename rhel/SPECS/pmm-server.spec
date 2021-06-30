@@ -7,7 +7,7 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         23
+%define release         24
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -39,8 +39,6 @@ make build-installation-wizard
 %install
 tar -zxvf %SOURCE1
 install -d %{buildroot}%{_sysconfdir}/nginx/conf.d
-mv nginx.conf %{buildroot}%{_sysconfdir}/nginx/conf.d/pmm.conf
-mv nginx-ssl.conf %{buildroot}%{_sysconfdir}/nginx/conf.d/pmm-ssl.conf
 install -d %{buildroot}%{_datadir}/percona-dashboards
 mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashboards.py
 
@@ -63,13 +61,14 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 %doc README.md CHANGELOG.md
 %{_sysconfdir}/supervisord.d
 %{_sysconfdir}/alertmanager.yml
-%{_sysconfdir}/nginx/conf.d/pmm.conf
-%{_sysconfdir}/nginx/conf.d/pmm-ssl.conf
 %{_datadir}/percona-dashboards/import-dashboards.py*
 %{_datadir}/%{name}
 
 
 %changelog
+* Tue Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
+- PMM-8307 move nginx logs to ansible playbook (pmm-update repo)
+
 * Tue Jun 29 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
 - PMM-7627 manage nginx logs with supervisord
 
