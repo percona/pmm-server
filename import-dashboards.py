@@ -400,20 +400,20 @@ def move_into_folders(api_key):
             if len(compare_tags) > 0:
                 match_compare = re.match('(MySQL|PostgreSQL|MongoDB|OS)', compare_tags[0]);
                 if match_compare:
-                    print '     * Compare dashboard is detected for the service %s' % match_compare.group(0);
+                    print '     * Compare dashboard is detected for the service %s' % (match_compare.group(0),);
                     tag = match_compare.group(0);
 
             if len(ha_tags) > 0:
                 match_ha = re.match('(MySQL|PostgreSQL|MongoDB)', ha_tags[0]);
                 if match_ha:
-                    print '     * HA dashboard is detected for the service %s' % match_ha.group(0);
+                    print '     * HA dashboard is detected for the service %s' % (match_ha.group(0),);
                     tag = match_ha.group(0);
 
             r = requests.get('%s/api/dashboards/uid/%s' % (HOST,item['uid']), headers=grafana_headers(api_key))
             dash_data = r.json()
             dash_data['folderId'] = SET_OF_TAGS[tag]
             dash_data['overwrite'] = True
-            r = requests.post('%s/api/dashboards/db' % (HOST), headers=grafana_headers(api_key), data=json.dumps(dash_data), verify=False)
+            r = requests.post('%s/api/dashboards/db' % (HOST,), headers=grafana_headers(api_key), data=json.dumps(dash_data), verify=False)
             print '     * Result: %r %r' % (r.status_code, r.content)
 
 
