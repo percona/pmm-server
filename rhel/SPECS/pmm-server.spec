@@ -66,7 +66,7 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
-* Tue Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
+* Wed Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
 - PMM-8307 move nginx logs to ansible playbook (pmm-update repo)
 
 * Tue Jun 29 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
