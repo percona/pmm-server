@@ -38,7 +38,6 @@ make build-installation-wizard
 
 %install
 tar -zxvf %SOURCE1
-install -d %{buildroot}%{_sysconfdir}/nginx/conf.d
 install -d %{buildroot}%{_datadir}/percona-dashboards
 mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashboards.py
 
@@ -51,8 +50,6 @@ install -d %{buildroot}%{_datadir}/%{name}
 cp -pav ./entrypoint.sh %{buildroot}%{_datadir}/%{name}/entrypoint.sh
 cp -pav ./installation-wizard/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
 cp -pav ./%{pmm_repo}-%{pmm_commit}/api/swagger %{buildroot}%{_datadir}/%{name}/swagger
-install -d %{buildroot}%{_datadir}/%{name}/static
-cp -pav ./local-rss.xml %{buildroot}%{_datadir}/%{name}/static/local-rss.xml
 rm -rf %{pmm_repo}-%{pmm_commit}
 
 
@@ -67,7 +64,7 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 %changelog
 * Wed Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
-- PMM-8307 move nginx logs to ansible playbook (pmm-update repo)
+- PMM-8307 move nginx files to ansible playbook (pmm-update repo)
 
 * Tue Jun 29 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
 - PMM-7627 manage nginx logs with supervisord
