@@ -7,7 +7,7 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         22
+%define release         23
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -44,10 +44,7 @@ mv nginx-ssl.conf %{buildroot}%{_sysconfdir}/nginx/conf.d/pmm-ssl.conf
 install -d %{buildroot}%{_datadir}/percona-dashboards
 mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashboards.py
 
-mv prometheus.yml %{buildroot}%{_sysconfdir}/prometheus.yml
 mv alertmanager.yml %{buildroot}%{_sysconfdir}/alertmanager.yml
-
-install -d %{buildroot}%{_sysconfdir}/clickhouse-server
 
 install -d %{buildroot}%{_sysconfdir}/supervisord.d
 mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
@@ -65,7 +62,6 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 %license LICENSE
 %doc README.md CHANGELOG.md
 %{_sysconfdir}/supervisord.d
-%{_sysconfdir}/prometheus.yml
 %{_sysconfdir}/alertmanager.yml
 %{_sysconfdir}/nginx/conf.d/pmm.conf
 %{_sysconfdir}/nginx/conf.d/pmm-ssl.conf
@@ -74,6 +70,12 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
+* Tue Jun 29 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
+- PMM-7627 manage nginx logs with supervisord
+
+* Thu Jun 24 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.19.1-1
+- PMM-8266 remove prometheus config
+
 * Tue Mar  9 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.15.1-22
 - PMM-6017 merge pmm-server-packaging to pmm-server
 
