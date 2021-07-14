@@ -1,0 +1,55 @@
+---
+# install VBoxGuestAdditions for vagrant image
+    - name: VBoxGuestAdditions         | stat /home/vagrant/VBoxGuestAdditions.iso
+      stat: path=/home/vagrant/VBoxGuestAdditions.iso
+      register: iso_file
+
+    - name: VBoxGuestAdditions         | Install build deps
+      when: iso_file.stat.exists and ansible_os_family == 'RedHat'
+      yum:
+        name:
+          - dkms
+          - gcc
+          - kexec-tools
+
+    - name: VBoxGuestAdditions         | Install build deps
+      when: iso_file.stat.exists and ansible_os_family == 'RedHat'
+      shell: yum -y install kernel-devel-$(uname -r)
+
+    - name: VBoxGuestAdditions         | Mount
+      when: iso_file.stat.exists
+      mount:
+        name=/media
+        src=/home/vagrant/VBoxGuestAdditions.iso
+        fstype=iso9660
+        opts=noauto
+        state=mounted
+      register: mounted_ISO
+
+    - name: VBoxGuestAdditions         | Detect version
+      shell: /media/VBoxLinuxAdditions.run --info | grep Identification | head -1 | cut -d ' ' -f 3
+      register: virtualbox_version
+      failed_when: virtualbox_version.stdout_lines|length > 1
+      changed_when: False
+
+    - name: VBoxGuestAdditions         | Build and install
+      when: iso_file.stat.exists
+      shell: /bin/bash /media/VBoxLinuxAdditions.run --nox11
+
+    - name: VBoxGuestAdditions         | Unmount
+      when: iso_file.stat.exists
+      mount:
+        name=/media
+        src=/home/vagrant/VBoxGuestAdditions.iso
+        fstype=iso9660
+        state=unmounted
+
+    - name: VBoxGuestAdditions         | Remove build temp files
+      file: name={{ item }} follow=yes state=absent
+      with_items:
+        - "/opt/VBoxGuestAdditions-{{ virtualbox_version.stdout }}/src"
+        - /home/vagrant/VBoxGuestAdditions.iso
+        - "/usr/src/vboxguest-{{ virtualbox_version.stdout }}"
+        - /var/log/vboxadd-install.log
+        - /var/log/vboxadd-install-x11.log
+        - /var/log/VBoxGuestAdditions.log

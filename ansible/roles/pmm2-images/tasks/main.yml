@@ -1,0 +1,249 @@
+---
+    - name: Packages                   | Add PMM2 Server YUM repository
+      yum_repository:
+        name: pmm2-server
+        description: PMM Server YUM repository - x86_64
+        baseurl: https://repo.percona.com/pmm2-components/yum/{{ pmm2_server_repo }}/7/RPMS/x86_64/
+        gpgcheck: yes
+        enabled: yes
+        gpgkey: file:///etc/pki/rpm-gpg/PERCONA-PACKAGING-KEY
+
+    # local yum repo for building of pmm server docker image in autobuild jobs
+    - name: PMM                        | Add local YUM repository
+      when: ansible_virtualization_type == "docker"
+      yum_repository:
+        name: local
+        description: Local YUM repository - x86_64
+        baseurl: file:///tmp/RPMS
+        gpgcheck: no
+        enabled: no
+
+    - name: Packages                   | Update OS
+      yum:
+        name: '*'
+        state: latest
+        exclude: 'ansible'
+        disablerepo: percona-release-x86_64
+
+    - name: Packages                   | Install OS tools
+      yum:
+        name:
+          - lsof
+          - yum-utils
+          - yum-cron
+          - yum-changelog
+          - unzip
+          - python2-pip
+
+    - name: Create pmm user           | Create pmm user
+      when: ansible_virtualization_type != "docker"
+      user:
+        name: pmm
+        comment: PMM Server
+
+    - name: Add user to group         | Add the user 'postgres' to group 'pmm'
+      user:
+        name: postgres
+        groups: pmm
+        append: yes
+
+    - name: Create directories        | Create dirs
+      file: path={{ item }} state=directory owner=pmm group=pmm
+      with_items:
+        - /srv/prometheus/data
+        - /srv/prometheus/rules
+        - /srv/alertmanager/data
+
+    - name: Create directories        | Create dirs
+      file:
+        path: /srv/logs
+        state: directory
+        owner: pmm
+        group: pmm
+        mode: '0775'
+
+    - name: PostgresDB                | Create Postgres log file
+      file:
+        path: /srv/logs/postgresql.log
+        state: touch
+        force: yes
+        group: postgres
+        owner: postgres
+        mode: 0644
+
+    - name: Create dirs                | Create dirs
+      when: ansible_virtualization_type == "docker"
+      file: path={{ item }} state=directory
+      with_items:
+        - /var/lib/cloud/scripts/per-once
+        - /var/lib/cloud/scripts/per-boot
+
+    - name: Install supervisord
+      include_role:
+        name: supervisord-init
+
+    - name: Install nginx              | Install and configure nginx
+      include_role:
+        name: nginx-init
+
+    - name: Configure yum              | Configure yum-cron
+      replace:
+        dest: /etc/yum/yum-cron-hourly.conf
+        regexp: 'update_cmd = default'
+        replace: 'update_cmd = minimal-security'
+
+    - name: Configure yum              | Configure yum-cron
+      replace:
+        dest: /etc/yum/yum-cron.conf
+        regexp: 'update_cmd = default'
+        replace: 'update_cmd = minimal-security'
+
+    - name: Install RPMs               | Install RPMs for PMM2 server
+      yum:
+        name:
+          - percona-grafana
+          - percona-victoriametrics
+          - percona-qan-api2
+          - percona-dashboards
+          - percona-alertmanager
+          - pmm-server
+          - pmm-managed
+          - pmm-update
+          - percona-clickhouse-client
+          - percona-clickhouse-server
+          - dbaas-controller
+          - dbaas-tools
+        state: installed
+        # line below is sed'ed by build-server-docker script
+        enablerepo: "pmm2-server"
+
+    - name: PMM                        | Enable repo for pmm2-client
+      command: percona-release enable {{ pmm_client_repos }}
+
+    - name: Install RPMs               | Install pmm2-client rpm
+      yum:
+        name:
+          - pmm2-client
+        state: installed
+        enablerepo: "{{ pmm_client_repo_name }}"
+
+    - name: Create directories        | Create '/srv/grafana' dir
+      file:
+        path: /srv/grafana
+        state: directory
+        owner: grafana
+        group: grafana
+        mode: '0775'
+
+    - name: Grafana                    | Check data dir
+      stat: path=/srv/grafana/grafana.db
+      register: grafana_db
+
+    - name: Grafana                    | Disable Anonymous access
+      when: not grafana_db.stat.exists
+      ini_file:
+        dest: /etc/grafana/grafana.ini
+        section: auth.anonymous
+        option: enabled
+        value: 'false'
+
+    - name: Grafana                   | Enable gzip for grafana
+      ini_file:
+        dest: /etc/grafana/grafana.ini
+        section: server
+        option: enable_gzip
+        value: "true"
+
+    - name: Clickhouse                | Disable clickhouse-server in systemd
+      when: ansible_virtualization_type != "docker"
+      service: name=clickhouse-server state=stopped enabled=no
+
+    - name: Cron                      | Disable crond
+      when: ansible_virtualization_type != "docker"
+      service: name=crond state=stopped enabled=no
+
+    - name: Disable pmm-agent service | Disable pmm-agent
+      when: ansible_virtualization_type != "docker"
+      service: name=pmm-agent state=stopped enabled=no
+
+    - name: Supervisord               | Remove supervisord block from pmm.ini
+      when: ansible_virtualization_type != "docker"
+      ini_file:
+        path: /etc/supervisord.d/pmm.ini
+        section: supervisord
+        state: absent
+
+    - name: Create directories        | Create dirs
+      file: path={{ item }} state=directory owner=root group=pmm
+      with_items:
+        - /srv/clickhouse
+
+    - name: PMM update                | Create pmm-update directory
+      file:
+        path: /srv/update
+        state: directory
+ 
+    - name: Create tmp dirs           | Create tmp dirs
+      when: ansible_virtualization_type != "docker"
+      command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
+
+    - name: Clickhouse logger         | Configure clickhouse logger
+      replace:
+        path: /etc/clickhouse-server/config.xml
+        regexp: '<logger>[\s\S]*</logger>'
+        replace: |-
+          <logger>
+                  <!-- Possible levels: https://github.com/pocoproject/poco/blob/develop/Foundation/include/Poco/Logger.h#L105 -->
+                  <level>trace</level>
+                  <console>1</console>
+              </logger>
+
+    # Start the services
+
+    - name: Supervisord start        | Start supervisord service for AMI/OVF
+      when: ansible_virtualization_type != "docker"
+      service: name=supervisord state=started enabled=yes
+
+    - name: Supervisord start         | Start supervisord for docker
+      when: ansible_virtualization_type == "docker"
+      shell: supervisord -c /etc/supervisord.conf &
+
+    - name: PostgresDB                | Wait for postgres start
+      wait_for:
+        port: 5432
+        state: present
+        delay: 30
+        timeout: 60
+
+    - name: PostgresDB                | Create pmm-managed database
+      postgresql_db:
+        name: pmm-managed
+        state: present
+
+    - name: PostgresDB                | Create pmm-managed user
+      postgresql_user:
+        db: pmm-managed
+        name: pmm-managed
+        password: 'md5da757ec3e22c6d86a2bb8e70307fa937'
+        priv: 'ALL'
+        expires: infinity
+        state: present
+
+    - name: Grafana                   | Wait for dashboards
+      wait_for:
+        path: /srv/grafana/PERCONA_DASHBOARDS_VERSION
+        state: present
+
+    - name: Grafana                   | Add community panels
+      unarchive:
+        src: "{{ item }}"
+        dest: /var/lib/grafana/plugins
+        remote_src: yes
+      with_fileglob:
+        - "/usr/share/percona-dashboards/panels/*.zip"
+
+    - name: Cickhouse                 | Create ClickHouse database
+      command: clickhouse-client --host 127.0.0.1 --query="CREATE DATABASE IF NOT EXISTS pmm"
+
+    - name: Cickhouse                 | Show ClickHouse database
+      command: clickhouse-client --host 127.0.0.1 --query="SHOW DATABASES"
