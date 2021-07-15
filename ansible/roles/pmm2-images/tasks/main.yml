@@ -82,10 +82,6 @@
       include_role:
         name: supervisord-init
 
-    - name: Install nginx              | Install and configure nginx
-      include_role:
-        name: nginx-init
-
     - name: Configure yum              | Configure yum-cron
       replace:
         dest: /etc/yum/yum-cron-hourly.conf
