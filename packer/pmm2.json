@@ -104,7 +104,6 @@
             ],
             "role_paths": [
                 "ansible/roles/cloud-node",
-                "ansible/roles/nginx-init",
                 "ansible/roles/postgres-init",
                 "ansible/roles/lvm-init",
                 "ansible/roles/pmm2-images",
