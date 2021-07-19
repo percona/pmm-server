@@ -375,46 +375,46 @@ def add_folders(api_key):
         SET_OF_TAGS[folder] = data['id']
 
 
-def move_into_folders():
+def move_into_folders(api_key):
     print ' * Moving dashboards into folders'
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level='EXCLUSIVE')
-    cur = con.cursor()
-    cur.execute('SELECT data FROM dashboard WHERE is_folder = 0')
-    for row in cur.fetchall():
-        try:
-            data = json.loads(row[0])
-            tag = data['tags'][0]
-        except:
-            continue
-        if tag == 'Percona':
+    r = requests.get('%s/api/search' % (HOST,), headers=grafana_headers(api_key))
+    for item in r.json():
+        if item['type'] == 'dash-db':
+            print '   * Dashboard title: %r' % (item['title'].encode("ascii", "ignore"),)
             try:
-                tag = data['tags'][1]
+                tag = item['tags'][0]
             except:
                 continue
-        compare_pattern = re.compile(r'^.*_Compare$')
-        compare_tags  = [s for s in data['tags'] if compare_pattern.match(s)]
-        ha_pattern = re.compile(r'^.*_HA$')
-        ha_tags  = [s for s in data['tags'] if ha_pattern.match(s)]
-        if len(compare_tags) > 0:
-            match_compare = re.match("(MySQL|PostgreSQL|MongoDB|OS)", compare_tags[0]);
-            if match_compare:
-                print '   * Compare dashboard is detected for the service %s' % match_compare.group(0);
-                tag = match_compare.group(0);
-        if len(ha_tags) > 0:
-            match_ha = re.match("(MySQL|PostgreSQL|MongoDB)", ha_tags[0]);
-            if match_ha:
-                print '   * HA dashboard is detected for the service %s' % match_ha.group(0);
-                tag = match_ha.group(0);
-        try:
-            print '   * Uid: %r, Dashboard: %r, Tags: %r' % (data['uid'],data['title'],data['tags'])
-            print '   * First Tag: %s' % (tag)
-            cur.execute('UPDATE dashboard SET folder_id = ? WHERE uid = ?', (SET_OF_TAGS[tag], data['uid']))
-            print '   * Moved to the Folder with Id: %s' % (SET_OF_TAGS[tag])
-        except Exception as err:
-            print '   * Moving dashboard %s is failed: %s' % (data['title'], str(err))
 
-    con.commit()
-    con.close()
+            if tag == 'Percona':
+                try:
+                    tag = item['tags'][1]
+                except:
+                    continue
+
+            compare_pattern = re.compile(r'^.*_Compare$')
+            compare_tags  = [s for s in item['tags'] if compare_pattern.match(s)]
+            ha_pattern = re.compile(r'^.*_HA$')
+            ha_tags  = [s for s in item['tags'] if ha_pattern.match(s)]
+
+            if len(compare_tags) > 0:
+                match_compare = re.match('(MySQL|PostgreSQL|MongoDB|OS)', compare_tags[0]);
+                if match_compare:
+                    print '     * Compare dashboard is detected for the service %s' % (match_compare.group(0),);
+                    tag = match_compare.group(0);
+
+            if len(ha_tags) > 0:
+                match_ha = re.match('(MySQL|PostgreSQL|MongoDB)', ha_tags[0]);
+                if match_ha:
+                    print '     * HA dashboard is detected for the service %s' % (match_ha.group(0),);
+                    tag = match_ha.group(0);
+
+            r = requests.get('%s/api/dashboards/uid/%s' % (HOST,item['uid']), headers=grafana_headers(api_key))
+            dash_data = r.json()
+            dash_data['folderId'] = SET_OF_TAGS[tag]
+            dash_data['overwrite'] = True
+            r = requests.post('%s/api/dashboards/db' % (HOST,), headers=grafana_headers(api_key), data=json.dumps(dash_data), verify=False)
+            print '     * Result: %r %r' % (r.status_code, r.content)
 
 
 def add_demo_footer():
@@ -517,7 +517,7 @@ def main():
     add_folders(api_key)
     get_folders(api_key)
     import_apps(api_key)
-    move_into_folders()
+    move_into_folders(api_key)
 
     # restart Grafana to load app and set home dashboard below
     stop_grafana()
