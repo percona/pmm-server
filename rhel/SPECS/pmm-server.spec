@@ -49,6 +49,7 @@ mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
 
 install -d %{buildroot}%{_datadir}/%{name}
 cp -pav ./entrypoint.sh %{buildroot}%{_datadir}/%{name}/entrypoint.sh
+cp -pav ./vmalert-rules.yml %{buildroot}%{_datadir}/%{name}/vmalert-rules.yml
 cp -pav ./installation-wizard/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
 cp -pav ./%{pmm_repo}-%{pmm_commit}/api/swagger %{buildroot}%{_datadir}/%{name}/swagger
 rm -rf %{pmm_repo}-%{pmm_commit}
