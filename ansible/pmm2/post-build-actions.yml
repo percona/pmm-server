@@ -70,6 +70,9 @@
         - /var/log/secure
         - /var/log/wtmp
 
+    - name: Clean Clickhouse dir
+      shell: find /srv/clickhouse -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf --
+
     - name: Create dir                 | Create '/srv/logs' dir
       file:
         path: /srv/logs
