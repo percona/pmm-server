@@ -18,7 +18,7 @@
             ],
             "region": "us-east-1",
             "security_group_id": "sg-688c2b1c",
-            "source_ami": "ami-0714412b3e3fd9845",
+            "source_ami": "ami-00e87074e52e6c9f9",
             "ssh_pty": "true",
             "ena_support": "true",
             "ssh_username": "centos",
@@ -43,7 +43,7 @@
             "image_publisher": "OpenLogic",
             "image_offer": "CentOS",
             "image_sku": "7_9",
-            "image_version": "7.9.2021020400",
+            "image_version": "7.9.2021071900",
 
             "azure_tags": {
                 "dept": "Engineering",
@@ -51,7 +51,7 @@
             },
 
             "location": "East US",
-            "vm_size": "Standard_B1s",
+            "vm_size": "Standard_B2s",
             "disk_additional_size": [ 30 ]
         },
         {
@@ -73,7 +73,7 @@
             "headless": true,
             "output_directory": "pmm2-virtualbox-ovf",
             "shutdown_command": "rm -rf ~/.ssh/authorized_keys; cat /dev/zero > zero.fill; sync; sleep 1; sync; rm -f zero.fill; sudo shutdown -P now",
-            "source_path": ".cache/1802.01/box.ovf",
+            "source_path": ".cache/2004.01/box.ovf",
             "ssh_private_key_file": ".cache/id_rsa_vagrant",
             "ssh_pty": true,
             "ssh_username": "vagrant",
