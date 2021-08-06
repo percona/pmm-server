@@ -1,6 +1,6 @@
 export PACKER_CACHE_DIR := .cache
 export PACKER_VERSION := 1.2.2
-export CENTOS_ISO := 1802.01
+export CENTOS_ISO := 2004.01
 
 build-installation-wizard:
 	cd installation-wizard && npm ci && npm run build

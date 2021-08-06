@@ -1,5 +1,8 @@
 .idea/
 .DS_Store
+.cache
+packer_cache/
+pmm2-virtualbox-ovf/
 
 installation-wizard/node_modules
 rhel/BUILD
