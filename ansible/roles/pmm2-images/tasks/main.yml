@@ -36,10 +36,18 @@
           - python2-pip
 
     - name: Create pmm user           | Create pmm user
-      when: ansible_virtualization_type != "docker"
       user:
-        name: pmm
-        comment: PMM Server
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        home: "{{ item.home }}"
+        comment: "{{ item.comment }}"
+        shell: "{{ item.shell }}"
+      loop:
+        - { name: pmm, uid: 1000, comment: "PMM Server", shell: "/bin/false", home: "/home/pmm" }
+        - { name: nginx, uid: 999, comment: "nginx user", shell: "/sbin/nologin", home: "/var/cache/nginx" }
+        - { name: grafana, uid: 998, comment: "Grafana Dashboard", shell: "/sbin/nologin", home: "/etc/grafana" }
+        - { name: clickhouse, uid: 997, comment: "Clickhouse server", shell: "/sbin/nologin", home: "/var/lib/clickhouse" }
+        - { name: pmm-agent, uid: 996, comment: "pmm-agent", shell: "/bin/false", home: "/usr/local/percona/" }
 
     - name: Add user to group         | Add the user 'postgres' to group 'pmm'
       user:
@@ -167,7 +175,7 @@
       file:
         path: /srv/update
         state: directory
- 
+
     - name: Create tmp dirs           | Create tmp dirs
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
