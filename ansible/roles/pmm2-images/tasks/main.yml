@@ -35,6 +35,17 @@
           - unzip
           - python2-pip
 
+    - name: Ensure group "docker" exists with correct gid
+      group:
+        name: docker
+        gid: 1750
+      loop:
+        - { name: pmm, uid: 1000 }
+        - { name: nginx, uid: 998 }
+        - { name: grafana, uid: 996 }
+        - { name: clickhouse, uid: 995 }
+        - { name: pmm-agent, uid: 994 }
+
     - name: Create pmm user           | Create pmm user
       user:
         name: "{{ item.name }}"
@@ -43,11 +54,11 @@
         comment: "{{ item.comment }}"
         shell: "{{ item.shell }}"
       loop:
-        - { name: pmm, uid: 1000, comment: "PMM Server", shell: "/bin/false", home: "/home/pmm" }
-        - { name: nginx, uid: 999, comment: "nginx user", shell: "/sbin/nologin", home: "/var/cache/nginx" }
-        - { name: grafana, uid: 998, comment: "Grafana Dashboard", shell: "/sbin/nologin", home: "/etc/grafana" }
-        - { name: clickhouse, uid: 997, comment: "Clickhouse server", shell: "/sbin/nologin", home: "/var/lib/clickhouse" }
-        - { name: pmm-agent, uid: 996, comment: "pmm-agent", shell: "/bin/false", home: "/usr/local/percona/" }
+        - { name: pmm, uid: 1000, comment: "PMM Server", shell: "/bin/false", home: "/home/pmm", group: pmm }
+        - { name: nginx, uid: 999, comment: "nginx user", shell: "/sbin/nologin", home: "/var/cache/nginx", group: nginx }
+        - { name: grafana, uid: 998, comment: "Grafana Dashboard", shell: "/sbin/nologin", home: "/etc/grafana", group: grafana }
+        - { name: clickhouse, uid: 997, comment: "Clickhouse server", shell: "/sbin/nologin", home: "/var/lib/clickhouse", group: clickhouse }
+        - { name: pmm-agent, uid: 996, comment: "pmm-agent", shell: "/bin/false", home: "/usr/local/percona/", group: pmm-agent }
 
     - name: Add user to group         | Add the user 'postgres' to group 'pmm'
       user:
