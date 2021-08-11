@@ -38,13 +38,13 @@
     - name: Ensure groups exist with correct gid
       group:
         name: "{{ item.name }}"
-        gid: "{{ item.uid }}"
+        gid: "{{ item.gid }}"
       loop:
-        - { name: pmm, uid: 1000 }
-        - { name: nginx, uid: 998 }
-        - { name: grafana, uid: 996 }
-        - { name: clickhouse, uid: 995 }
-        - { name: pmm-agent, uid: 994 }
+        - { name: pmm, gid: 1000 }
+        - { name: nginx, gid: 998 }
+        - { name: grafana, gid: 996 }
+        - { name: clickhouse, gid: 995 }
+        - { name: pmm-agent, gid: 994 }
 
     - name: Create users              | Create users
       user:
