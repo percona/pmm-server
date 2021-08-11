@@ -53,6 +53,7 @@
         home: "{{ item.home }}"
         comment: "{{ item.comment }}"
         shell: "{{ item.shell }}"
+        group: "{{ item.group }}"
       loop:
         - { name: pmm, uid: 1000, comment: "PMM Server", shell: "/bin/false", home: "/home/pmm", group: pmm }
         - { name: nginx, uid: 999, comment: "nginx user", shell: "/sbin/nologin", home: "/var/cache/nginx", group: nginx }
