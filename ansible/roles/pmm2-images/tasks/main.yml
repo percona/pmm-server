@@ -35,10 +35,10 @@
           - unzip
           - python2-pip
 
-    - name: Ensure group "docker" exists with correct gid
+    - name: Ensure groups exist with correct gid
       group:
-        name: docker
-        gid: 1750
+        name: "{{ item.name }}"
+        gid: "{{ item.uid }}"
       loop:
         - { name: pmm, uid: 1000 }
         - { name: nginx, uid: 998 }
@@ -46,7 +46,7 @@
         - { name: clickhouse, uid: 995 }
         - { name: pmm-agent, uid: 994 }
 
-    - name: Create pmm user           | Create pmm user
+    - name: Create users              | Create users
       user:
         name: "{{ item.name }}"
         uid: "{{ item.uid }}"
