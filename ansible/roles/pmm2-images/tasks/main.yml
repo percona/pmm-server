@@ -35,11 +35,31 @@
           - unzip
           - python2-pip
 
-    - name: Create pmm user           | Create pmm user
-      when: ansible_virtualization_type != "docker"
+    - name: Ensure groups exist with correct gid
+      group:
+        name: "{{ item.name }}"
+        gid: "{{ item.gid }}"
+      loop:
+        - { name: pmm, gid: 1000 }
+        - { name: nginx, gid: 998 }
+        - { name: grafana, gid: 996 }
+        - { name: clickhouse, gid: 995 }
+        - { name: pmm-agent, gid: 994 }
+
+    - name: Create users              | Create users
       user:
-        name: pmm
-        comment: PMM Server
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        home: "{{ item.home }}"
+        comment: "{{ item.comment }}"
+        shell: "{{ item.shell }}"
+        group: "{{ item.group }}"
+      loop:
+        - { name: pmm, uid: 1000, comment: "PMM Server", shell: "/bin/false", home: "/home/pmm", group: pmm }
+        - { name: nginx, uid: 999, comment: "nginx user", shell: "/sbin/nologin", home: "/var/cache/nginx", group: nginx }
+        - { name: grafana, uid: 998, comment: "Grafana Dashboard", shell: "/sbin/nologin", home: "/etc/grafana", group: grafana }
+        - { name: clickhouse, uid: 997, comment: "Clickhouse server", shell: "/sbin/nologin", home: "/var/lib/clickhouse", group: clickhouse }
+        - { name: pmm-agent, uid: 996, comment: "pmm-agent", shell: "/bin/false", home: "/usr/local/percona/", group: pmm-agent }
 
     - name: Add user to group         | Add the user 'postgres' to group 'pmm'
       user:
@@ -167,7 +187,7 @@
       file:
         path: /srv/update
         state: directory
- 
+
     - name: Create tmp dirs           | Create tmp dirs
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
