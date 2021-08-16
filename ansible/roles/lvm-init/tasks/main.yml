@@ -3,19 +3,20 @@
       yum: name=lvm2 state=installed
 
     - name: Data partition             | list
+      when: not single_disk
       shell: ls /dev/sda /dev/sdb /dev/sdc /dev/xvdb | grep -v ^$(pvdisplay -c | grep ':VolGroup00:' | cut -d ':' -f 1 | tr -d '[:space:]' | sed 's/[0-9]$//')$ | grep -v ^$(findmnt -f -n -o SOURCE / | sed 's/[0-9]$//')$ | grep -v ^$(findmnt -f -n -o SOURCE /mnt/resource | sed 's/[0-9]$//')$
       register: available_drives
       failed_when: available_drives.stdout_lines|length != 1
       changed_when: False
 
     - name: Data partition             | Create Volume Group
-      when: enable_lvm == "true"
+      when: enable_lvm == "true" and not single_disk
       lvg:
         vg: DataVG
         pvs: "{{ available_drives.stdout_lines[0] }}"
 
     - name: Data partition             | Create Thin Pool
-      when: enable_lvm == "true"
+      when: enable_lvm == "true" and not single_disk
       register: thin_pool
       failed_when: "thin_pool is failed and 'Sorry, no shrinking of DataLV to 0 permitted' not in thin_pool.msg"
       lvol:
@@ -25,20 +26,21 @@
         opts: --thinpool ThinPool -V 1G
 
     - name: Data partition             | Format LVM
-      when: enable_lvm == "true"
+      when: enable_lvm == "true" and not single_disk
       filesystem:
         fstype: xfs
         dev: /dev/DataVG/DataLV
         opts: -L DATA
 
     - name: Data partition             | Format Device
-      when: enable_lvm != "true"
+      when: enable_lvm != "true" and not single_disk
       filesystem:
         fstype: xfs
         dev: "{{ available_drives.stdout_lines[0] }}"
         opts: -L DATA
 
     - name: Data partition             | Mount
+      when: not single_disk
       mount:
         name: "{{ data_partition }}"
         src: LABEL=DATA
@@ -80,7 +82,7 @@
         - /var/lib/cloud/scripts/per-boot
 
     - name: Data partition             | Auto resize LVM
-      when: enable_lvm == "true"
+      when: enable_lvm == "true" and not single_disk
       template:
         src: resize-xfs-lvm
         dest: /var/lib/cloud/scripts/per-boot/resize-xfs
