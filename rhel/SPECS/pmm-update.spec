@@ -13,7 +13,7 @@
 %global commit	        592eddf656bce32a11bd958af0a32c62bd5ea34c
 %global shortcommit	    %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         60
+%define release         61
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 %global install_golang 0
@@ -76,6 +76,9 @@ install -p -m 0755 bin/pmm-update %{buildroot}%{_sbindir}/
 # Specifically, the change date is ignored – RPM's "Buildtime" is used instead.
 
 %changelog
+* Tue Aug 26 2021 Nurlan Moldomurov <nurlan.moldomurov@percona.com> - 2.21.0-61
+- https://per.co.na/pmm/2.21.0
+
 * Tue Jul 27 2021 Nurlan Moldomurov <nurlan.moldomurov@percona.com> - 2.20.0-60
 - https://per.co.na/pmm/2.20.0
 
