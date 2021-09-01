@@ -49,7 +49,7 @@ pmm2-ami:
 	packer build -only amazon-ebs packer/pmm2.json
 
 pmm2-az:
-	packer build -only amazon-ebs packer/pmm2.json
+	packer build -only azure-arm packer/pmm2.json
 
 docker-ovf: fetch
 	packer build -only virtualbox-ovf packer/docker.json
