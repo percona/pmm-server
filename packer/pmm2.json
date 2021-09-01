@@ -1,4 +1,9 @@
 {
+    "variables": {
+        "pmm2_server_repo": "testing",
+        "pmm_client_repos": "original testing",
+        "pmm_client_repo_name": "percona-testing-x86_64"
+    },
     "builders": [{
             "type": "amazon-ebs",
             "ami_name": "PMM2 Server [{{isotime \"2006-01-02 1504\"}}]",
@@ -37,7 +42,7 @@
             "resource_group_name": "percona",
             "storage_account": "percona",
             "capture_container_name": "percona",
-            "capture_name_prefix": "pmm2-server",
+            "capture_name_prefix": "pmm2-server-{{ user `pmm_version` }}",
 
             "os_type": "Linux",
             "image_publisher": "OpenLogic",

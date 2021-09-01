@@ -1,5 +1,5 @@
 export PACKER_CACHE_DIR := .cache
-export PACKER_VERSION := 1.2.2
+export PACKER_VERSION := 1.7.4
 export CENTOS_ISO := 2004.01
 
 build-installation-wizard:
@@ -47,6 +47,9 @@ pmm2-ovf: fetch
 
 pmm2-ami:
 	packer build -only amazon-ebs packer/pmm2.json
+
+pmm2-azure:
+	packer build -only azure-arm packer/pmm2.json
 
 docker-ovf: fetch
 	packer build -only virtualbox-ovf packer/docker.json
