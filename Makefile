@@ -48,7 +48,7 @@ pmm2-ovf: fetch
 pmm2-ami:
 	packer build -only amazon-ebs packer/pmm2.json
 
-pmm2-az:
+pmm2-azure:
 	packer build -only azure-arm packer/pmm2.json
 
 docker-ovf: fetch
