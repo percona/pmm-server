@@ -3,7 +3,7 @@
     - name: Packages                   | Add EPEL repository
       when: ansible_os_family == 'RedHat'
       yum:
-        name: https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-13.noarch.rpm
+        name: https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm
         state: installed
 
     - name: Packages                   | Install OS tools
@@ -138,13 +138,13 @@
       copy:
         src: show-url
         dest: /opt/show-url
-        mode: 0755        
+        mode: 0755
 
     - name: PMM URL Service            | Add Service for script which show PMM URL
       copy:
         src: banner.service
         dest: /etc/systemd/system/banner.service
-        mode: 0755         
+        mode: 0755
 
     - name: Enable PMM URL Service     | Enable PMM URL Service
       systemd:
