@@ -326,7 +326,7 @@ def rename_panels():
 def copy_apps():
     for app in ['pmm-app']:
         source_dir = '/usr/share/percona-dashboards/' + app
-        dest_dir = '/var/lib/grafana/plugins/' + app
+        dest_dir = GRAFANA_PLUGINS_DIR + app
         if os.path.isdir(source_dir):
             print '  * Copying %r' % (app,)
             try:
