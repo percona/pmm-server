@@ -411,10 +411,11 @@ def move_into_folders(api_key):
 
             r = requests.get('%s/api/dashboards/uid/%s' % (HOST,item['uid']), headers=grafana_headers(api_key))
             dash_data = r.json()
-            dash_data['folderId'] = SET_OF_TAGS[tag]
-            dash_data['overwrite'] = True
-            r = requests.post('%s/api/dashboards/db' % (HOST,), headers=grafana_headers(api_key), data=json.dumps(dash_data), verify=False)
-            print '     * Result: %r %r' % (r.status_code, r.content)
+            if tag in SET_OF_TAGS:
+                dash_data['folderId'] = SET_OF_TAGS[tag]
+                dash_data['overwrite'] = True
+                r = requests.post('%s/api/dashboards/db' % (HOST,), headers=grafana_headers(api_key), data=json.dumps(dash_data), verify=False)
+                print '     * Result: %r %r' % (r.status_code, r.content)
 
 
 def add_demo_footer():
