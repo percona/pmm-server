@@ -239,7 +239,7 @@
     - name: Grafana                   | Add community panels
       unarchive:
         src: "{{ item }}"
-        dest: /var/lib/grafana/plugins
+        dest: /srv/grafana/plugins
         remote_src: yes
       with_fileglob:
         - "/usr/share/percona-dashboards/panels/*.zip"
