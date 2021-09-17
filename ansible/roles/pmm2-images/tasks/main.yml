@@ -157,6 +157,14 @@
         group: grafana
         mode: '0775'
 
+    - name: Create directories        | Create '/srv/grafana/plugins' dir
+      file:
+        path: /srv/grafana/plugins
+        state: directory
+        owner: grafana
+        group: grafana
+        mode: '0775'
+
     - name: Grafana                    | Check data dir
       stat: path=/srv/grafana/grafana.db
       register: grafana_db
