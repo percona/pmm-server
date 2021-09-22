@@ -32,6 +32,17 @@ NEW_VERSION_FILE           = SCRIPT_DIR + '/VERSION'
 OLD_VERSION_FILE           = GRAFANA_DB_DIR + '/PERCONA_DASHBOARDS_VERSION'
 HOST                       = 'http://127.0.0.1:3000'
 SET_OF_TAGS                = {'Query Analytics': 0, 'OS': 0, 'MySQL': 0, 'MongoDB': 0, 'PostgreSQL': 0, 'Insight': 0, 'PMM': 0}
+SET_OF_DASH_UIDS           = {'prometheus-advanced', 'node-cpu', 'node-disk', 'haproxy-instance-summary', 'pmm-home', 'node-memory',
+                              'mongodb-cluster-summary', 'mongodb-inmemory', 'mongodb-instance-summary', 'mongodb-instance-compare',
+                              'mongodb-instance-overview', 'mongodb-mmapv1', 'mongodb-replicaset-summary', 'mongodb-wiredtiger',
+                              'mysql-amazonaurora', 'mysql-commandhandler-compare', 'mysql-group-replicaset-summary', 'mysql-innodb-compression',
+                              'mysql-innodb', 'mysql-instance-summary', 'mysql-instance-compare', 'mysql-instance-overview',
+                              'mysql-myisamaria', 'mysql-myrocks', 'mysql-performance-schema', 'mysql-queryresponsetime', 'mysql-replicaset-summary',
+                              'mysql-table', 'mysql-tokudb', 'mysql-user', 'mysql-waitevents-analysis', 'node-memory-numa', 'node-network',
+                              'node-instance-summary', 'node-temp', 'node-instance-compare', 'node-instance-overview', 'pxc-cluster-summary',
+                              'pxc-node-summary', 'pxc-nodes-compare', 'postgresql-instance-summary', 'postgresql-instance-compare',
+                              'postgresql-instance-overview', 'node-cpu-process', 'prometheus-status', 'prometheus-overview',
+                              'proxysql-instance-summary', 'victoriametrics', 'vmagent', 'pmm-qan'}
 YEAR                       = str(datetime.date.today())[:4]
 
 CONTENT                    = '''<center>
@@ -380,7 +391,8 @@ def move_into_folders(api_key):
     r = requests.get('%s/api/search' % (HOST,), headers=grafana_headers(api_key))
     for item in r.json():
         if item['type'] == 'dash-db':
-            print '   * Dashboard title: %r' % (item['title'].encode("ascii", "ignore"),)
+            uid = item['uid'].encode("ascii", "ignore")
+            print '   * Dashboard title: %r, uid: %r' % (item['title'].encode("ascii", "ignore"), uid,)
             try:
                 tag = item['tags'][0]
             except:
@@ -411,7 +423,7 @@ def move_into_folders(api_key):
 
             r = requests.get('%s/api/dashboards/uid/%s' % (HOST,item['uid']), headers=grafana_headers(api_key))
             dash_data = r.json()
-            if tag in SET_OF_TAGS:
+            if tag in SET_OF_TAGS and uid in SET_OF_DASH_UIDS:
                 dash_data['folderId'] = SET_OF_TAGS[tag]
                 dash_data['overwrite'] = True
                 r = requests.post('%s/api/dashboards/db' % (HOST,), headers=grafana_headers(api_key), data=json.dumps(dash_data), verify=False)
