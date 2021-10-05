@@ -24,7 +24,7 @@ import zipfile
 import requests
 
 GRAFANA_DB_DIR             = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
-GRAFANA_PLUGINS_DIR        = '/var/lib/grafana/plugins/'
+GRAFANA_PLUGINS_DIR        = '/srv/grafana/plugins/'
 GRAFANA_SOURCE_PLUGINS_DIR = '/usr/share/percona-dashboards/panels/'
 SCRIPT_DIR                 = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR              = SCRIPT_DIR + '/dashboards/'
@@ -337,7 +337,7 @@ def rename_panels():
 def copy_apps():
     for app in ['pmm-app']:
         source_dir = '/usr/share/percona-dashboards/' + app
-        dest_dir = '/var/lib/grafana/plugins/' + app
+        dest_dir = GRAFANA_PLUGINS_DIR + app
         if os.path.isdir(source_dir):
             print '  * Copying %r' % (app,)
             try:
