@@ -48,6 +48,9 @@ pmm2-ovf: fetch
 pmm2-ami:
 	packer build -only amazon-ebs packer/pmm2.json
 
+pmm2-digitalocean:
+	packer build -only digitalocean -var 'single_disk=true' packer/pmm2.json
+
 pmm2-azure:
 	packer build -only azure-arm packer/pmm2.json
 
