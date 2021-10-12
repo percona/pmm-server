@@ -12,7 +12,7 @@
 %global commit          pmm-6401-v1.60.0
 
 Name:           percona-victoriametrics
-Version:        1.60.0
+Version:        1.67.0
 Release:        1%{?dist}
 Summary:        VictoriaMetrics monitoring solution and time series database
 License:        Apache-2.0
