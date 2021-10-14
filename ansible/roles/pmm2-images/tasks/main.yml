@@ -149,33 +149,6 @@
         state: installed
         enablerepo: "{{ pmm_client_repo_name }}"
 
-    - name: Create directories        | Create '/srv/grafana' dir
-      file:
-        path: /srv/grafana
-        state: directory
-        owner: grafana
-        group: grafana
-        mode: '0775'
-
-    - name: Grafana                    | Check data dir
-      stat: path=/srv/grafana/grafana.db
-      register: grafana_db
-
-    - name: Grafana                    | Disable Anonymous access
-      when: not grafana_db.stat.exists
-      ini_file:
-        dest: /etc/grafana/grafana.ini
-        section: auth.anonymous
-        option: enabled
-        value: 'false'
-
-    - name: Grafana                   | Enable gzip for grafana
-      ini_file:
-        dest: /etc/grafana/grafana.ini
-        section: server
-        option: enable_gzip
-        value: "true"
-
     - name: Cron                      | Disable crond
       when: ansible_virtualization_type != "docker"
       service: name=crond state=stopped enabled=no
@@ -191,50 +164,9 @@
         section: supervisord
         state: absent
 
-    - name: PMM update                | Create pmm-update directory
-      file:
-        path: /srv/update
-        state: directory
-
     - name: Create tmp dirs           | Create tmp dirs
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
-
-    # Start the services
-
-    - name: Supervisord start        | Start supervisord service for AMI/OVF
-      when: ansible_virtualization_type != "docker"
-      service: name=supervisord state=started enabled=yes
-
-    - name: Supervisord start         | Start supervisord for docker
-      when: ansible_virtualization_type == "docker"
-      shell: supervisord -c /etc/supervisord.conf &
-
-    - name: PostgresDB                | Wait for postgres start
-      wait_for:
-        port: 5432
-        state: present
-        delay: 30
-        timeout: 60
-
-    - name: PostgresDB                | Create pmm-managed database
-      postgresql_db:
-        name: pmm-managed
-        state: present
-
-    - name: PostgresDB                | Create pmm-managed user
-      postgresql_user:
-        db: pmm-managed
-        name: pmm-managed
-        password: 'md5da757ec3e22c6d86a2bb8e70307fa937'
-        priv: 'ALL'
-        expires: infinity
-        state: present
-
-    - name: Grafana                   | Wait for dashboards
-      wait_for:
-        path: /srv/grafana/PERCONA_DASHBOARDS_VERSION
-        state: present
 
     - name: Grafana                   | Add community panels
       unarchive:
