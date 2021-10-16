@@ -42,7 +42,7 @@ SET_OF_DASH_UIDS           = {'prometheus-advanced', 'node-cpu', 'node-disk', 'h
                               'node-instance-summary', 'node-temp', 'node-instance-compare', 'node-instance-overview', 'pxc-cluster-summary',
                               'pxc-node-summary', 'pxc-nodes-compare', 'postgresql-instance-summary', 'postgresql-instance-compare',
                               'postgresql-instance-overview', 'node-cpu-process', 'prometheus-status', 'prometheus-overview',
-                              'proxysql-instance-summary', 'victoriametrics', 'vmagent', 'pmm-qan'}
+                              'proxysql-instance-summary', 'victoriametrics', 'vmagent', 'pmm-qan', 'db-cluster-summary'}
 YEAR                       = str(datetime.date.today())[:4]
 
 CONTENT                    = '''<center>
