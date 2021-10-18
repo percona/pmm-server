@@ -13,7 +13,7 @@
 %global commit	        592eddf656bce32a11bd958af0a32c62bd5ea34c
 %global shortcommit	    %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         63
+%define release         64
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 %global install_golang 0
@@ -72,10 +72,10 @@ install -p -m 0755 bin/pmm-update %{buildroot}%{_sbindir}/
 %{_datadir}/%{name}
 
 
-# Currently, the only thing from changelog that is used by pmm-update is the first URL.
-# Specifically, the change date is ignored – RPM's "Buildtime" is used instead.
-
 %changelog
+* Tue Oct 19 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.23.0-64
+- https://per.co.na/pmm/latest
+
 * Tue Oct 19 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.23.0-63
 - https://per.co.na/pmm/2.23.0
 

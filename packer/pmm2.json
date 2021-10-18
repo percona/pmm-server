@@ -1,8 +1,9 @@
 {
     "variables": {
-        "pmm2_server_repo": "testing",
-        "pmm_client_repos": "original testing",
-        "pmm_client_repo_name": "percona-testing-x86_64"
+      "single_disk": "false",
+      "pmm2_server_repo": "testing",
+      "pmm_client_repos": "original testing",
+      "pmm_client_repo_name": "percona-testing-x86_64"
     },
     "builders": [{
             "type": "amazon-ebs",
@@ -89,6 +90,15 @@
                 ["storagectl", "{{.Name}}", "--name", "SCSI Controller", "--add", "scsi", "--controller", "LSILogic"],
                 ["storageattach", "{{.Name}}", "--storagectl", "SCSI Controller", "--port", "1", "--type", "hdd", "--medium", "/tmp/{{.Name}}-disk2.vmdk"]
             ]
+        },
+        {
+            "type": "digitalocean",
+            "ssh_username": "root",
+            "image": "centos-7-x64",
+            "region": "nyc3",
+            "size": "s-2vcpu-2gb",
+            "snapshot_name": "PMM2 Server [{{isotime \"2006-01-02 1504\"}}]",
+            "ssh_clear_authorized_keys": "true"
         }
     ],
     "provisioners": [{
@@ -136,6 +146,20 @@
             "type": "shell",
             "inline": [
                 "sudo bats /tmp/bats/*.bats"
+            ]
+        },
+        {
+            "type": "file",
+            "only": ["digitalocean"],
+            "destination": "/home/admin/digitalocean_add_dbaas",
+            "source": "files/digitalocean/digitalocean_add_dbaas.py"
+        },
+        {
+            "type": "shell",
+            "only": ["digitalocean"],
+            "inline": [
+                "curl -s https://raw.githubusercontent.com/digitalocean/marketplace-partners/master/scripts/99-img-check.sh -o img_check.sh",
+                "sudo bash ./img_check.sh"
             ]
         }
     ],

@@ -157,6 +157,14 @@
         group: grafana
         mode: '0775'
 
+    - name: Create directories        | Create '/srv/grafana/plugins' dir
+      file:
+        path: /srv/grafana/plugins
+        state: directory
+        owner: grafana
+        group: grafana
+        mode: '0775'
+
     - name: Grafana                    | Check data dir
       stat: path=/srv/grafana/grafana.db
       register: grafana_db
@@ -210,27 +218,6 @@
       when: ansible_virtualization_type == "docker"
       shell: supervisord -c /etc/supervisord.conf &
 
-    - name: PostgresDB                | Wait for postgres start
-      wait_for:
-        port: 5432
-        state: present
-        delay: 30
-        timeout: 60
-
-    - name: PostgresDB                | Create pmm-managed database
-      postgresql_db:
-        name: pmm-managed
-        state: present
-
-    - name: PostgresDB                | Create pmm-managed user
-      postgresql_user:
-        db: pmm-managed
-        name: pmm-managed
-        password: 'md5da757ec3e22c6d86a2bb8e70307fa937'
-        priv: 'ALL'
-        expires: infinity
-        state: present
-
     - name: Grafana                   | Wait for dashboards
       wait_for:
         path: /srv/grafana/PERCONA_DASHBOARDS_VERSION
@@ -239,7 +226,7 @@
     - name: Grafana                   | Add community panels
       unarchive:
         src: "{{ item }}"
-        dest: /var/lib/grafana/plugins
+        dest: /srv/grafana/plugins
         remote_src: yes
       with_fileglob:
         - "/usr/share/percona-dashboards/panels/*.zip"
