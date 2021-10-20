@@ -9,7 +9,6 @@ import json
 import os
 import random
 import shutil
-import sqlite3
 import string
 import subprocess
 import sys
@@ -20,8 +19,10 @@ import httplib
 import fnmatch
 import re
 import zipfile
+import psycopg2
 
 import requests
+
 
 GRAFANA_DB_DIR             = sys.argv[1] if len(sys.argv) > 1 else '/srv/grafana'
 GRAFANA_PLUGINS_DIR        = '/srv/grafana/plugins/'
@@ -149,24 +150,31 @@ def wait_for_grafana_start():
 
 
 def add_api_key(name, db_key):
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
-    cur = con.cursor()
+    conn = psycopg2.connect(dbname='grafana',
+                            user='grafana',
+                            password='grafana',
+                            host='localhost')
+    cur = conn.cursor()
 
-    cur.execute("REPLACE INTO api_key (org_id, name, key, role, created, updated) "
-                "VALUES (1, ?, ?, 'Admin', datetime('now'), datetime('now'))", (name, db_key))
+    cur.execute("""INSERT INTO api_key (org_id, name, key, role, created, updated)
+    VALUES(1, %s, %s, 'Admin', NOW(), NOW())""", (name, db_key))
 
-    con.commit()
-    con.close()
+    conn.commit()
+    conn.close()
 
 
 def delete_api_key(db_key, upgrade):
-    con = sqlite3.connect(GRAFANA_DB_DIR + '/grafana.db', isolation_level="EXCLUSIVE")
-    cur = con.cursor()
+    conn = psycopg2.connect(dbname='grafana',
+                            user='grafana',
+                            password='grafana',
+                            host='localhost')
 
-    cur.execute("DELETE FROM api_key WHERE key = ?", (db_key,))
+    cur = conn.cursor()
 
-    con.commit()
-    con.close()
+    cur.execute("DELETE FROM api_key WHERE key = %s", (db_key,))
+
+    conn.commit()
+    conn.close()
 
 
 def _add_metrics_datasource(api_key, ds):
@@ -497,7 +505,7 @@ def set_home_dashboard(api_key):
     homeDashboard = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
 
     # Check if any dashboard has set as the home dashboard
-    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned. 
+    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned.
     # Next snippet sets pmm home dashboard as default grafana home dashboad.
     if not 'redirectUri' in homeDashboard.content:
         res = json.loads(r.content)
