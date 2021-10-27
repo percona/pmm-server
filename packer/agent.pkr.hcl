@@ -9,7 +9,9 @@ packer {
 
 source "amazon-ebs" "agent" {
   ami_name      = "Docker Agent"
-  instance_type = "t3.2xlarge"
+  instance_type = "t3.xlarge"
+  force_deregister = true
+  force_delete_snapshot = true
   region        = "us-east-2"
   source_ami_filter {
     filters = {
@@ -42,7 +44,10 @@ build {
   ]
   provisioner "shell" {
     inline = [
-        "sudo yum install -y docker"
+        "sudo yum install -y docker java-1.8.0-openjdk.x86_64",
+        "sudo systemctl enable docker.service",
+        "sudo systemctl start docker.service",
+        "sudo usermod -a -G docker ec2-user"
     ]
   }
 }
