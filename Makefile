@@ -58,4 +58,4 @@ centos-ami:
 	packer build packer/centos-ami.json
 
 pmm2-ami:
-	docker run -ti --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:1.7.7 build -var 'pmm_client_repos=original testing' -var 'pmm_client_repo_name=percona-testing-x86_64' -var 'pmm2_server_repo=testing' -only amazon-ebs '-color=false' packer/pmm2.json
+	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:1.7.7 build -var 'pmm_client_repos=original testing' -var 'pmm_client_repo_name=percona-testing-x86_64' -var 'pmm2_server_repo=testing' -only amazon-ebs '-color=false' packer/pmm2.json
