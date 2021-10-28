@@ -44,7 +44,7 @@ build {
   ]
   provisioner "shell" {
     inline = [
-        "sudo yum install -y docker java-1.8.0-openjdk.x86_64",
+        "sudo yum install -y docker java-1.8.0-openjdk.x86_64 git ",
         "sudo systemctl enable docker.service",
         "sudo systemctl start docker.service",
         "sudo usermod -a -G docker ec2-user"

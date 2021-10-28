@@ -45,9 +45,6 @@ pmm-az:
 pmm2-ovf: fetch
 	packer build -only virtualbox-ovf packer/pmm2.json
 
-pmm2-ami:
-	packer build -only amazon-ebs packer/pmm2.json
-
 pmm2-digitalocean:
 	packer build -only digitalocean -var 'single_disk=true' packer/pmm2.json
 
@@ -59,3 +56,6 @@ docker-ovf: fetch
 
 centos-ami:
 	packer build packer/centos-ami.json
+
+pmm2-ami:
+	docker run -ti --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:1.7.7 build -var 'pmm_client_repos=original testing' -var 'pmm_client_repo_name=percona-testing-x86_64' -var 'pmm2_server_repo=testing' -only amazon-ebs '-color=false' packer/pmm2.json
