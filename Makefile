@@ -1,5 +1,5 @@
 export PACKER_CACHE_DIR := .cache
-export PACKER_VERSION := 1.7.4
+export PACKER_VERSION := 1.7.7
 export CENTOS_ISO := 2004.01
 
 build-installation-wizard:
@@ -58,4 +58,16 @@ centos-ami:
 	packer build packer/centos-ami.json
 
 pmm2-ami:
-	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:1.7.7 build -var 'pmm_client_repos=original testing' -var 'pmm_client_repo_name=percona-testing-x86_64' -var 'pmm2_server_repo=testing' -only amazon-ebs '-color=false' packer/pmm2.json
+	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:${PACKER_VERSION} \
+			build -var 'pmm_client_repos=original experimental' \
+                  -var 'pmm_client_repo_name=percona-experimental-x86_64' \
+                  -var 'pmm2_server_repo=experimental' \
+                  -only amazon-ebs -color=false \
+				  packer/pmm2.json
+pmm2-ami-rc:
+	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:${PACKER_VERSION} \
+			build -var 'pmm_client_repos=original testing' \
+				  -var 'pmm_client_repo_name=percona-testing-x86_64' \
+				  -var 'pmm2_server_repo=testing' \
+				  -only amazon-ebs '-color=false' \
+				  packer/pmm2.json
