@@ -34,6 +34,12 @@ source "amazon-ebs" "agent" {
   run_volume_tags = {
     iit-billing-tag = "pmm-slave"
   }
+  launch_block_device_mappings {
+    device_name = "/dev/xvda"
+    volume_size = 100
+    volume_type = "gp3"
+    delete_on_termination = true
+  }
 
 }
 
