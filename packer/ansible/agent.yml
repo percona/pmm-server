@@ -10,6 +10,7 @@
           - docker
           - java-1.8.0-openjdk.x86_64
           - git
+          - jq
         state: present
 
     - name: Enable Docker service
