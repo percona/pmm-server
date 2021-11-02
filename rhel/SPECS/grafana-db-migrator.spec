@@ -1,7 +1,5 @@
 %undefine _missing_build_ids_terminate_build
 
-%define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         4
 %global release_hash b61138937c3a25c49be5548150a9df7e23f74d27
 
 Name:           grafana-db-migrator
