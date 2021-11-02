@@ -4,7 +4,7 @@
   become: true
 
   tasks:
-    - name: install packages
+    - name: Install packages
       package:
         name:
           - docker
