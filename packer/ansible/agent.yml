@@ -26,7 +26,7 @@
           - "docker"
         append: yes
 
-    - name: Switch off swap
+    - name: Turn off swap
       sysctl:
         name: vm.swappiness
         value: 0
