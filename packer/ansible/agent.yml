@@ -32,7 +32,7 @@
         value: 0
         state: present
 
-    - name: Increase ditry ratio
+    - name: Increase dirty ratio
       sysctl:
         name: vm.dirty_ratio
         value: 80
