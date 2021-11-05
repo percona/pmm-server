@@ -21,11 +21,11 @@ make
 
 %install
 mkdir -p %{buildroot}/usr/sbin/
-install -m 755 dist/grafana-migrate %{buildroot}%{_sbindir}/
+install -m 755 dist/grafana-db-migrator %{buildroot}%{_sbindir}/
 
 
 %files
-%{_sbindir}/grafana-migrate
+%{_sbindir}/grafana-db-migrator
 
 %changelog
 * Tue Nov 02 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 0.0.1-1
