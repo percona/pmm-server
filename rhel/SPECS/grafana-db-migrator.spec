@@ -1,10 +1,10 @@
 %undefine _missing_build_ids_terminate_build
 
-%global release_hash b61138937c3a25c49be5548150a9df7e23f74d27
+%global release_hash d03bfc51223aef4651c099e501d50dd6995ada8b
 
 Name:           grafana-db-migrator
-Version:        0.0.1
-Release:	    1%{?dist}
+Version:        1.0.0
+Release:        1%{?dist}
 Summary:        A tool for Grafana database migration
 License:        MIT
 URL:            https://github.com/percona/grafana-db-migrator
@@ -28,6 +28,6 @@ install -m 755 dist/grafana-db-migrator %{buildroot}%{_sbindir}/
 %{_sbindir}/grafana-db-migrator
 
 %changelog
-* Tue Nov 02 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 0.0.1-1
+* Tue Nov 02 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.1-1
 - Creating package for grafana-db-migrator
 
