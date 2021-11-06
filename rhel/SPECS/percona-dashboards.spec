@@ -38,11 +38,9 @@ make release
 
 
 %install
-install -d %{buildroot}%{_datadir}/%{name}/pmm-app
-install -d %{buildroot}%{_datadir}/%{name}/panels
-cp -pa ./pmm-app/dist %{buildroot}%{_datadir}/%{name}/pmm-app
+install -d %{buildroot}%{_datadir}/%{name}/panels/pmm-app
 cp -pa ./panels %{buildroot}%{_datadir}/%{name}
-%{__cp} ./misc/fix-panels.py %{buildroot}%{_datadir}/%{name}
+cp -pa ./pmm-app/dist %{buildroot}%{_datadir}/%{name}/panels/pmm-app
 echo %{version} > %{buildroot}%{_datadir}/%{name}/VERSION
 
 
@@ -53,6 +51,9 @@ echo %{version} > %{buildroot}%{_datadir}/%{name}/VERSION
 
 
 %changelog
+* Sat Nov 06 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
+- Migrate to grafana provisioning
+
 * Tue Jan 26 2021 Alex Tymchuk <alexander.tymchuk@percona.com> - 2.15.0-15
 - PMM-6766 remove qan-app
 

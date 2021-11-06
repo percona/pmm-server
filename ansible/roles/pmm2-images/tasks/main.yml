@@ -222,11 +222,3 @@
       wait_for:
         path: /srv/grafana/PERCONA_DASHBOARDS_VERSION
         state: present
-
-    - name: Grafana                   | Add community panels
-      unarchive:
-        src: "{{ item }}"
-        dest: /srv/grafana/plugins
-        remote_src: yes
-      with_fileglob:
-        - "/usr/share/percona-dashboards/panels/*.zip"
