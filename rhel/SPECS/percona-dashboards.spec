@@ -1,4 +1,6 @@
 %global _missing_build_ids_terminate_build 0
+%define debug_package %{nil}
+
 %global repo		grafana-dashboards
 %global provider	github.com/percona/%{repo}
 %global import_path	%{provider}
