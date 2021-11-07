@@ -427,6 +427,19 @@ def set_home_dashboard(api_key):
         print ' * "home" dashboard has already set'
 
 
+def copy_plugins():
+    print ' * Copy plugins'
+    if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DIR):
+        plugin_list = os.listdir(GRAFANA_SOURCE_PLUGINS_DIR)
+        print '  * Copying plugins'
+        if not os.path.isdir(GRAFANA_PLUGINS_DIR):
+            os.makedirs(GRAFANA_PLUGINS_DIR)
+            print '   * Grafana panel folder %r is missed -> created' % (GRAFANA_PLUGINS_DIR,)
+        for plugin in plugin_list:
+            print(plugin)
+            print(type(plugin))
+            shutil.copytree(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, plugin), os.path.join(GRAFANA_PLUGINS_DIR, plugin))
+
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
     upgrade = check_dashboards_version()
@@ -442,6 +455,8 @@ def main():
         start_grafana()
 
     wait_for_grafana_start()
+
+    copy_plugins()
 
     add_datasources(api_key)
     add_folders(api_key)
