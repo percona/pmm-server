@@ -1,3 +1,4 @@
+%global _missing_build_ids_terminate_build 0
 %global repo            pmm-server
 %global provider        github.com/percona/%{repo}
 %global commit          0dbbc0ca255591000f0371012cd4e7515624a059
@@ -64,7 +65,7 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
-* Wed Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
+* Wed Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-2
 - PMM-8307 move nginx files to ansible playbook (pmm-update repo)
 
 * Tue Jun 29 2021 Alexander Tymchuk <alexander.tymchuk@percona.com> - 2.20.0-1
