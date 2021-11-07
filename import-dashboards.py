@@ -284,87 +284,6 @@ def add_datasources(api_key):
     _add_prometheus_alertmanager_datasource(api_key, ds)
 
 
-def add_panels():
-    print ' * Adding panels'
-    if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DIR):
-        files_list = os.listdir(GRAFANA_SOURCE_PLUGINS_DIR)
-        print '  * Copying panels'
-        if not os.path.isdir(GRAFANA_PLUGINS_DIR):
-            os.makedirs(GRAFANA_PLUGINS_DIR)
-            print '   * Grafana panel folder %r is missed -> created' % (GRAFANA_PLUGINS_DIR,)
-        for file in files_list:
-            shutil.copyfile(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, file), os.path.join(GRAFANA_PLUGINS_DIR, file))
-        print '   * Unzipping panels'
-        for file in files_list:
-            with zipfile.ZipFile(os.path.join(GRAFANA_PLUGINS_DIR, file), 'r') as zip_ref:
-                print '    * Unzip %r' % (file,)
-                for info in zip_ref.infolist():
-                    extracted_path = zip_ref.extract(info, GRAFANA_PLUGINS_DIR)
-                    # file permissions are not preserved by ZipFile
-                    # https://bugs.python.org/issue15795
-                    unix_attributes = info.external_attr >> 16
-                    if unix_attributes:
-                        os.chmod(extracted_path, unix_attributes)
-            os.remove(os.path.join(GRAFANA_PLUGINS_DIR, file))
-        rename_panels()
-
-
-def rename_panels():
-    print '   * Renaming panels'
-    panels_list = os.listdir(GRAFANA_PLUGINS_DIR)
-    for panel in panels_list:
-        print '    * %r -> ' % (panel,),
-        panel_path = os.path.join(GRAFANA_PLUGINS_DIR, panel, 'dist/plugin.json')
-        if os.path.exists(panel_path):
-            with open(panel_path, 'r') as f:
-                panel_params = json.loads(f.read())
-                # check if folder has already the correct name
-                if panel == panel_params['id']:
-                    print 'skipped (panel already has the correct name)'
-                    continue
-                print '%r' % (panel_params['id'],)
-                if os.path.isdir(os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id'])):
-                    try:
-                        shutil.rmtree(os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']))
-                    except Exception as err:
-                        print '   * Failed to remove %s: %s' % (os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']), err)
-                        continue
-                os.rename(os.path.join(GRAFANA_PLUGINS_DIR, panel), os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']))
-        else:
-            print 'skipped (%r file does not exist)' % (panel_path,)
-
-
-def copy_apps():
-    for app in ['pmm-app']:
-        source_dir = '/usr/share/percona-dashboards/' + app
-        dest_dir = GRAFANA_PLUGINS_DIR + app
-        if os.path.isdir(source_dir):
-            print '  * Copying %r' % (app,)
-            try:
-                shutil.rmtree(dest_dir, False)
-            except Exception as err:
-                print '   * Failed to remove %s: %s' % (dest_dir, err)
-            shutil.copytree(source_dir, dest_dir)
-
-
-def import_apps(api_key):
-    for app in ['pmm-app']:
-        print ' * Importing %r' % (app,)
-        data = json.dumps({'enabled': False})
-        r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
-        print ' * Plugin disable result: %r %r' % (r.status_code, r.content)
-        if r.status_code != httplib.OK:
-            print ' * Cannot dissable %s app' % app
-            sys.exit(-1)
-
-        data = json.dumps({'enabled': True})
-        r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
-        print ' * Plugin enable result: %r %r' % (r.status_code, r.content)
-        if r.status_code != httplib.OK:
-            print ' * Cannot enable %s app' % app
-            sys.exit(-1)
-
-
 def get_folders(api_key):
     r = requests.get('%s/api/folders' % (HOST,), headers=grafana_headers(api_key))
     for x in json.loads(r.content):
@@ -497,7 +416,7 @@ def set_home_dashboard(api_key):
     homeDashboard = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
 
     # Check if any dashboard has set as the home dashboard
-    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned. 
+    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned.
     # Next snippet sets pmm home dashboard as default grafana home dashboad.
     if not 'redirectUri' in homeDashboard.content:
         res = json.loads(r.content)
@@ -518,8 +437,6 @@ def main():
     stop_grafana()
     try:
       #  add_demo_footer()
-        add_panels()
-        copy_apps()
         add_api_key(name, db_key)
     finally:
         start_grafana()
@@ -529,7 +446,6 @@ def main():
     add_datasources(api_key)
     add_folders(api_key)
     get_folders(api_key)
-    import_apps(api_key)
     move_into_folders(api_key)
 
     # restart Grafana to load app and set home dashboard below
