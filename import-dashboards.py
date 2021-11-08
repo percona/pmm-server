@@ -436,9 +436,10 @@ def copy_plugins():
             os.makedirs(GRAFANA_PLUGINS_DIR)
             print '   * Grafana panel folder %r is missed -> created' % (GRAFANA_PLUGINS_DIR,)
         for plugin in plugin_list:
-            print(plugin)
-            print(type(plugin))
-            shutil.copytree(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, plugin), os.path.join(GRAFANA_PLUGINS_DIR, plugin))
+            plugin_path = os.path.join(GRAFANA_PLUGINS_DIR, plugin)
+            if os.path.exists(plugin_path):
+                shutil.rmtree(plugin_path)
+            shutil.copytree(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, plugin), plugin_path)
 
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
