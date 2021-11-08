@@ -20,7 +20,6 @@ URL:		https://%{provider}
 Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
 BuildRequires:	nodejs
-BuildArch:	noarch
 Requires:	percona-grafana python python-requests
 Provides:	percona-grafana-dashboards = %{version}-%{release}
 
