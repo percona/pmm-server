@@ -433,7 +433,7 @@ def copy_plugins():
         print '  * Copying plugins'
         if not os.path.isdir(GRAFANA_PLUGINS_DIR):
             os.makedirs(GRAFANA_PLUGINS_DIR)
-            print '   * Grafana panel folder %r is missed -> created' % (GRAFANA_PLUGINS_DIR,)
+            print '   * Grafana panel folder %r is missing -> created' % (GRAFANA_PLUGINS_DIR,)
         for plugin in plugin_list:
             plugin_path = os.path.join(GRAFANA_PLUGINS_DIR, plugin)
             if os.path.exists(plugin_path):
