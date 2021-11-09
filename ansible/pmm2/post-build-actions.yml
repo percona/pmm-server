@@ -73,6 +73,7 @@
     - name: Post-build cleanup         | Cleanup build logs and data
       file: path={{ item }} state=absent
       with_items:
+        - /srv/logs
         - /tmp/RPMS
         - /var/log/yum.log
         - /var/log/secure

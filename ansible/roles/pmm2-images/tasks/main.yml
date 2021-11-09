@@ -208,6 +208,12 @@
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
 
+    # Temporary task before dashboard provisioning will be implemented 
+    - name: Copy grafana plugins provisioning files
+      copy:
+        src: plugins.yml
+        dest: /usr/share/grafana/conf/provisioning/plugins/default.yml
+
     # Start the services
 
     - name: Supervisord start        | Start supervisord service for AMI/OVF

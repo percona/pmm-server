@@ -19,7 +19,6 @@ import datetime
 import httplib
 import fnmatch
 import re
-import zipfile
 
 import requests
 
