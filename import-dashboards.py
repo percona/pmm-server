@@ -448,6 +448,7 @@ def main():
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
+    copy_plugins()
     try:
       #  add_demo_footer()
         add_api_key(name, db_key)
@@ -456,7 +457,6 @@ def main():
 
     wait_for_grafana_start()
 
-    copy_plugins()
 
     add_datasources(api_key)
     add_folders(api_key)
