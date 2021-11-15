@@ -194,6 +194,12 @@
                 "    rm -rf               *.ovf *.mf *-disk001.vmdk *-disk002.vmdk",
                 "popd"
             ]
+        }],
+        [{
+            "type": "manifest",
+            "only": ["amazon-ebs"],
+            "output": "manifest.json",
+            "strip_path": true
         }]
     ]
 }
