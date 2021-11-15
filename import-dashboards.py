@@ -168,119 +168,84 @@ def delete_api_key(db_key, upgrade):
     con.close()
 
 
-def _add_metrics_datasource(api_key, ds):
-    if 'Metrics' not in ds:   # https://jira.percona.com/browse/PMM-6518
-        print ' * Adding Metrics Data Source'
-        data = json.dumps({'name': 'Metrics', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-    else:
-        print ' * Modifing Metrics Data Source'
-        r = requests.get('%s/api/datasources/name/Metrics' % (HOST,), headers=grafana_headers(api_key))
-        data = json.loads(r.content)
-        data['jsonData']['timeInterval']='1s'
-        data['jsonData']['httpMethod']='POST'
-        data['readOnly'] = False
-        data['isDefault'] = True
-        r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
-    print r.status_code, r.content
-    if r.status_code != httplib.OK:
-        print ' * Cannot process Metrics Data Source'
-        sys.exit(-1)
+def add_panels():
+    print ' * Adding panels'
+    if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DIR):
+        files_list = os.listdir(GRAFANA_SOURCE_PLUGINS_DIR)
+        print '  * Copying panels'
+        if not os.path.isdir(GRAFANA_PLUGINS_DIR):
+            os.makedirs(GRAFANA_PLUGINS_DIR)
+            print '   * Grafana panel folder %r is missed -> created' % (GRAFANA_PLUGINS_DIR,)
+        for file in files_list:
+            shutil.copyfile(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, file), os.path.join(GRAFANA_PLUGINS_DIR, file))
+        print '   * Unzipping panels'
+        for file in files_list:
+            with zipfile.ZipFile(os.path.join(GRAFANA_PLUGINS_DIR, file), 'r') as zip_ref:
+                print '    * Unzip %r' % (file,)
+                for info in zip_ref.infolist():
+                    extracted_path = zip_ref.extract(info, GRAFANA_PLUGINS_DIR)
+                    # file permissions are not preserved by ZipFile
+                    # https://bugs.python.org/issue15795
+                    unix_attributes = info.external_attr >> 16
+                    if unix_attributes:
+                        os.chmod(extracted_path, unix_attributes)
+            os.remove(os.path.join(GRAFANA_PLUGINS_DIR, file))
+        rename_panels()
+
+def rename_panels():
+    print '   * Renaming panels'
+    panels_list = os.listdir(GRAFANA_PLUGINS_DIR)
+    for panel in panels_list:
+        print '    * %r -> ' % (panel,),
+        panel_path = os.path.join(GRAFANA_PLUGINS_DIR, panel, 'dist/plugin.json')
+        if os.path.exists(panel_path):
+            with open(panel_path, 'r') as f:
+                panel_params = json.loads(f.read())
+                # check if folder has already the correct name
+                if panel == panel_params['id']:
+                    print 'skipped (panel already has the correct name)'
+                    continue
+                print '%r' % (panel_params['id'],)
+                if os.path.isdir(os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id'])):
+                    try:
+                        shutil.rmtree(os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']))
+                    except Exception as err:
+                        print '   * Failed to remove %s: %s' % (os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']), err)
+                        continue
+                os.rename(os.path.join(GRAFANA_PLUGINS_DIR, panel), os.path.join(GRAFANA_PLUGINS_DIR, panel_params['id']))
+        else:
+            print 'skipped (%r file does not exist)' % (panel_path,)
 
 
-def _add_postgresql_datasource(api_key, ds):
-    if 'PostgreSQL' not in ds:
-        print ' * PostgreSQL Data Source'
-        data = json.dumps({
-            'name': 'PostgreSQL',
-            'type': 'postgres',
-            'url': 'localhost:5432',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {'postgresVersion': '1000', 'sslmode': 'disable'},
-            'password': '',
-            'database': 'pmm-managed',
-            'user': 'postgres'
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
+def copy_apps():
+    for app in ['pmm-app']:
+        source_dir = '/usr/share/percona-dashboards/' + app
+        dest_dir = GRAFANA_PLUGINS_DIR + app
+        if os.path.isdir(source_dir):
+            print '  * Copying %r' % (app,)
+            try:
+                shutil.rmtree(dest_dir, False)
+            except Exception as err:
+                print '   * Failed to remove %s: %s' % (dest_dir, err)
+            shutil.copytree(source_dir, dest_dir)
+
+
+def import_apps(api_key):
+    for app in ['pmm-app']:
+        print ' * Importing %r' % (app,)
+        data = json.dumps({'enabled': False})
+        r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
+        print ' * Plugin disable result: %r %r' % (r.status_code, r.content)
         if r.status_code != httplib.OK:
-            print ' * Cannot add PostgreSQL Data Source'
+            print ' * Cannot dissable %s app' % app
             sys.exit(-1)
 
-
-def _add_clickhouse_datasource(api_key, ds):
-    if 'ClickHouse' not in ds:
-        print ' * ClickHouse Data Source'
-        data = json.dumps({
-            'name': 'ClickHouse',
-            'type': 'vertamedia-clickhouse-datasource',
-            'url': 'http://localhost:8123',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {'keepCookies': []},
-            'password': '',
-            'database': '',
-            'user': ''
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
+        data = json.dumps({'enabled': True})
+        r = requests.post('%s/api/plugins/%s/settings' % (HOST, app), data=data, headers=grafana_headers(api_key))
+        print ' * Plugin enable result: %r %r' % (r.status_code, r.content)
         if r.status_code != httplib.OK:
-            print ' * Cannot add ClickHouse Data Source'
+            print ' * Cannot enable %s app' % app
             sys.exit(-1)
-
-
-def _add_ptsummary_datasource(api_key, ds):
-    if 'PTSummary' not in ds:
-        print ' * PTSummary Data Source'
-        data = json.dumps({
-            'name': 'PTSummary',
-            'type': 'pmm-pt-summary-datasource',
-            'url': '',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {},
-            'password': '',
-            'database': '',
-            'user': ''
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add PTSummary Data Source'
-            sys.exit(-1)
-
-
-def _add_prometheus_alertmanager_datasource(api_key, ds):
-    if 'Prometheus AlertManager' not in ds:
-        print ' * Prometheus AlertManager Data Source'
-        data = json.dumps({
-            'name': 'Prometheus AlertManager',
-            'type': 'camptocamp-prometheus-alertmanager-datasource',
-            'url': 'http://localhost:9093/alertmanager/',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {'keepCookies': []},
-            'password': '',
-            'database': '',
-            'user': ''
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add Prometheus AlertManager Data Source'
-            sys.exit(-1)
-
-
-def add_datasources(api_key):
-    r = requests.get('%s/api/datasources' % (HOST,), headers=grafana_headers(api_key))
-    print ' * Datasources: %r %r' % (r.status_code, r.content)
-    ds = [x['name'] for x in json.loads(r.content)]
-    _add_metrics_datasource(api_key, ds)
-    _add_postgresql_datasource(api_key, ds)
-    _add_clickhouse_datasource(api_key, ds)
-    _add_ptsummary_datasource(api_key, ds)
-    _add_prometheus_alertmanager_datasource(api_key, ds)
 
 
 def get_folders(api_key):
@@ -457,8 +422,6 @@ def main():
 
     wait_for_grafana_start()
 
-
-    add_datasources(api_key)
     add_folders(api_key)
     get_folders(api_key)
     move_into_folders(api_key)
