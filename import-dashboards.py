@@ -169,121 +169,6 @@ def delete_api_key(db_key, upgrade):
     con.close()
 
 
-def _add_metrics_datasource(api_key, ds):
-    if 'Metrics' not in ds:   # https://jira.percona.com/browse/PMM-6518
-        print ' * Adding Metrics Data Source'
-        data = json.dumps({'name': 'Metrics', 'type': 'prometheus', 'jsonData': {'keepCookies': [], 'timeInterval': '1s', 'httpMethod': 'POST'}, 'url': 'http://127.0.0.1:9090/prometheus/', 'access': 'proxy', 'isDefault': True})
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-    else:
-        print ' * Modifing Metrics Data Source'
-        r = requests.get('%s/api/datasources/name/Metrics' % (HOST,), headers=grafana_headers(api_key))
-        data = json.loads(r.content)
-        data['jsonData']['timeInterval']='1s'
-        data['jsonData']['httpMethod']='POST'
-        data['readOnly'] = False
-        data['isDefault'] = True
-        r = requests.put('%s/api/datasources/%i' % (HOST, data['id']), data=json.dumps(data), headers=grafana_headers(api_key))
-    print r.status_code, r.content
-    if r.status_code != httplib.OK:
-        print ' * Cannot process Metrics Data Source'
-        sys.exit(-1)
-
-
-def _add_postgresql_datasource(api_key, ds):
-    if 'PostgreSQL' not in ds:
-        print ' * PostgreSQL Data Source'
-        data = json.dumps({
-            'name': 'PostgreSQL',
-            'type': 'postgres',
-            'url': 'localhost:5432',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {'postgresVersion': '1000', 'sslmode': 'disable'},
-            'password': '',
-            'database': 'pmm-managed',
-            'user': 'postgres'
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add PostgreSQL Data Source'
-            sys.exit(-1)
-
-
-def _add_clickhouse_datasource(api_key, ds):
-    if 'ClickHouse' not in ds:
-        print ' * ClickHouse Data Source'
-        data = json.dumps({
-            'name': 'ClickHouse',
-            'type': 'vertamedia-clickhouse-datasource',
-            'url': 'http://localhost:8123',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {'keepCookies': []},
-            'password': '',
-            'database': '',
-            'user': ''
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add ClickHouse Data Source'
-            sys.exit(-1)
-
-
-def _add_ptsummary_datasource(api_key, ds):
-    if 'PTSummary' not in ds:
-        print ' * PTSummary Data Source'
-        data = json.dumps({
-            'name': 'PTSummary',
-            'type': 'pmm-pt-summary-datasource',
-            'url': '',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {},
-            'password': '',
-            'database': '',
-            'user': ''
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add PTSummary Data Source'
-            sys.exit(-1)
-
-
-def _add_prometheus_alertmanager_datasource(api_key, ds):
-    if 'Prometheus AlertManager' not in ds:
-        print ' * Prometheus AlertManager Data Source'
-        data = json.dumps({
-            'name': 'Prometheus AlertManager',
-            'type': 'camptocamp-prometheus-alertmanager-datasource',
-            'url': 'http://localhost:9093/alertmanager/',
-            'access': 'proxy',
-            'basicAuth': False,
-            'jsonData': {'keepCookies': []},
-            'password': '',
-            'database': '',
-            'user': ''
-        })
-        r = requests.post('%s/api/datasources' % HOST, data=data, headers=grafana_headers(api_key))
-        print r.status_code, r.content
-        if r.status_code != httplib.OK:
-            print ' * Cannot add Prometheus AlertManager Data Source'
-            sys.exit(-1)
-
-
-def add_datasources(api_key):
-    r = requests.get('%s/api/datasources' % (HOST,), headers=grafana_headers(api_key))
-    print ' * Datasources: %r %r' % (r.status_code, r.content)
-    ds = [x['name'] for x in json.loads(r.content)]
-    _add_metrics_datasource(api_key, ds)
-    _add_postgresql_datasource(api_key, ds)
-    _add_clickhouse_datasource(api_key, ds)
-    _add_ptsummary_datasource(api_key, ds)
-    _add_prometheus_alertmanager_datasource(api_key, ds)
-
-
 def add_panels():
     print ' * Adding panels'
     if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DIR):
@@ -307,7 +192,6 @@ def add_panels():
                         os.chmod(extracted_path, unix_attributes)
             os.remove(os.path.join(GRAFANA_PLUGINS_DIR, file))
         rename_panels()
-
 
 def rename_panels():
     print '   * Renaming panels'
@@ -497,7 +381,7 @@ def set_home_dashboard(api_key):
     homeDashboard = requests.get('%s/api/dashboards/home' % (HOST,), headers=grafana_headers(api_key))
 
     # Check if any dashboard has set as the home dashboard
-    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned. 
+    # All PMM dashboards are reuploaded during an update and got new IDs. So default grafana home dashboard has to be reassigned.
     # Next snippet sets pmm home dashboard as default grafana home dashboad.
     if not 'redirectUri' in homeDashboard.content:
         res = json.loads(r.content)
@@ -526,7 +410,6 @@ def main():
 
     wait_for_grafana_start()
 
-    add_datasources(api_key)
     add_folders(api_key)
     get_folders(api_key)
     import_apps(api_key)
