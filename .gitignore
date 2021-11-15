@@ -16,3 +16,5 @@ rhel/SOURCES/*
 !rhel/SOURCES/*.ico
 
 *.ova
+
+manifest.json
