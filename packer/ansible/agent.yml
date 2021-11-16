@@ -11,7 +11,29 @@
           - java-1.8.0-openjdk.x86_64
           - git
           - jq
+          - gettext
+          - unzip
+          - python3
+          - https://rpm.nodesource.com/pub_14.x/el/7/x86_64/nodejs-14.18.1-1nodesource.x86_64.rpm
         state: present
+
+    - name: Install docker-compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.1.1/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x,o+x'
+
+    - name: Download and unarchive installer
+      unarchive:
+        src: https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+        dest: /tmp
+        remote_src: yes
+
+    - name: Install awscl
+      shell: python3 /tmp/awscli-bundle/install
+
+    - name: install npm
+      command: npm install
 
     - name: Enable Docker service
       systemd:

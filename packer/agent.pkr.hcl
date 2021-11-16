@@ -24,21 +24,31 @@ source "amazon-ebs" "agent" {
     owners = ["amazon"]
   }
   ssh_username = "ec2-user"
-  subnet_id    = "subnet-00b3df129e7d8c658"
   tags = {
-    iit-billing-tag = "pmm-slave"
+    iit-billing-tag = "pmm-worker"
   }
   run_tags = {
-    iit-billing-tag = "pmm-slave"
+    iit-billing-tag = "pmm-worker"
   }
   run_volume_tags = {
-    iit-billing-tag = "pmm-slave"
+    iit-billing-tag = "pmm-worker"
   }
   launch_block_device_mappings {
     device_name = "/dev/xvda"
     volume_size = 100
     volume_type = "gp3"
     delete_on_termination = true
+  }
+  vpc_filter {
+    filters = {
+      "tag:Name" : "jenkins-pmm-amzn2"
+    }
+  }
+  subnet_filter {
+    filters = {
+      "tag:Name" : "jenkins-pmm-amzn2-B"
+    }
+    random = true
   }
 
 }
