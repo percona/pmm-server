@@ -58,7 +58,6 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 %doc README.md CHANGELOG.md
 %{_sysconfdir}/supervisord.d
 %{_sysconfdir}/alertmanager.yml
-%{_datadir}/percona-dashboards/import-dashboards.py*
 %{_datadir}/%{name}
 
 
