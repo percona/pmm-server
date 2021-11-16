@@ -19,7 +19,6 @@ import datetime
 import httplib
 import fnmatch
 import re
-import zipfile
 
 import requests
 
@@ -392,6 +391,20 @@ def set_home_dashboard(api_key):
         print ' * "home" dashboard has already set'
 
 
+def copy_plugins():
+    print ' * Copy plugins'
+    if os.path.isdir(GRAFANA_SOURCE_PLUGINS_DIR):
+        plugin_list = os.listdir(GRAFANA_SOURCE_PLUGINS_DIR)
+        print '  * Copying plugins'
+        if not os.path.isdir(GRAFANA_PLUGINS_DIR):
+            os.makedirs(GRAFANA_PLUGINS_DIR)
+            print '   * Grafana panel folder %r is missing -> created' % (GRAFANA_PLUGINS_DIR,)
+        for plugin in plugin_list:
+            plugin_path = os.path.join(GRAFANA_PLUGINS_DIR, plugin)
+            if os.path.exists(plugin_path):
+                shutil.rmtree(plugin_path)
+            shutil.copytree(os.path.join(GRAFANA_SOURCE_PLUGINS_DIR, plugin), plugin_path)
+
 def main():
     print "Grafana database directory: %s" % (GRAFANA_DB_DIR,)
     upgrade = check_dashboards_version()
@@ -400,10 +413,9 @@ def main():
 
     # modify database when Grafana is stopped to avoid a data race
     stop_grafana()
+    copy_plugins()
     try:
       #  add_demo_footer()
-        add_panels()
-        copy_apps()
         add_api_key(name, db_key)
     finally:
         start_grafana()
@@ -412,7 +424,6 @@ def main():
 
     add_folders(api_key)
     get_folders(api_key)
-    import_apps(api_key)
     move_into_folders(api_key)
 
     # restart Grafana to load app and set home dashboard below
