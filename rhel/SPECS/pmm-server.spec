@@ -40,7 +40,6 @@ make build-installation-wizard
 tar -zxvf %SOURCE1
 install -d %{buildroot}%{_sysconfdir}/nginx/conf.d
 install -d %{buildroot}%{_datadir}/percona-dashboards
-mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashboards.py
 
 mv alertmanager.yml %{buildroot}%{_sysconfdir}/alertmanager.yml
 
