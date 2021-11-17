@@ -7,7 +7,7 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         24
+%define release         25
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -62,6 +62,9 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
+* Wed Nov 17 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
+- PMM-4486 remove import-dashboards.py and use internal Grafana provisioning
+
 * Wed Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
 - PMM-8307 move nginx files to ansible playbook (pmm-update repo)
 
