@@ -42,4 +42,4 @@
       lineinfile:
         path: /srv/postgres/postgresql.conf
         regexp: "^#listen_addresses = 'localhost'"
-        line: "#listen_addresses = '*'"
+        line: "listen_addresses = '*'"
