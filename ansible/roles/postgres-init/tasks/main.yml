@@ -37,3 +37,9 @@
         path: /srv/postgres/postgresql.conf
         regexp: '^logging_collector'
         line: 'logging_collector = off'
+
+    - name: Postgres                   | Allow connecting from any host
+      lineinfile:
+        path: /srv/postgres/postgresql.conf
+        regexp: "^#listen_addresses = 'localhost'"
+        line: "#listen_addresses = '*'"
