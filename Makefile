@@ -43,31 +43,22 @@ pmm-az:
 	packer build -only azure-arm packer/pmm.json
 
 pmm2-ovf: fetch
-	packer build -only virtualbox-ovf packer/pmm2.json
+	packer build -only virtualbox-ovf.ovf_distribuion packer/pmm2.pkr.hcl
 
 pmm2-digitalocean:
-	packer build -only digitalocean -var 'single_disk=true' packer/pmm2.json
+	packer build -only digitalocean.digitalocean_distribuion -var 'single_disk=true' packer/pmm2.pkr.hcl
 
 pmm2-azure:
-	packer build -only azure-arm packer/pmm2.json
-
-docker-ovf: fetch
-	packer build -only virtualbox-ovf packer/docker.json
-
-centos-ami:
-	packer build packer/centos-ami.json
+	packer build -var 'pmm_version=2.25.0' -only azure-arm.azure_distribuion packer/pmm2.pkr.hcl
 
 pmm2-ami:
 	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:${PACKER_VERSION} \
 			build -var 'pmm_client_repos=original experimental' \
                   -var 'pmm_client_repo_name=percona-experimental-x86_64' \
                   -var 'pmm2_server_repo=experimental' \
-                  -only amazon-ebs -color=false \
-				  packer/pmm2.json
+                  -only amazon-ebs.aws_distribuion -color=false \
+				  packer/pmm2.pkr.hcl
 pmm2-ami-rc:
 	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:${PACKER_VERSION} \
-			build -var 'pmm_client_repos=original testing' \
-				  -var 'pmm_client_repo_name=percona-testing-x86_64' \
-				  -var 'pmm2_server_repo=testing' \
-				  -only amazon-ebs '-color=false' \
-				  packer/pmm2.json
+			build -only amazon-ebs.aws_distribuion '-color=false' \
+				  packer/pmm2.pkr.hcl
