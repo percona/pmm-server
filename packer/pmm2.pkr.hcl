@@ -19,7 +19,7 @@ variable "single_disk" {
   default = "false"
 }
 
-source "amazon-ebs" "aws_distribuion" {
+source "amazon-ebs" "aws_distribution" {
   ami_name      = "PMM2 Server [${formatdate("2006-01-02 1504", timestamp())}]"
   ena_support   = "true"
   instance_type = "c4.xlarge"
@@ -49,7 +49,7 @@ source "amazon-ebs" "aws_distribuion" {
   subnet_id         = "subnet-ee06e8e1"
 }
 
-source "azure-arm" "azure_distribuion" {
+source "azure-arm" "azure_distribution" {
   azure_tags = {
     dept = "Engineering"
     task = "PMM2 Image deployment"
@@ -69,7 +69,7 @@ source "azure-arm" "azure_distribuion" {
   vm_size                = "Standard_B2s"
 }
 
-source "digitalocean" "digitalocean_distribuion" {
+source "digitalocean" "digitalocean_distribution" {
   image                     = "centos-7-x64"
   region                    = "nyc3"
   size                      = "s-2vcpu-2gb"
@@ -78,7 +78,7 @@ source "digitalocean" "digitalocean_distribuion" {
   ssh_username              = "root"
 }
 
-source "virtualbox-ovf" "ovf_distribuion" {
+source "virtualbox-ovf" "ovf_distribution" {
   export_opts          = [
     "--ovf10",
     "--manifest",
@@ -106,14 +106,18 @@ source "virtualbox-ovf" "ovf_distribuion" {
 
 build {
   sources = [
-    "source.amazon-ebs.aws_distribuion",
-    "source.azure-arm.azure_distribuion",
-    "source.digitalocean.digitalocean_distribuion",
-    "source.virtualbox-ovf.ovf_distribuion"
+    "source.amazon-ebs.aws_distribution",
+    "source.azure-arm.azure_distribution",
+    "source.digitalocean.digitalocean_distribution",
+    "source.virtualbox-ovf.ovf_distribution"
   ]
 
   provisioner "shell" {
-    inline = ["sudo yum -y update", "sudo yum -y install epel-release", "sudo yum -y install ansible bats"]
+    inline = [
+      "sudo yum -y update",
+      "sudo yum -y install epel-release",
+      "sudo yum -y install ansible bats"
+      ]
   }
 
   provisioner "ansible-local" {

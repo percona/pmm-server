@@ -49,7 +49,7 @@ pmm2-digitalocean:
 	packer build -only digitalocean.digitalocean_distribuion -var 'single_disk=true' packer/pmm2.pkr.hcl
 
 pmm2-azure:
-	packer build -var 'pmm_version=2.25.0' -only azure-arm.azure_distribuion packer/pmm2.pkr.hcl
+	packer build -only azure-arm.azure_distribuion packer/pmm2.pkr.hcl
 
 pmm2-ami:
 	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:${PACKER_VERSION} \
