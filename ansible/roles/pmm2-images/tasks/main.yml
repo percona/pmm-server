@@ -199,31 +199,13 @@
         section: supervisord
         state: absent
 
-    - name: PMM update                | Create pmm-update directory
-      file:
-        path: /srv/update
-        state: directory
-
     - name: Create tmp dirs           | Create tmp dirs
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
 
-    # TODO delete after dashboard provisioning will be implemented
-    - name: Copy grafana plugins provisioning files
-      copy:
-        src: plugins.yml
-        dest: /usr/share/grafana/conf/provisioning/plugins/default.yml
-
-    # Start the services
-    - name: Supervisord start        | Start supervisord service for AMI/OVF
-      when: ansible_virtualization_type != "docker"
-      service: name=supervisord state=started enabled=yes
-
-    - name: Supervisord start         | Start supervisord for docker
-      when: ansible_virtualization_type == "docker"
-      shell: supervisord -c /etc/supervisord.conf &
-
-    - name: Grafana                   | Wait for dashboards
-      wait_for:
-        path: /srv/grafana/PERCONA_DASHBOARDS_VERSION
-        state: present
+    - name: Disable pmm-update-perform-init for build time
+      ini_file:
+        path: /etc/supervisord.d/pmm.ini
+        section: program:pmm-update-perform-init
+        option: autostart
+        value: "false"
