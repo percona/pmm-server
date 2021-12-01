@@ -168,26 +168,9 @@
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
 
-    - name: Create directories        | Create '/srv/grafana' dir
-      file:
-        path: /srv/grafana
-        state: directory
-        owner: grafana
-        group: grafana
-        mode: '0775'
-
-    - name: Create directories        | Create '/srv/grafana/plugins' dir
-      file:
-        path: /srv/grafana/plugins
-        state: directory
-        owner: grafana
-        group: grafana
-        mode: '0775'
-
-    - name: Grafana                   | Add community panels
-      unarchive:
-        src: "{{ item }}"
-        dest: /srv/grafana/plugins
-        remote_src: yes
-      with_fileglob:
-        - "/usr/share/percona-dashboards/panels/*.zip"
+    - name: Disable pmm-update-perform-init for build time
+      ini_file:
+        path: /etc/supervisord.d/pmm.ini
+        section: program:pmm-update-perform-init
+        option: autostart
+        value: "false"
