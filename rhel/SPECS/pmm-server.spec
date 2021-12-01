@@ -7,7 +7,7 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         24
+%define release         25
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -40,7 +40,6 @@ make build-installation-wizard
 tar -zxvf %SOURCE1
 install -d %{buildroot}%{_sysconfdir}/nginx/conf.d
 install -d %{buildroot}%{_datadir}/percona-dashboards
-mv import-dashboards.py %{buildroot}%{_datadir}/percona-dashboards/import-dashboards.py
 
 mv alertmanager.yml %{buildroot}%{_sysconfdir}/alertmanager.yml
 
@@ -59,11 +58,13 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 %doc README.md CHANGELOG.md
 %{_sysconfdir}/supervisord.d
 %{_sysconfdir}/alertmanager.yml
-%{_datadir}/percona-dashboards/import-dashboards.py*
 %{_datadir}/%{name}
 
 
 %changelog
+* Wed Nov 17 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
+- PMM-4486 remove import-dashboards.py and use internal Grafana provisioning
+
 * Wed Jun 30 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.20.0-2
 - PMM-8307 move nginx files to ansible playbook (pmm-update repo)
 
