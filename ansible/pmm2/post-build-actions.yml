@@ -104,13 +104,3 @@
         owner: pmm
         group: pmm
         mode: "0775"
-
-    - name: Remove settings from pmm-managed database
-      postgresql_query:
-        db: pmm-managed
-        query: TRUNCATE settings;
-
-    - name: Add empty settings
-      postgresql_query:
-        db: pmm-managed
-        query: INSERT INTO settings VALUES ('{}');
