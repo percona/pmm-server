@@ -54,10 +54,20 @@
         --server-address=127.0.0.1:443
         --server-insecure-tls
 
-    - name: Remove settings from pmm-managed database
-      postgresql_query:
-        db: pmm-managed
-        query: TRUNCATE settings;
+    - name: Stop pmm-managed before delete database
+      supervisorctl:
+        name: pmm-managed
+        state: stopped
+
+    - name: Remove pmm-managed database from postgres
+      postgresql_db:
+        name: pmm-managed
+        state: absent
+
+    - name: Remove pmm-managed role from postgres
+      postgresql_user:
+        name: pmm-managed
+        state: absent
 
     - name: Supervisord stop           | Stop supervisord service for AMI/OVF
       when: ansible_virtualization_type != "docker"
