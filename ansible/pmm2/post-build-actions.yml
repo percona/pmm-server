@@ -54,14 +54,18 @@
         --server-address=127.0.0.1:443
         --server-insecure-tls
 
-    - name: Remove pmm-managed database
+    - name: Restart my_app, connecting to supervisord with credentials and server URL
+      supervisorctl:
+        name: pmm-managed
+        state: restarted
+
+    - name: Remove pmm-managed database from postgres
       postgresql_db:
         name: pmm-managed
         state: absent
 
-    - name: Remove pmm-managed role
+    - name: Remove pmm-managed role from postgres
       postgresql_user:
-        db: pmm-managed
         name: pmm-managed
         state: absent
 
