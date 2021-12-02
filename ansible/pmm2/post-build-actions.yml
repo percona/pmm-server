@@ -57,7 +57,7 @@
     - name: Restart my_app, connecting to supervisord with credentials and server URL
       supervisorctl:
         name: pmm-managed
-        state: restarted
+        state: stopped
 
     - name: Remove pmm-managed database from postgres
       postgresql_db:
