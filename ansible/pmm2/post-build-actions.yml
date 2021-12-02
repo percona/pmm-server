@@ -109,3 +109,8 @@
       postgresql_query:
         db: pmm-managed
         query: TRUNCATE settings;
+
+    - name: Add empty settings
+      postgresql_query:
+        db: pmm-managed
+        query: INSERT INTO settings VALUES ('{}');
