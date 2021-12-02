@@ -54,7 +54,7 @@
         --server-address=127.0.0.1:443
         --server-insecure-tls
 
-    - name: Restart my_app, connecting to supervisord with credentials and server URL
+    - name: Stop pmm-managed before delete database
       supervisorctl:
         name: pmm-managed
         state: stopped
