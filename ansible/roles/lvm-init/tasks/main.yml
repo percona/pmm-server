@@ -82,7 +82,7 @@
         - /var/lib/cloud/scripts/per-boot
 
     - name: Data partition             | Auto resize LVM
-      when: enable_lvm == "true" and not single_disk == "false"
+      when: enable_lvm == "true" and single_disk == "false"
       template:
         src: resize-xfs-lvm
         dest: /var/lib/cloud/scripts/per-boot/resize-xfs
