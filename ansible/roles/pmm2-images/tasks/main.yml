@@ -174,3 +174,9 @@
         section: program:pmm-update-perform-init
         option: autostart
         value: "false"
+
+    - name: Copy grafana.ini file for the first run
+      copy:
+        src: grafana.ini
+        dest: /etc/supervisord.d/grafana.ini
+        mode: '0644'
