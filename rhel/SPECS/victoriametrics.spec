@@ -9,7 +9,7 @@
 
 %global repo            VictoriaMetrics
 %global provider        github.com/VictoriaMetrics/%{repo}
-%global commit          pmm-6401-v1.69.0
+%global commit          pmm-6401-v1.70.0
 
 Name:           percona-victoriametrics
 Version:        1.70.0
