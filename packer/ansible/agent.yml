@@ -29,13 +29,18 @@
 
     - name: Install docker-compose
       get_url:
-        url: https://github.com/docker/compose/releases/download/v2.1.1/docker-compose-linux-x86_64
+        url: https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64
         dest: /usr/local/bin/docker-compose
         mode: 'u+x,g+x,o+x'
 
+    - name: Copy docker daemon config
+      copy:
+        src: daemon.json
+        dest: /etc/docker/daemon.json
+
     - name: Install kubectl
       get_url:
-        url: https://storage.googleapis.com/kubernetes-release/release/v1.22.4/bin/linux/amd64/kubectl
+        url: https://storage.googleapis.com/kubernetes-release/release/v1.22.5/bin/linux/amd64/kubectl
         dest: /usr/local/bin/kubectl
         mode: 'u+x,g+x,o+x'
 
