@@ -69,13 +69,7 @@ install -d -p %{buildroot}%{_sysconfdir}/grafana
 cp conf/sample.ini %{buildroot}%{_sysconfdir}/grafana/grafana.ini
 mv conf/ldap.toml %{buildroot}%{_sysconfdir}/grafana/
 
-%if  0%{?rhel} == 6
-mkdir -p %{buildroot}%{_initddir}/
-install -p -m 0644 packaging/rpm/init.d/grafana-server %{buildroot}%{_initddir}/
-%endif
-
 install -d -p %{buildroot}%{_sharedstatedir}/grafana
-install -d -p %{buildroot}/var/log/grafana
 
 %files
 %defattr(-, grafana, grafana, -)
@@ -87,7 +81,6 @@ install -d -p %{buildroot}/var/log/grafana
 %{_sysconfdir}/grafana/grafana.ini
 %{_sysconfdir}/grafana/ldap.toml
 %dir %{_sharedstatedir}/grafana
-%dir /var/log/grafana
 
 %pre
 getent group grafana >/dev/null || groupadd -r grafana
@@ -97,6 +90,9 @@ getent passwd grafana >/dev/null || \
 exit 0
 
 %changelog
+* Fri Jan  14 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 7.5.11-2
+- PMM-9452 Remove useless operation in grafana spec
+
 * Wed Oct  6 2021 Tiago Santos <tiago.mota@percona.com> - 7.5.11-1
 - PMM-8967 Update grafana to version 7.5.11
 
