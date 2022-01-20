@@ -1,6 +1,6 @@
 %undefine _missing_build_ids_terminate_build
 
-%global release_hash 6d8bd7f1a41505d8f47c6fb5bf250de2e7ea8ae7
+%global release_hash 65e6fde3868a50584efb43e9b771fc7341e6739c
 
 Name:           grafana-db-migrator
 Version:        1.0.2
@@ -28,7 +28,7 @@ install -m 755 dist/grafana-db-migrator %{buildroot}%{_sbindir}/
 %{_sbindir}/grafana-db-migrator
 
 %changelog
-* Thu Jan 20 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.2-1
+* Thu Jan 20 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.2-2
 - Add fixes for CHAR fields
 
 * Tue Nov 02 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.1-1
