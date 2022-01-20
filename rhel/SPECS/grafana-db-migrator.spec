@@ -3,7 +3,7 @@
 %global release_hash 65e6fde3868a50584efb43e9b771fc7341e6739c
 
 Name:           grafana-db-migrator
-Version:        1.0.2
+Version:        1.0.3
 Release:        1%{?dist}
 Summary:        A tool for Grafana database migration
 License:        MIT
@@ -28,7 +28,7 @@ install -m 755 dist/grafana-db-migrator %{buildroot}%{_sbindir}/
 %{_sbindir}/grafana-db-migrator
 
 %changelog
-* Thu Jan 20 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.2-2
+* Thu Jan 20 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.3-2
 - Add fixes for CHAR fields
 
 * Tue Nov 02 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 1.0.1-1
