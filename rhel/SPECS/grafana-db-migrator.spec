@@ -1,6 +1,6 @@
 %undefine _missing_build_ids_terminate_build
 
-%global release_hash 5e3097708aceeefc8256acc6e54854a83ef4098a
+%global release_hash 6d8bd7f1a41505d8f47c6fb5bf250de2e7ea8ae7
 
 Name:           grafana-db-migrator
 Version:        1.0.0
