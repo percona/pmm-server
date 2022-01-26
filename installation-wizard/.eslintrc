@@ -7,9 +7,7 @@
     }
   },
   "plugins": [
-    "react",
-    "import",
-    "react-hooks"
+    "jsx-a11y"
   ],
   "overrides": [
     {
