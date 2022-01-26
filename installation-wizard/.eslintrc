@@ -1,5 +1,16 @@
 { 
-  "extends": ["airbnb", "airbnb/hooks"],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": [
+    "react",
+    "import",
+    "react-hooks"
+  ],
   "overrides": [
     {
       "files": ["*.jsx", "*.js"],
