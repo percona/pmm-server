@@ -65,7 +65,7 @@
             dest: /usr/local/bin/kubectl
             mode: 'u+x,g+x,o+x'
 
-        - name: Install package
+        - name: Install NodeJS
           package:
             name: https://rpm.nodesource.com/pub_14.x/el/7/aarch64/nodejs-14.18.3-1nodesource.aarch64.rpm
       when: ansible_architecture == "arm64"
