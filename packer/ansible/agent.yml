@@ -40,7 +40,7 @@
             dest: /usr/local/bin/kubectl
             mode: 'u+x,g+x,o+x'
 
-        - name: Install specific package
+        - name: Install NodeJS
           package:
             name:
               - https://rpm.nodesource.com/pub_14.x/el/7/x86_64/nodejs-14.18.3-1nodesource.x86_64.rpm
