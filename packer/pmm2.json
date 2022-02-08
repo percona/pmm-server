@@ -34,7 +34,8 @@
             },
             "run_volume_tags": {
                 "iit-billing-tag": "pmm-ami"
-            }
+            },
+            "ssh_clear_authorized_keys": "true"
         },
         {
             "type": "azure-arm",
@@ -58,7 +59,8 @@
 
             "location": "East US",
             "vm_size": "Standard_B2s",
-            "disk_additional_size": [ 30 ]
+            "disk_additional_size": [ 30 ],
+            "ssh_clear_authorized_keys": "true"
         },
         {
             "type": "virtualbox-ovf",
@@ -89,7 +91,8 @@
                 ["createhd", "--format", "VMDK", "--filename", "/tmp/{{.Name}}-disk2.vmdk", "--variant", "STREAM", "--size", "409600"],
                 ["storagectl", "{{.Name}}", "--name", "SCSI Controller", "--add", "scsi", "--controller", "LSILogic"],
                 ["storageattach", "{{.Name}}", "--storagectl", "SCSI Controller", "--port", "1", "--type", "hdd", "--medium", "/tmp/{{.Name}}-disk2.vmdk"]
-            ]
+            ],
+            "ssh_clear_authorized_keys": "true"
         },
         {
             "type": "digitalocean",
