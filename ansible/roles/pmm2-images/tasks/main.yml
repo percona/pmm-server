@@ -28,11 +28,9 @@
     - name: Packages                   | Install OS tools
       yum:
         name:
-          - lsof
           - yum-utils
           - yum-cron
           - yum-changelog
-          - unzip
           - python2-pip
 
     - name: Create users for non-docker images          | Create users
