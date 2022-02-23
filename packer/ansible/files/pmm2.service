@@ -1,0 +1,16 @@
+[Unit]
+Description=PMM2 Docker container
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker exec %n stop
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/docker run --rm --name %n \
+    --net host \
+    percona/pmm-server:2.26.0
+
+[Install]
+WantedBy=default.target
