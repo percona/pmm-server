@@ -78,12 +78,12 @@
 
     - name: Download and unarchive installer
       unarchive:
-        src: https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+        src: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
         dest: /tmp
         remote_src: yes
 
     - name: Install awscl
-      shell: python3 /tmp/awscli-bundle/install
+      shell: /tmp/aws/install
 
     - name: Enable Docker service
       systemd:
