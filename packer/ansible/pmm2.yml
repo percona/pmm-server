@@ -2,15 +2,16 @@
 - name: Create PMM2 image
   hosts: default
   become: true
+  roles:
+    - lvm-init
   tasks:
-#    - name: Enable epel repo
-#      command: amazon-linux-extras install -y epel
     - name: Install packages
       package:
         name:
           - docker
           - python3-pip
           - python3
+          - lvm2
 
     - name: Install docker Python API
       pip:
@@ -126,11 +127,11 @@
 
     - name: pull the PMM image
       docker_image:
-        name: percona/pmm-server:2.26.0
+        name: "{{ pmm_server_image_name }}"
         source: pull
 
     - name: Copy systemd service file to image
-      copy:
+      template:
         src: pmm2.service
         dest: /etc/systemd/system
         owner: root

@@ -7,6 +7,11 @@ packer {
   }
 }
 
+variable "pmm_server_image_name" {
+  type = string
+  default = "perconalab/pmm-server:dev-latest"
+}
+
 source "amazon-ebs" "pmm2" {
   ami_name          = "PMM2 Server [${formatdate("YYYY-MM-DD hhmm", timestamp())}]"
   instance_type     = "c4.xlarge"
@@ -58,6 +63,10 @@ build {
     "source.amazon-ebs.pmm2"
   ]
   provisioner "ansible" {
+    extra_arguments = [
+        "--extra-vars",
+        "pmm_server_image_name=${var.pmm_server_image_name}"
+    ]
     playbook_file = "./packer/ansible/pmm2.yml"
   }
 }

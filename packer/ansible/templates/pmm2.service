@@ -10,7 +10,7 @@ ExecStartPre=-/usr/bin/docker exec %n stop
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStart=/usr/bin/docker run --rm --name %n \
     --net host \
-    percona/pmm-server:2.26.0
+    {{ pmm_server_image_name }}
 
 [Install]
 WantedBy=default.target
