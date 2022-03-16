@@ -28,7 +28,7 @@
     name: "/var/run/docker"
     src: LABEL=DATA
     fstype: xfs
-    opts: defaults,nofail
+    opts: defaults
     state: mounted
 
 - name: stat /boot/grub2/grub.cfg
