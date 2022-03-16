@@ -1,5 +1,5 @@
 ---
-- name: Wait until disk will be presend
+- name: Wait until disk is ready
   wait_for:
     path: /dev/xvdb
 
