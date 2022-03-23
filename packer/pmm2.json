@@ -91,8 +91,7 @@
                 ["createhd", "--format", "VMDK", "--filename", "/tmp/{{.Name}}-disk2.vmdk", "--variant", "STREAM", "--size", "409600"],
                 ["storagectl", "{{.Name}}", "--name", "SCSI Controller", "--add", "scsi", "--controller", "LSILogic"],
                 ["storageattach", "{{.Name}}", "--storagectl", "SCSI Controller", "--port", "1", "--type", "hdd", "--medium", "/tmp/{{.Name}}-disk2.vmdk"]
-            ],
-            "ssh_clear_authorized_keys": "true"
+            ]
         },
         {
             "type": "digitalocean",
