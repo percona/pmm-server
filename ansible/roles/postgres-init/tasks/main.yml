@@ -28,12 +28,15 @@
       file: path={{ item }} state=directory owner=postgres group=postgres
       with_items:
         - /srv/postgres
+      tags: srv_init
 
     - name: Postgres                   | Create Postgres data cluster
       command: su postgres -c "/usr/pgsql-11/bin/initdb -D /srv/postgres"
+      tags: srv_init
 
     - name: Postgres                   | Disable logging_collector
       lineinfile:
         path: /srv/postgres/postgresql.conf
         regexp: '^logging_collector'
         line: 'logging_collector = off'
+      tags: srv_init

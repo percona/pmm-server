@@ -81,6 +81,7 @@
         - /srv/prometheus/data
         - /srv/prometheus/rules
         - /srv/alertmanager/data
+      tags: srv_init
 
     - name: Create directories        | Create dirs
       file:
@@ -89,6 +90,7 @@
         owner: pmm
         group: pmm
         mode: '0775'
+      tags: srv_init
 
     - name: PostgresDB                | Create Postgres log file
       file:
@@ -98,6 +100,7 @@
         group: postgres
         owner: postgres
         mode: 0644
+      tags: srv_init
 
     - name: Create dirs                | Create dirs
       when: ansible_virtualization_type == "docker"

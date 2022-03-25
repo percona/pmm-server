@@ -16,6 +16,7 @@
       copy:
         content: "docker"
         dest: /srv/pmm-distribution
+      tags: srv_init
 
     - name: Detect distribution        | Create '/srv/pmm-distribution' file for OVF
       when: ansible_virtualization_type == "virtualbox"
