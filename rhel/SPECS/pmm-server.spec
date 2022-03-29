@@ -50,6 +50,8 @@ install -d %{buildroot}%{_datadir}/%{name}
 cp -pav ./entrypoint.sh %{buildroot}%{_datadir}/%{name}/entrypoint.sh
 cp -pav ./installation-wizard/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
 cp -pav ./%{pmm_repo}-%{pmm_commit}/api/swagger %{buildroot}%{_datadir}/%{name}/swagger
+cp -pav ./ansible %{buildroot}%{_datadir}/%{name}/ansible
+cp -pav ./ansible/roles %{buildroot}%{_datadir}/%{name}/ansible/pmm2/roles
 rm -rf %{pmm_repo}-%{pmm_commit}
 
 
