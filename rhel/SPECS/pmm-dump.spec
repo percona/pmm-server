@@ -12,7 +12,7 @@ Release:	%{rpm_release}
 Summary:	Percona PMM Dump allows to export and import monitoring metrics and query analytics.
 
 License:	AGPLv3
-URL:			https://%{provider}
+URL:		https://%{provider}
 Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
 %description
