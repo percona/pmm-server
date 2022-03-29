@@ -26,11 +26,11 @@ make build
 
 %install
 install -d -p %{buildroot}%{_sbindir}
-install -p -m 0755 pmm-dump %{buildroot}%{_sbindir}/%{name}
+install -p -m 0755 pmm-dump %{buildroot}%{_sbindir}/pmm-dump
 
 %files
 %doc README.md
-%{_sbindir}/%{name}
+%{_sbindir}/pmm-dump
 
 
 %changelog
