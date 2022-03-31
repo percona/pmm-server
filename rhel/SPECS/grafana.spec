@@ -8,8 +8,6 @@
 %define full_version    v%{grafana_version}-%{full_pmm_version}
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
-%global install_golang 0
-
 %if ! 0%{?gobuild:1}
 %define gobuild(o:) go build -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n')" -a -v -x %{?**};
 %endif
@@ -23,12 +21,9 @@ URL:            https://github.com/percona-platform/grafana
 Source0:        https://github.com/percona-platform/grafana/archive/%{commit}.tar.gz
 ExclusiveArch:  %{ix86} x86_64 %{arm}
 
-%if %{install_golang}
-BuildRequires:   golang >= 1.14.0
-%endif
 BuildRequires: nodejs-grunt-cli fontconfig
 
-Requires:       fontconfig freetype urw-fonts
+Requires:       urw-fonts
 
 %description
 Grafana is an open source, feature rich metrics dashboard and graph editor for
