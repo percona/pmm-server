@@ -134,6 +134,7 @@
           - dbaas-controller
           - dbaas-tools
           - grafana-db-migrator
+          - pmm-dump
         state: installed
         # line below is sed'ed by build-server-docker script
         enablerepo: "pmm2-server"

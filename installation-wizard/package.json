@@ -1,6 +1,6 @@
 {
   "name": "installation-wizard",
-  "version": "2.26.0",
+  "version": "2.27.0",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -10,7 +10,7 @@
     "lint": "eslint ./src"
   },
   "dependencies": {
-    "axios": "^0.25.0",
+    "axios": "^0.26.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "^5.0.0"
