@@ -1,0 +1,135 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pmm
+  namespace: default
+  labels:
+    app: pmm
+spec:
+  serviceName: monitoring-service # helm
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pmm
+  template:
+    metadata:
+      labels:
+        app: pmm
+    spec:
+      serviceAccountName: pmm-service-account
+      containers:
+        - name: pmm
+          image: perconalab/pmm-server:2.27.0-rc # helm
+          imagePullPolicy: Always # helm
+          limits: # TODO
+          envFrom:
+            - configMapRef:
+                name: pmm-env # helm
+                optional: true
+          env:
+            - name: DISABLE_UPDATES
+              value: "1"
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID # helm
+              valueFrom:
+                secretKeyRef:
+                  name: pmm-okta-oauth-secret # helm
+                  key: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
+                  optional: true
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET # helm
+              valueFrom:
+                secretKeyRef:
+                  name: pmm-okta-oauth-secret # helm
+                  key: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+                  optional: true
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /v1/readyz
+          volumeMounts:
+            - name: srv # helm
+              mountPath: /srv
+
+      initContainers: # Execute a set of changes in persistent volume and ensure they are met on each deployment.
+        - name: pmm-init
+          image: perconalab/pmm-server:2.27.0-rc # helm
+          imagePullPolicy: Always # helm
+          command: ["/bin/bash"]
+          args:
+            - "-c"
+            - |
+              set -ex
+              # Check if this is a first deployment on empty PV
+              if [ ! -f /srv-init/pmm-distribution ]; then
+                
+                # set admin password if exists
+                if [ ! -v $ADMIN_PASSWORD ]; then
+                  set -e
+                  #echo "changing admin password..."
+                  #change-admin-password $ADMIN_PASSWORD
+                  #echo "admin password was changed"
+                  set -ex
+                fi;
+
+                # Copies /srv from pmm-server into the volume if the volume is empty.
+                cp --archive --verbose /srv/* /srv-init
+
+              fi;
+
+          env:
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pmm-admin
+                  key: PMM_ADMIN_PASSWORD
+                  optional: true
+
+          volumeMounts:
+            - name: srv # helm
+              mountPath: /srv-init
+
+  volumeClaimTemplates:
+    - metadata:
+        name: srv # helm
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi # helm
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-service # helm
+  namespace: default # helm
+  labels:
+    app: pmm
+spec:
+  selector:
+    app: pmm
+  ports:
+    # for browsers, APIs, etc
+    - name: http
+      port: 80
+      targetPort: 80
+    # for pmm-agent<->pmm-managed two-way communication channel
+    - name: https
+      port: 443
+      targetPort: 443
+  type: LoadBalancer
+# generate secret in helm
+#---
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: pmm-admin
+#type: Opaque
+#data:
+#  PMM_ADMIN_PASSWORD: YWRtaW4=
