@@ -23,6 +23,7 @@
           - php # we use PHP in pmm-qa repo
           - php-mysqlnd
           - php-pdo
+          - wget
         state: present
 
 
