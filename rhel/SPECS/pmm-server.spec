@@ -7,27 +7,43 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         25
+%define release         26
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
-Name:		%{repo}
-Version:	%{version}
-Release:	%{rpm_release}
-Summary:	Percona Monitoring and Management Server
+Name:       %{repo}
+Version:    %{version}
+Release:    %{rpm_release}
+Summary:    Percona Monitoring and Management Server
 
-License:	AGPLv3
-URL:		https://%{provider}
-Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-Source1:	https://%{pmm_provider}/archive/%{pmm_commit}/%{pmm_repo}-%{pmm_shortcommit}.tar.gz
+License:    AGPLv3
+URL:        https://%{provider}
+Source0:    https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+Source1:    https://%{pmm_provider}/archive/%{pmm_commit}/%{pmm_repo}-%{pmm_shortcommit}.tar.gz
 
-BuildArch:	noarch
-Requires:	nginx ansible git bats
-BuildRequires:	openssl
+BuildArch:  noarch
+Requires:   nginx ansible git bats
+BuildRequires:  openssl
 
 %description
 Percona Monitoring and Management (PMM) Server.
 See the PMM docs for more information.
 
+%package    systemd
+Version:    %{version}
+Release:    %{rpm_release}
+Summary:    SystemD service for Percona Monitoring and Management Server
+
+License:    AGPLv3
+URL:        https://%{provider}
+
+BuildArch:  noarch
+Requires:   podman
+BuildRequires:  systemd-rpm-macros
+
+%description systemd
+SystemD service to run Percona Monitoring and Management (PMM) Server.
+It runs podman to manage PMM.
+See the PMM docs for more information.
 
 %prep
 %setup -q -n %{repo}-%{commit}
@@ -52,6 +68,32 @@ cp -pav ./installation-wizard/build %{buildroot}%{_datadir}/%{name}/installation
 cp -pav ./%{pmm_repo}-%{pmm_commit}/api/swagger %{buildroot}%{_datadir}/%{name}/swagger
 rm -rf %{pmm_repo}-%{pmm_commit}
 
+# pmm-server-systemd package
+install -D -m 0644 pmm-server.service %{buildroot}/%{_unitdir}/pmm-server.service
+install -D -p -m 0644 pmm-server.env %{buildroot}/%{_sysconfdir}/%{repo}/pmm-server.env
+
+%pre systemd
+
+# use newusers util to create user and group to assign subuid/subguid
+# newusers pw_name:pw_passwd:pw_uid:pw_gid:pw_gecos:pw_dir:pw_shel
+getent passwd pmm-server >/dev/null >/dev/null || echo "pmm-server:::pmm::/home/pmm-server:/bin/false" | %{_sbindir}/newusers
+%{_bindir}/loginctl enable-linger pmm-server
+
+%post systemd
+%systemd_post pmm-server.service
+%{_bindir}/systemctl enable pmm-server >/dev/null 2>&1 || true
+
+%preun systemd
+%systemd_preun pmm-server.service
+
+%postun systemd
+%systemd_postun_with_restart pmm-server.service
+if [ $1 == 0 ]; then
+  # This is a yum remove.
+  %{_bindir}/loginctl terminate-user pmm-server || true
+  getent passwd pmm-server >/dev/null && %{_sbindir}/userdel pmm-server
+  getent group pmm >/dev/null && %{_sbindir}/groupdel pmm
+fi
 
 %files
 %license LICENSE
@@ -60,8 +102,17 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 %{_sysconfdir}/alertmanager.yml
 %{_datadir}/%{name}
 
+%files systemd
+%license LICENSE
+%doc README.md CHANGELOG.md
+%{_sysconfdir}/%{repo}
+%config(noreplace) %{_sysconfdir}/%{repo}/pmm-server.env
+%{_unitdir}/pmm-server.service
 
 %changelog
+* Fri Apr 08 2022 Denys Kondratenko <denys.kondratenko@percona.com> - 2.26.0-1
+- PMM-7925 add systemd service with podman support
+
 * Wed Nov 17 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
 - PMM-4486 remove import-dashboards.py and use internal Grafana provisioning
 
