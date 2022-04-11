@@ -14,10 +14,10 @@ Environment=PMM_VOLUME_NAME=%N
 Environment=PMM_TAG=2.27.0
 Environment=PMM_IMAGE=docker.io/percona/pmm-server
 Environment=PMM_IMAGE=docker.io/percona/pmm-server
-Environment=PMM_ENV_FILE=~/.config/pmm-server/pmm-server.env
+Environment=PMM_ENV_FILE=%h/.config/pmm-server/pmm-server.env
 
 # optional env file that could overide previous env settings for this unit
-EnvironmentFile=-%~/.config/pmm-server/env
+EnvironmentFile=-%h/.config/pmm-server/env
 
 ExecStartPre=/usr/bin/bash -c '/usr/bin/podman stop -t 10 %N; /usr/bin/podman rm -f %N || true'
 ExecStart=/usr/bin/podman run --rm --name %N -p ${PMM_PUBLIC_PORT}:443/tcp --ulimit=host --volume=${PMM_VOLUME_NAME}:/srv --env-file=${PMM_ENV_FILE} ${PMM_IMAGE}:${PMM_TAG}
@@ -27,4 +27,4 @@ Restart=on-failure
 RestartSec=20
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
