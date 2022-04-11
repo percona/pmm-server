@@ -13,7 +13,6 @@ Environment=PMM_PUBLIC_PORT=8443
 Environment=PMM_VOLUME_NAME=%N
 Environment=PMM_TAG=2.27.0
 Environment=PMM_IMAGE=docker.io/percona/pmm-server
-Environment=PMM_IMAGE=docker.io/percona/pmm-server
 Environment=PMM_ENV_FILE=%h/.config/pmm-server/pmm-server.env
 
 # optional env file that could overide previous env settings for this unit
