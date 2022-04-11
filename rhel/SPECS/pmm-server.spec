@@ -37,7 +37,7 @@ License:    AGPLv3
 URL:        https://%{provider}
 
 BuildArch:  noarch
-Requires:   podman
+Requires:   podman systemd shadow-utils
 BuildRequires:  systemd-rpm-macros
 
 %description systemd
