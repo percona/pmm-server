@@ -2,8 +2,8 @@
 %global commit          33423d34f211ce1ce5ce0a265a38f0709ec44360
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         94
-%define grafana_version 7.5.11
+%define release         95
+%define grafana_version 8.3.5
 %define full_pmm_version 2.0.0
 %define full_version    v%{grafana_version}-%{full_pmm_version}
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
@@ -85,6 +85,9 @@ getent passwd grafana >/dev/null || \
 exit 0
 
 %changelog
+* Mon Apr 11 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 8.3.5-1
+- PMM-7 Fix grafana version
+
 * Fri Jan  14 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 7.5.11-2
 - PMM-9452 Remove useless operation in grafana spec
 
