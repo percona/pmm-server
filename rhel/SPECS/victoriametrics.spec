@@ -50,7 +50,7 @@ install -D -p -m 0755 ./bin/vmalert-pure %{buildroot}%{_sbindir}/vmalert
 
 
 %changelog
-* Mon Thu 14 2022 Anton Bystrov <anton.bystrov@simbirsoft.com> - 1.76.1
+* Thu Apr 14 2022 Anton Bystrov <anton.bystrov@simbirsoft.com> - 1.76.1
 - upgrade victoriametrics to 1.76.1 release
 
 * Wed Jan 20 2022 Anton Bystrov <anton.bystrov@simbirsoft.com> - 1.72.0-1
