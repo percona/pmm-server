@@ -19,7 +19,7 @@ Environment=PMM_ENV_FILE=%h/.config/pmm-server/pmm-server.env
 EnvironmentFile=-%h/.config/pmm-server/env
 
 ExecStartPre=/usr/bin/bash -c '/usr/bin/podman stop -t 10 %N; /usr/bin/podman rm -f %N || true'
-ExecStart=/usr/bin/podman run --rm --name %N -p ${PMM_PUBLIC_PORT}:443/tcp --ulimit=host --volume=${PMM_VOLUME_NAME}:/srv --env-file=${PMM_ENV_FILE} ${PMM_IMAGE}:${PMM_TAG}
+ExecStart=/usr/bin/podman run --rm --name %N -p ${PMM_PUBLIC_PORT}:443/tcp --ulimit=host --volume=${PMM_VOLUME_NAME}:/srv --env-file=${PMM_ENV_FILE} --health-cmd=none --health-interval=disable ${PMM_IMAGE}:${PMM_TAG}
 ExecStop=/usr/bin/podman stop -t 10 %N
 ExecStopPost=/usr/bin/podman stop -t 10 `%N`
 Restart=on-failure
