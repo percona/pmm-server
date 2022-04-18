@@ -29,7 +29,6 @@
       yum:
         name:
           - yum-utils
-          - yum-cron
           - yum-changelog
           - python2-pip
 
@@ -107,18 +106,6 @@
     - name: Install supervisord
       include_role:
         name: supervisord-init
-
-    - name: Configure yum              | Configure yum-cron
-      replace:
-        dest: /etc/yum/yum-cron-hourly.conf
-        regexp: 'update_cmd = default'
-        replace: 'update_cmd = minimal-security'
-
-    - name: Configure yum              | Configure yum-cron
-      replace:
-        dest: /etc/yum/yum-cron.conf
-        regexp: 'update_cmd = default'
-        replace: 'update_cmd = minimal-security'
 
     - name: Install RPMs               | Install RPMs for PMM2 server
       yum:
