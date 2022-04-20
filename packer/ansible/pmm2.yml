@@ -23,6 +23,26 @@
         state: started
         enabled: yes
 
+    - name: Add admin user
+      user:
+        name: admin
+        comment: PMM User
+        groups: wheel,adm,systemd-journal
+        shell: /bin/bash
+
+    - name: Add sudo for admin user
+      copy:
+        content: |
+          admin ALL=(ALL) NOPASSWD: ALL
+        dest: /etc/sudoers.d/90-admin-user
+        mode: 0440
+
+    - name: change cloud user          | Change cloud user
+      replace:
+        dest: /etc/cloud/cloud.cfg
+        regexp: 'name: ec2-user'
+        replace: 'name: admin'
+
     - name: Turn off swap
       sysctl:
         name: vm.swappiness
