@@ -135,10 +135,6 @@
         state: installed
         enablerepo: "{{ pmm_client_repo_name }}"
 
-    - name: Cron                      | Disable crond
-      when: ansible_virtualization_type != "docker"
-      service: name=crond state=stopped enabled=no
-
     - name: Disable pmm-agent service | Disable pmm-agent
       when: ansible_virtualization_type != "docker"
       service: name=pmm-agent state=stopped enabled=no
