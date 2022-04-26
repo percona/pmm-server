@@ -28,7 +28,7 @@ URL:        https://github.com/percona-platform/dbaas-controller
 Source0:    https://github.com/percona-platform/dbaas-controller/archive/%{commit}/dbaas-controller-%{shortcommit}.tar.gz
 
 %if %{install_golang}
-BuildRequires:   golang >= 1.14.0
+BuildRequires:   golang >= 1.16.0
 %endif
 
 %description
