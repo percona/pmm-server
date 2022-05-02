@@ -6,7 +6,7 @@
 - name: Create Volume Group
   lvg:
     vg: DataVG
-    pvs: "/dev/xvdb"
+    pvs: /dev/sdb
 
 - name: Create Thin Pool
   register: thin_pool
@@ -25,32 +25,15 @@
 
 - name: Mount
   mount:
-    name: "/var/run/docker"
+    name: "/srv"
     src: LABEL=DATA
     fstype: xfs
     opts: defaults
     state: mounted
 
-- name: stat /boot/grub2/grub.cfg
-  stat: path=/boot/grub2/grub.cfg
-  register: grub2_conf
-
-- name: System Log                 | change /etc/default/grub
-  when: grub2_conf.stat.exists
-  replace:
-    dest: /etc/default/grub
-    regexp: 'rhgb'
-    replace: 'console=ttyS0,115200n8 earlyprintk=ttyS0,115200 rootdelay=300 xen_emul_unplug=unnecessary'
-  register: grub2_var
-
-- name: System Log                 | run grub2-mkconfig
-  when: grub2_var.changed and grub2_conf.stat.exists
-  command: grub2-mkconfig -o /boot/grub2/grub.cfg
-
 - name: Create dirs                | Create dirs
   file: path={{ item }} state=directory
   with_items:
-    - /var/lib/cloud/scripts/per-once
     - /var/lib/cloud/scripts/per-boot
 
 - name: Data partition             | Auto resize LVM
