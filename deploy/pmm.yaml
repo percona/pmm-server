@@ -6,7 +6,6 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
-    app.kubernetes.io/version: "2.27.0"
 spec:
   serviceName: monitoring-service
   replicas: 1
@@ -115,7 +114,6 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
-    app.kubernetes.io/version: "2.27.0"
 spec:
   type: LoadBalancer
   ports:
@@ -135,7 +133,6 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
-    app.kubernetes.io/version: "2.27.0"
 type: Opaque
 data:
 # base64 encoded password
@@ -151,7 +148,6 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
-    app.kubernetes.io/version: "2.27.0"
 data:
 # environment passed to the PMM
       DISABLE_UPDATES: "1"
