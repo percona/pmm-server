@@ -4,11 +4,9 @@ kind: ServiceAccount
 metadata:
   name: pmm-service-account
   labels:
-    helm.sh/chart: pmm-0.1.0
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
     app.kubernetes.io/version: "2.27.0"
-    app.kubernetes.io/managed-by: Helm
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -16,11 +14,9 @@ kind: ClusterRole
 metadata:
   name: pmm
   labels:
-    helm.sh/chart: pmm-0.1.0
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
     app.kubernetes.io/version: "2.27.0"
-    app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources:
