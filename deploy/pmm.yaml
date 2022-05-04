@@ -3,43 +3,48 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: pmm
-  namespace: default
   labels:
-    app: pmm
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/version: "2.27.0"
 spec:
-  serviceName: monitoring-service # helm
+  serviceName: monitoring-service
   replicas: 1
   selector:
     matchLabels:
-      app: pmm
+      app.kubernetes.io/name: pmm
+      app.kubernetes.io/instance: pmm
   template:
     metadata:
       labels:
-        app: pmm
+        app.kubernetes.io/name: pmm
+        app.kubernetes.io/instance: pmm
     spec:
-      serviceAccountName: pmm-service-account
+      # uncomment service account when deploying pmm-rbac.yaml (should be deployed before this manifest)
+      #serviceAccountName: pmm-service-account
       containers:
         - name: pmm
-          image: perconalab/pmm-server:2.27.0-rc # helm
-          imagePullPolicy: Always # helm
-          limits: # TODO
+          image: "percona/pmm-server:2.27.0"
+          imagePullPolicy: Always
+
+          # environment passed to PMM, defined in configMap
           envFrom:
             - configMapRef:
-                name: pmm-env # helm
+                name: pmm
                 optional: true
+
+          # additional secrets that could be used for Grafana iDP 
           env:
-            - name: DISABLE_UPDATES
-              value: "1"
-            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID # helm
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: pmm-okta-oauth-secret # helm
+                  name: pmm-secret
                   key: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
                   optional: true
-            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET # helm
+            - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: pmm-okta-oauth-secret # helm
+                  name: pmm-secret
                   key: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
                   optional: true
           ports:
@@ -49,16 +54,15 @@ spec:
               containerPort: 443
           readinessProbe:
             httpGet:
-              port: 80
               path: /v1/readyz
+              port: http
           volumeMounts:
-            - name: srv # helm
+            - name: pmm-storage
               mountPath: /srv
-
       initContainers: # Execute a set of changes in persistent volume and ensure they are met on each deployment.
         - name: pmm-init
-          image: perconalab/pmm-server:2.27.0-rc # helm
-          imagePullPolicy: Always # helm
+          image: "percona/pmm-server:2.27.0"
+          imagePullPolicy: Always
           command: ["/bin/bash"]
           args:
             - "-c"
@@ -66,7 +70,7 @@ spec:
               set -ex
               # Check if this is a first deployment on empty PV
               if [ ! -f /srv-init/pmm-distribution ]; then
-                
+
                 # set admin password if exists
                 if [ ! -v $ADMIN_PASSWORD ]; then
                   set -e
@@ -85,51 +89,69 @@ spec:
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: pmm-admin
+                  name: pmm-secret
                   key: PMM_ADMIN_PASSWORD
                   optional: true
 
           volumeMounts:
-            - name: srv # helm
+            - name: pmm-storage
               mountPath: /srv-init
 
   volumeClaimTemplates:
     - metadata:
-        name: srv # helm
+        name: pmm-storage
       spec:
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 10Gi # helm
+            storage: 10Gi
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitoring-service # helm
-  namespace: default # helm
+  name: monitoring-service
   labels:
-    app: pmm
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/version: "2.27.0"
 spec:
-  selector:
-    app: pmm
-  ports:
-    # for browsers, APIs, etc
-    - name: http
-      port: 80
-      targetPort: 80
-    # for pmm-agent<->pmm-managed two-way communication channel
-    - name: https
-      port: 443
-      targetPort: 443
   type: LoadBalancer
-# generate secret in helm
-#---
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: pmm-admin
-#type: Opaque
-#data:
-#  PMM_ADMIN_PASSWORD: YWRtaW4=
+  ports:
+    - port: 443
+      targetPort: https
+      protocol: TCP
+      name: https
+  selector:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pmm-secret
+  labels:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/version: "2.27.0"
+type: Opaque
+data:
+# base64 encoded password
+# encode some password: `echo -n "admin" | base64`
+# to get the password on deployed cluster: `kubectl get secret pmm-secret -o jsonpath='{.data.PMM_ADMIN_PASSWORD}' | base64 --decode`
+  PMM_ADMIN_PASSWORD: "YWRtaW4="
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pmm
+  labels:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/version: "2.27.0"
+data:
+# environment passed to the PMM
+      DISABLE_UPDATES: "1"
