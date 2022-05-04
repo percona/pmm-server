@@ -10,7 +10,7 @@
 %global install_golang 1
 
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         4
+%define release         1
 %define rpm_release     %{release}.%{build_timestamp}%{?dist}
 
 Name:           dbaas-tools
@@ -54,8 +54,8 @@ export CGO_ENABLED=0
 export USER=builder
 
 cd src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
-sed -i '/dockers:/,+35d' .goreleaser.yaml
-make build
+sed -i '/dockers:/,+23d' .goreleaser.yaml
+make goreleaser
 
 cd %{_builddir}/kubernetes-%{commit_k8s}/
 export GOPATH="$(pwd)"
@@ -76,6 +76,9 @@ install -D -p -m 0775 _output/local/go/bin/kubectl %{buildroot}/opt/dbaas-tools/
 /opt/dbaas-tools/bin/kubectl-1.23
 
 %changelog
+* Wed May 04 2022 Nurlan Moldomurov <nurlan.moldomurov@percona.com> - 0.5.7-1
+- Update versions of dbaas-tools
+
 * Thu Aug 27 2020 Illia Pshonkin <illia.pshonkin@percona.com> - 0.5.1-1
 - Initial packaging for dbaas-tools
 
