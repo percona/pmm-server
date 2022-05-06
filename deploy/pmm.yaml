@@ -1,3 +1,82 @@
+# uncomment secret, volumeMounts, volumes to provide certificate
+# https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod
+# provide certs content as values for keys (file names)
+#---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: pmm-certs
+#   labels:
+#     app.kubernetes.io/name: pmm
+#     app.kubernetes.io/instance: pmm
+#     app.kubernetes.io/component: pmm-server
+#     app.kubernetes.io/part-of: percona-platform
+#     app.kubernetes.io/version: "2.27.0"
+# type: Opaque
+# data:
+# # ngnix ssl certificates
+#     ca-certs.pem:
+#     certificate.crt:
+#     certificate.key:
+#     dhparam.pem:
+#
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pmm-secret
+  labels:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+    app.kubernetes.io/version: "2.27.0"
+type: Opaque
+data:
+# base64 encoded password
+# encode some password: `echo -n "admin" | base64`
+# to get the password on deployed cluster: `kubectl get secret pmm-secret -o jsonpath='{.data.PMM_ADMIN_PASSWORD}' | base64 --decode`
+  PMM_ADMIN_PASSWORD: "YWRtaW4="
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pmm
+  labels:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+    app.kubernetes.io/version: "2.27.0"
+data:
+# environment passed to the PMM
+      DISABLE_UPDATES: "1"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-service
+  labels:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+    app.kubernetes.io/version: "2.27.0"
+spec:
+  type: NodePort
+  ports:
+    - port: 443
+      targetPort: https
+      protocol: TCP
+      name: https
+  selector:
+    app.kubernetes.io/name: pmm
+    app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -6,6 +85,9 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+    app.kubernetes.io/version: "2.27.0"
 spec:
   serviceName: monitoring-service
   replicas: 1
@@ -13,14 +95,19 @@ spec:
     matchLabels:
       app.kubernetes.io/name: pmm
       app.kubernetes.io/instance: pmm
+      app.kubernetes.io/component: pmm-server
+      app.kubernetes.io/part-of: percona-platform
+  updateStrategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app.kubernetes.io/name: pmm
         app.kubernetes.io/instance: pmm
+        app.kubernetes.io/component: pmm-server
+        app.kubernetes.io/part-of: percona-platform
     spec:
-      # uncomment service account when deploying pmm-rbac.yaml (should be deployed before this manifest)
-      #serviceAccountName: pmm-service-account
+      serviceAccountName: pmm-service-account
       containers:
         - name: pmm
           image: "percona/pmm-server:2.27.0"
@@ -32,7 +119,7 @@ spec:
                 name: pmm
                 optional: true
 
-          # additional secrets that could be used for Grafana iDP 
+          # additional secrets that could be used for Grafana iDP
           env:
             - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
               valueFrom:
@@ -58,6 +145,10 @@ spec:
           volumeMounts:
             - name: pmm-storage
               mountPath: /srv
+            # uncomment secret, volumeMounts, volumes to provide certificate
+            # - name: pmm-certs
+            #   mountPath: /srv/nginx
+            #   readOnly: true
       initContainers: # Execute a set of changes in persistent volume and ensure they are met on each deployment.
         - name: pmm-init
           image: "percona/pmm-server:2.27.0"
@@ -95,7 +186,12 @@ spec:
           volumeMounts:
             - name: pmm-storage
               mountPath: /srv-init
-
+      # uncomment secret, volumeMounts, volumes to provide certificate
+      # volumes:
+      #   - name: pmm-certs
+      #     secret:
+      #       secretName: pmm-certs
+      #       optional: false
   volumeClaimTemplates:
     - metadata:
         name: pmm-storage
@@ -105,49 +201,3 @@ spec:
         resources:
           requests:
             storage: 10Gi
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: monitoring-service
-  labels:
-    app.kubernetes.io/name: pmm
-    app.kubernetes.io/instance: pmm
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 443
-      targetPort: https
-      protocol: TCP
-      name: https
-  selector:
-    app.kubernetes.io/name: pmm
-    app.kubernetes.io/instance: pmm
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: pmm-secret
-  labels:
-    app.kubernetes.io/name: pmm
-    app.kubernetes.io/instance: pmm
-type: Opaque
-data:
-# base64 encoded password
-# encode some password: `echo -n "admin" | base64`
-# to get the password on deployed cluster: `kubectl get secret pmm-secret -o jsonpath='{.data.PMM_ADMIN_PASSWORD}' | base64 --decode`
-  PMM_ADMIN_PASSWORD: "YWRtaW4="
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: pmm
-  labels:
-    app.kubernetes.io/name: pmm
-    app.kubernetes.io/instance: pmm
-data:
-# environment passed to the PMM
-      DISABLE_UPDATES: "1"

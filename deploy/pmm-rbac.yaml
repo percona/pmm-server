@@ -6,6 +6,9 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+    app.kubernetes.io/version: "2.27.0"
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -15,6 +18,9 @@ metadata:
   labels:
     app.kubernetes.io/name: pmm
     app.kubernetes.io/instance: pmm
+    app.kubernetes.io/component: pmm-server
+    app.kubernetes.io/part-of: percona-platform
+    app.kubernetes.io/version: "2.27.0"
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources:
