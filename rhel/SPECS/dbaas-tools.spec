@@ -65,7 +65,7 @@ make WHAT="cmd/kubectl"
 
 %install
 cd %{_builddir}/aws-iam-authenticator-%{commit_aws}/src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
-install -D -p -m 0755 dist/authenticator_linux_amd64/aws-iam-authenticator %{buildroot}/opt/dbaas-tools/bin/aws-iam-authenticator
+install -D -p -m 0755 dist/aws-iam-authenticator_linux_amd64_v1/aws-iam-authenticator %{buildroot}/opt/dbaas-tools/bin/aws-iam-authenticator
 
 cd %{_builddir}/kubernetes-%{commit_k8s}/src/github.com/kubernetes/kubernetes-%{commit_k8s}
 install -D -p -m 0775 _output/local/go/bin/kubectl %{buildroot}/opt/dbaas-tools/bin/kubectl-1.23
