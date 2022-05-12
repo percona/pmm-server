@@ -66,12 +66,6 @@
             - { name: pmm-agent, uid: 996, comment: "pmm-agent", shell: "/bin/false", home: "/usr/local/percona/", group: pmm-agent }
       when: ansible_virtualization_type == "docker"
 
-    - name: Add user to group         | Add the user 'postgres' to group 'pmm'
-      user:
-        name: postgres
-        groups: pmm
-        append: yes
-
     - name: Create directories        | Create dirs
       file: path={{ item }} state=directory owner=pmm group=pmm
       with_items:
@@ -86,15 +80,6 @@
         owner: pmm
         group: pmm
         mode: '0775'
-
-    - name: PostgresDB                | Create Postgres log file
-      file:
-        path: /srv/logs/postgresql.log
-        state: touch
-        force: yes
-        group: postgres
-        owner: postgres
-        mode: 0644
 
     - name: Create dirs                | Create dirs
       when: ansible_virtualization_type == "docker"
