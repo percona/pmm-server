@@ -29,6 +29,7 @@
       yum:
         name:
           - yum-utils
+          - python2-pip
 
     - name: Create users for non-docker images          | Create users
       user:
