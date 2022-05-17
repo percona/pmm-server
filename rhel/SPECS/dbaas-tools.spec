@@ -1,20 +1,20 @@
 %define debug_package %{nil}
 
-%global commit_aws          d7c0b2e9131faabb2b09dd804a35ee03822f8447
+%global commit_aws          2a9ee95fecab59fab41a0b646a63227d66113434
 %global shortcommit_aws     %(c=%{commit_aws}; echo ${c:0:7})
 
-%global commit_k8s          ec6eb119b81be488b030e849b9e64fda4caaf33c
+%global commit_k8s          ad3338546da947756e8a88aa6822e9c11e7eac22
 %global shortcommit_k8s     %(c=%{commit_k8s}; echo ${c:0:7})
-%global version_k8s         v1.16.8
+%global version_k8s         v1.23.7
 
 %global install_golang 1
 
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         4
+%define release         1
 %define rpm_release     %{release}.%{build_timestamp}%{?dist}
 
 Name:           dbaas-tools
-Version:        0.5.1
+Version:        0.5.7
 Release:        %{rpm_release}
 Summary:        A set of tools for Percona DBaaS
 License:        ASL 2.0
@@ -54,8 +54,8 @@ export CGO_ENABLED=0
 export USER=builder
 
 cd src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
-sed -i '/dockers:/,+35d' .goreleaser.yaml
-make build
+sed -i '/dockers:/,+23d' .goreleaser.yaml
+make goreleaser
 
 cd %{_builddir}/kubernetes-%{commit_k8s}/
 export GOPATH="$(pwd)"
@@ -65,17 +65,20 @@ make WHAT="cmd/kubectl"
 
 %install
 cd %{_builddir}/aws-iam-authenticator-%{commit_aws}/src/github.com/kubernetes-sigs/aws-iam-authenticator-%{commit_aws}
-install -D -p -m 0755 dist/authenticator_linux_amd64/aws-iam-authenticator %{buildroot}/opt/dbaas-tools/bin/aws-iam-authenticator
+install -D -p -m 0755 dist/aws-iam-authenticator_linux_amd64_v1/aws-iam-authenticator %{buildroot}/opt/dbaas-tools/bin/aws-iam-authenticator
 
 cd %{_builddir}/kubernetes-%{commit_k8s}/src/github.com/kubernetes/kubernetes-%{commit_k8s}
-install -D -p -m 0775 _output/local/go/bin/kubectl %{buildroot}/opt/dbaas-tools/bin/kubectl-1.16
+install -D -p -m 0775 _output/local/go/bin/kubectl %{buildroot}/opt/dbaas-tools/bin/kubectl-1.23
 
 
 %files
 /opt/dbaas-tools/bin/aws-iam-authenticator
-/opt/dbaas-tools/bin/kubectl-1.16
+/opt/dbaas-tools/bin/kubectl-1.23
 
 %changelog
+* Wed May 04 2022 Nurlan Moldomurov <nurlan.moldomurov@percona.com> - 0.5.7-1
+- Update versions of dbaas-tools
+
 * Thu Aug 27 2020 Illia Pshonkin <illia.pshonkin@percona.com> - 0.5.1-1
 - Initial packaging for dbaas-tools
 
