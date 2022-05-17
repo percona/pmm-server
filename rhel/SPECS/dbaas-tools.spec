@@ -24,9 +24,6 @@ URL:            https://github.com/kubernetes-sigs/aws-iam-authenticator
 Source0:        https://github.com/kubernetes-sigs/aws-iam-authenticator/archive/%{commit_aws}/aws-iam-authenticator-%{shortcommit_aws}.tar.gz
 Source1:        https://github.com/kubernetes/kubernetes/archive/%{commit_k8s}/kubernetes-%{shortcommit_k8s}.tar.gz
 
-%if %{install_golang}
-BuildRequires:   golang >= 1.13.0
-%endif
 BuildRequires: which
 
 %description
@@ -34,7 +31,6 @@ BuildRequires: which
 
 %description
 %{summary}
-
 
 %prep
 %setup -T -c -n aws-iam-authenticator-%{commit_aws}

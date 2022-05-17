@@ -16,8 +16,6 @@
 %define release         64
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
-%global install_golang 0
-
 # the line below is sed'ed by build/bin/build-server-rpm to set a correct version
 %define full_pmm_version 2.0.0
 
@@ -30,13 +28,7 @@ License:	AGPLv3
 URL:		https://%{provider}
 Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
-%if %{install_golang}
-BuildRequires:   golang >= 1.12.0
-%endif
-
 BuildArch:	noarch
-Requires:	PyYAML
-
 
 %description
 %{summary}
@@ -73,6 +65,9 @@ install -p -m 0755 bin/pmm-update %{buildroot}%{_sbindir}/
 
 
 %changelog
+* Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.29.0-1
+- https://per.co.na/pmm/latest
+
 * Tue Oct 19 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.23.0-64
 - https://per.co.na/pmm/latest
 

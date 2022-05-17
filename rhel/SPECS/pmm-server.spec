@@ -21,7 +21,6 @@ Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source1:	https://%{pmm_provider}/archive/%{pmm_commit}/%{pmm_repo}-%{pmm_shortcommit}.tar.gz
 
 BuildArch:	noarch
-Requires:	nginx ansible git bats
 BuildRequires:	openssl
 
 %description
@@ -62,6 +61,9 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 
 
 %changelog
+* Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.29.0-1
+- PMM-10027 remove useless packages
+
 * Wed Nov 17 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
 - PMM-4486 remove import-dashboards.py and use internal Grafana provisioning
 
