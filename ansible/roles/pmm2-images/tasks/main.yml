@@ -32,6 +32,14 @@
           - yum-changelog
           - python2-pip
 
+    - name: Upgrade Python deps
+      pip:
+        name:
+          - cryptography==3.3.2
+          - paramiko==2.1.5
+          - jinja2==2.10.1
+          - urllib3==1.26.5
+
     - name: Create users for non-docker images          | Create users
       user:
         name: "pmm"
