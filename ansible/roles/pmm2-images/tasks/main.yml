@@ -32,6 +32,14 @@
           - yum-changelog
           - python2-pip
 
+    - name: Upgrade pip
+      get_url:
+        url: https://bootstrap.pypa.io/pip/2.7/get-pip.py
+        dest: /tmp/get-pip.py
+
+    - name: Upgrade pip
+      command: python /tmp/get-pip.py
+
     - name: Upgrade Python deps
       pip:
         name:
