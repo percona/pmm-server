@@ -29,6 +29,7 @@
       yum:
         name:
           - python2-pip
+          - rsync
 
     - name: Create users for non-docker images          | Create users
       user:
