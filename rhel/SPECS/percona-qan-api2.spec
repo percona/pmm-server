@@ -62,7 +62,7 @@ install -p -m 0755 bin/qan-api2 %{buildroot}%{_sbindir}/%{name}
 
 %changelog
 * Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.0.0-16
-- PMM-5645 built using Golang 1.14
+- PMM-10027 remove useless packages
 
 * Thu Jul  2 2020 Mykyta Solomko <mykyta.solomko@percona.com> - 2.0.0-15
 - PMM-5645 built using Golang 1.14
