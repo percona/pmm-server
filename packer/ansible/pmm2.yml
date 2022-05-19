@@ -175,6 +175,24 @@
           ami
         dest: /srv/pmm-distribution
 
+    - name: Add script which show PMM URL
+      copy:
+        src: pmm/show-url
+        dest: /opt/show-url
+        mode: 0755
+
+    - name: Add Service for script which show PMM URL
+      copy:
+        src: banner.service
+        dest: /etc/systemd/system/banner.service
+        mode: 0755
+
+    - name: Enable PMM URL Service
+      systemd:
+        name: banner
+        state: started
+        enabled: yes
+
     - name: Copy systemd service file to image
       template:
         src: pmm2.service
