@@ -28,9 +28,8 @@
     - name: Packages                   | Install OS tools
       yum:
         name:
-          - yum-utils
-          - yum-changelog
           - python2-pip
+          - rsync
 
     - name: Upgrade pip
       get_url:
