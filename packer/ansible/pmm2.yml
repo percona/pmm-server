@@ -28,7 +28,7 @@
       user:
         name: admin
         comment: PMM User
-        groups: wheel,adm,systemd-journal
+        groups: wheel,adm,systemd-journal,docker
         shell: /bin/bash
 
     - name: Add sudo for admin user
