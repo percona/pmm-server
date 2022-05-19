@@ -2,7 +2,7 @@
 %global commit          33423d34f211ce1ce5ce0a265a38f0709ec44360
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         95
+%define release         96
 %define grafana_version 8.3.5
 %define full_pmm_version 2.0.0
 %define full_version    v%{grafana_version}-%{full_pmm_version}
@@ -22,8 +22,6 @@ Source0:        https://github.com/percona-platform/grafana/archive/%{commit}.ta
 ExclusiveArch:  %{ix86} x86_64 %{arm}
 
 BuildRequires: nodejs-grunt-cli fontconfig
-
-Requires:       urw-fonts
 
 %description
 Grafana is an open source, feature rich metrics dashboard and graph editor for
@@ -85,6 +83,9 @@ getent passwd grafana >/dev/null || \
 exit 0
 
 %changelog
+* Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 8.3.5-2
+- PMM-10027 remove useless packages
+
 * Mon Apr 11 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 8.3.5-1
 - PMM-7 Fix grafana version
 

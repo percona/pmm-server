@@ -14,8 +14,6 @@
 %define release           1
 %define rpm_release       %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
-%global install_golang    0
-
 Name:       dbaas-controller
 # the line below is sed'ed by build-server-rpm script to set a correct version
 # see: https://github.com/Percona-Lab/pmm-submodules/blob/PMM-2.0/build/bin/build-server-rpm
@@ -26,10 +24,6 @@ Summary:    Simplified API for managing Percona Kubernetes Operators
 License:    AGPLv3
 URL:        https://github.com/percona-platform/dbaas-controller
 Source0:    https://github.com/percona-platform/dbaas-controller/archive/%{commit}/dbaas-controller-%{shortcommit}.tar.gz
-
-%if %{install_golang}
-BuildRequires:   golang >= 1.14.0
-%endif
 
 %description
 dbaas-controller exposes a simplified API for managing Percona Kubernetes Operators

@@ -5,8 +5,6 @@
 %global commit          4c6c03ebfe21009c546e4d1e9b92c371d67c021d
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
-%global install_golang 0
-
 Name:           percona-%{repo}
 Version:        0.21.0
 Release:        3%{?dist}
@@ -15,22 +13,16 @@ License:        ASL 2.0
 URL:            https://%{provider}
 Source0:        https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
-%if %{install_golang}
-BuildRequires:   golang >= 1.14.0
-%endif
-
 %description
 %{summary}
 
 %description
 %{summary}
-
 
 %prep
 %setup -q -n %{repo}-%{commit}
 mkdir -p ./build/src/github.com/prometheus
 ln -s $(pwd) ./build/src/github.com/prometheus/alertmanager
-
 
 %build
 export GOPATH="$(pwd)/build"
@@ -40,13 +32,11 @@ export USER=builder
 cd build/src/github.com/prometheus/alertmanager
 make build
 
-
 %install
 install -D -p -m 0755 ./%{repo}  %{buildroot}%{_sbindir}/%{repo}
 install -D -p -m 0755 ./amtool %{buildroot}%{_bindir}/amtool
 install -d %{buildroot}%{_datadir}/%{repo}
 install -d %{buildroot}%{_sharedstatedir}/%{repo}
-
 
 %files
 %doc LICENSE CHANGELOG.md README.md NOTICE
