@@ -9,6 +9,7 @@ if [ ! -f $DIST_FILE ]; then
     mkdir -p /srv/{clickhouse,grafana,logs,postgres,prometheus,nginx,victoriametrics}
     chown grafana:grafana /srv/grafana
     chown pmm:pmm /srv/{victoriametrics,prometheus,logs}
+    chown postgres:postgres /srv/postgres
     echo "Generate self-signed certificates for nginx"
     bash /var/lib/cloud/scripts/per-boot/generate-ssl-certificate
     echo "Init Postgres"
