@@ -18,6 +18,12 @@
         gpgcheck: no
         enabled: no
 
+    # we use it for pmm-client (TODO we'll need switch to pmm-client client repo)
+    - name: Packages                   | Install percona-release rpm
+      yum:
+        name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+        state: installed
+
     - name: Packages                   | Update OS
       yum:
         name: '*'
