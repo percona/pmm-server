@@ -34,9 +34,8 @@
     - name: Packages                   | Install OS tools
       yum:
         name:
-          - yum-utils
-          - yum-changelog
           - python2-pip
+          - rsync
 
     - name: Create users for non-docker images          | Create users
       user:

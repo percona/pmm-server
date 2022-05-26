@@ -6,7 +6,7 @@
 %global commit		ad4af6808bcd361284e8eb8cd1f36b1e98e32bce
 %global shortcommit	%(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         15
+%define release         16
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		percona-dashboards
@@ -19,7 +19,7 @@ URL:		https://%{provider}
 Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
 BuildRequires:	nodejs
-Requires:	percona-grafana python python-requests
+Requires:	percona-grafana
 Provides:	percona-grafana-dashboards = %{version}-%{release}
 
 %description
@@ -52,6 +52,9 @@ echo %{version} > %{buildroot}%{_datadir}/%{name}/VERSION
 
 
 %changelog
+* Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.28.0-1
+- PMM-10027 remove useless packages
+
 * Sat Nov 06 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
 - Migrate to grafana provisioning
 
