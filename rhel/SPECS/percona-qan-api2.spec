@@ -12,10 +12,8 @@
 %global commit          376dbed06e403faad1b444f99ab3e1e28ac7687e
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         15
+%define release         16
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
-
-%global install_golang 0
 
 # the line below is sed'ed by build/bin/build-server-rpm to set a correct version
 %define full_pmm_version 2.0.0
@@ -28,11 +26,6 @@ Summary:        Query Analytics API v2 for PMM
 License:        AGPLv3
 URL:            https://%{provider}
 Source0:        https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-
-%if %{install_golang}
-BuildRequires:   golang >= 1.12.0
-%endif
-Requires:       perl
 
 %description
 Percona Query Analytics (QAN) API v2 is part of Percona Monitoring and Management.
@@ -68,6 +61,9 @@ install -p -m 0755 bin/qan-api2 %{buildroot}%{_sbindir}/%{name}
 %attr(0755, root, root) %{_sbindir}/%{name}
 
 %changelog
+* Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.0.0-16
+- PMM-10027 remove useless packages
+
 * Thu Jul  2 2020 Mykyta Solomko <mykyta.solomko@percona.com> - 2.0.0-15
 - PMM-5645 built using Golang 1.14
 

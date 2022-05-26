@@ -1,5 +1,5 @@
 export PACKER_CACHE_DIR := .cache
-export PACKER_VERSION := 1.7.7
+export PACKER_VERSION := 1.8.0
 export CENTOS_ISO := 2004.01
 
 build-installation-wizard:

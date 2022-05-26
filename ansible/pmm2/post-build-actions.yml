@@ -54,7 +54,7 @@
         --server-address=127.0.0.1:443
         --server-insecure-tls
 
-    - name: Stop pmm-managed before delete database
+    - name: Stop pmm-managed before deleting the database
       supervisorctl:
         name: pmm-managed
         state: stopped

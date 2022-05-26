@@ -28,12 +28,8 @@
     - name: Packages                   | Install OS tools
       yum:
         name:
-          - lsof
-          - yum-utils
-          - yum-cron
-          - yum-changelog
-          - unzip
           - python2-pip
+          - rsync
 
     - name: Create users for non-docker images          | Create users
       user:
@@ -110,18 +106,6 @@
       include_role:
         name: supervisord-init
 
-    - name: Configure yum              | Configure yum-cron
-      replace:
-        dest: /etc/yum/yum-cron-hourly.conf
-        regexp: 'update_cmd = default'
-        replace: 'update_cmd = minimal-security'
-
-    - name: Configure yum              | Configure yum-cron
-      replace:
-        dest: /etc/yum/yum-cron.conf
-        regexp: 'update_cmd = default'
-        replace: 'update_cmd = minimal-security'
-
     - name: Install RPMs               | Install RPMs for PMM2 server
       yum:
         name:
@@ -135,6 +119,7 @@
           - pmm-update
           - dbaas-controller
           - dbaas-tools
+          - pmm-dump
         state: installed
         # line below is sed'ed by build-server-docker script
         enablerepo: "pmm2-server"
@@ -148,45 +133,6 @@
           - pmm2-client
         state: installed
         enablerepo: "{{ pmm_client_repo_name }}"
-
-    - name: Create directories        | Create '/srv/grafana' dir
-      file:
-        path: /srv/grafana
-        state: directory
-        owner: grafana
-        group: grafana
-        mode: '0775'
-
-    - name: Create directories        | Create '/srv/grafana/plugins' dir
-      file:
-        path: /srv/grafana/plugins
-        state: directory
-        owner: grafana
-        group: grafana
-        mode: '0775'
-
-    - name: Grafana                    | Check data dir
-      stat: path=/srv/grafana/grafana.db
-      register: grafana_db
-
-    - name: Grafana                    | Disable Anonymous access
-      when: not grafana_db.stat.exists
-      ini_file:
-        dest: /etc/grafana/grafana.ini
-        section: auth.anonymous
-        option: enabled
-        value: 'false'
-
-    - name: Grafana                   | Enable gzip for grafana
-      ini_file:
-        dest: /etc/grafana/grafana.ini
-        section: server
-        option: enable_gzip
-        value: "true"
-
-    - name: Cron                      | Disable crond
-      when: ansible_virtualization_type != "docker"
-      service: name=crond state=stopped enabled=no
 
     - name: Disable pmm-agent service | Disable pmm-agent
       when: ansible_virtualization_type != "docker"
@@ -209,3 +155,9 @@
         section: program:pmm-update-perform-init
         option: autostart
         value: "false"
+
+    - name: Copy grafana.ini file for the first run
+      copy:
+        src: grafana.ini
+        dest: /etc/supervisord.d/grafana.ini
+        mode: '0644'
