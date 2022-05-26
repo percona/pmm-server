@@ -12,6 +12,26 @@ variable "pmm_server_image_name" {
   default = "perconalab/pmm-server:dev-latest"
 }
 
+variable "single_disk" {
+  type = string
+  default = "false"
+}
+
+variable "pmm2_server_repo" {
+  type = string
+  default = "testing"
+}
+
+variable "pmm_client_repos" {
+  type = string
+  default = "original testing"
+}
+
+variable "pmm_client_repo_name" {
+  type = string
+  default = "percona-testing-x86_64"
+}
+
 source "amazon-ebs" "image" {
   ami_name          = "PMM2 Server [${formatdate("YYYY-MM-DD hhmm", timestamp())}]"
   instance_type     = "c4.xlarge"
@@ -111,7 +131,10 @@ build {
   provisioner "ansible" {
     extra_arguments = [
         "--extra-vars",
-        "pmm_server_image_name=${var.pmm_server_image_name}"
+        "pmm_server_image_name=${var.pmm_server_image_name}",
+        "pmm2_server_repo=${var.pmm2_server_repo}",
+        "pmm_client_repo_name=${var.pmm_client_repo_name}",
+        "pmm_client_repos=${var.pmm_client_repos}"
     ]
     playbook_file = "./packer/ansible/pmm2.yml"
   }
