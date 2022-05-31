@@ -1,6 +1,5 @@
 export PACKER_CACHE_DIR := .cache
 export PACKER_VERSION := 1.8.0
-export RHEL_ISO := 4.0.0
 
 build-installation-wizard:
 	cd installation-wizard && npm ci && npm run build
@@ -18,9 +17,9 @@ fetch:
 	    || curl -L https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant \
 		-o ${PACKER_CACHE_DIR}/id_rsa_vagrant
 	chmod 600 ${PACKER_CACHE_DIR}/id_rsa_vagrant
-	wget --progress=dot:giga https://app.vagrantup.com/generic/boxes/rhel9/versions/${RHEL_ISO}/providers/virtualbox.box \
-		-O ${PACKER_CACHE_DIR}/rhel9.ova
-	tar -C ${PACKER_CACHE_DIR}/ -xf ${PACKER_CACHE_DIR}/rhel9.ova
+	wget --progress=dot:giga https://yum.oracle.com/boxes/oraclelinux/ol8/OL8U6_x86_64-vagrant-virtualbox-b331.box \
+		-O ${PACKER_CACHE_DIR}/OracleLinux8.ova
+	tar -C ${PACKER_CACHE_DIR}/ -xf ${PACKER_CACHE_DIR}/OracleLinux8.ova
 
 deps:
 	mkdir -p ${PACKER_CACHE_DIR} ~/bin || :
