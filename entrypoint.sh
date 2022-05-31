@@ -20,9 +20,9 @@ if [ ! -f $DIST_FILE ]; then
     su postgres -c "/usr/pgsql-11/bin/pg_ctl stop -D /srv/postgres11"
 fi
 
-if [ -n ${PMM_ADMIN_PASSWORD} ]; then
+if [ -n "$PMM_ADMIN_PASSWORD" ]; then
     echo "PMM_ADMIN_PASSWORD variable was set. Change password"
-    /usr/local/sbin/change-admin-password ${PMM_ADMIN_PASSWORD}
+    /usr/local/sbin/change-admin-password $PMM_ADMIN_PASSWORD
 fi
 
 # pmm-managed-init validates environment variables.
