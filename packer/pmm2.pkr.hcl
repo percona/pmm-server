@@ -128,11 +128,14 @@ build {
     "source.amazon-ebs.image",
     "source.virtualbox-ovf.image"
   ]
-  provisioner "ansible" {
+  provisioner "shell" {
+      inline = ["sudo yum -y install epel-release", "sudo yum -y install ansible"]
+  }
+  provisioner "ansible-local" {
     extra_arguments = [
         "-v",
         "--extra-vars",
-        "ansible_remote_tmp=/tmp/.ansible/tmp pmm_server_image_name=${var.pmm_server_image_name} pmm2_server_repo=${var.pmm2_server_repo} pmm_client_repo_name=${var.pmm_client_repo_name} pmm_client_repos=${var.pmm_client_repos}"
+        "pmm_server_image_name=${var.pmm_server_image_name} pmm2_server_repo=${var.pmm2_server_repo} pmm_client_repo_name=${var.pmm_client_repo_name} pmm_client_repos=${var.pmm_client_repos}"
     ]
     playbook_file = "./packer/ansible/pmm2.yml"
   }
