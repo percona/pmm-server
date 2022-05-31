@@ -129,23 +129,9 @@
       when: ansible_virtualization_type != "docker"
       service: name=pmm-agent state=stopped enabled=no
 
-    - name: Supervisord               | Remove supervisord block from pmm.ini
-      when: ansible_virtualization_type != "docker"
-      ini_file:
-        path: /etc/supervisord.d/pmm.ini
-        section: supervisord
-        state: absent
-
     - name: Create tmp dirs           | Create tmp dirs
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
-
-    - name: Disable pmm-update-perform-init for build time
-      ini_file:
-        path: /etc/supervisord.d/pmm.ini
-        section: program:pmm-update-perform-init
-        option: autostart
-        value: "false"
 
     - name: Copy grafana.ini file for the first run
       copy:
