@@ -95,7 +95,7 @@ source "virtualbox-ovf" "image" {
   headless             = true
   output_directory     = "pmm2-virtualbox-ovf"
   shutdown_command     = "rm -rf ~/.ssh/authorized_keys; cat /dev/zero > zero.fill; sync; sleep 1; sync; rm -f zero.fill; sudo shutdown -P now"
-  source_path          = ".cache/box.ovf"
+  source_path          = ".cache/2004.01/box.ovf"
   ssh_private_key_file = ".cache/id_rsa_vagrant"
   ssh_pty              = true
   ssh_username         = "vagrant"
