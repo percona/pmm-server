@@ -2,6 +2,7 @@
 - name: Create PMM2 image
   hosts: default
   become: true
+  gather_facts: no
   roles:
     - lvm-init
   tasks:
