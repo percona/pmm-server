@@ -20,9 +20,8 @@ URL:        https://%{provider}
 Source0:    https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 Source1:    https://%{pmm_provider}/archive/%{pmm_commit}/%{pmm_repo}-%{pmm_shortcommit}.tar.gz
 
-BuildArch:  noarch
-Requires:   nginx ansible git bats
-BuildRequires:  openssl
+BuildArch:	noarch
+BuildRequires:	openssl
 
 %description
 Percona Monitoring and Management (PMM) Server.
@@ -110,8 +109,12 @@ fi
 %{_unitdir}/pmm-server.service
 
 %changelog
-* Fri Apr 08 2022 Denys Kondratenko <denys.kondratenko@percona.com> - 2.26.0-1
+
+* Tue May 31 2022 Denys Kondratenko <denys.kondratenko@percona.com> - 2.29.0-2
 - PMM-7925 add systemd service with podman support
+
+* Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.29.0-1
+- PMM-10027 remove useless packages
 
 * Wed Nov 17 2021 Nikita Beletskii <nikita.beletskii@percona.com> - 2.25.0-1
 - PMM-4486 remove import-dashboards.py and use internal Grafana provisioning

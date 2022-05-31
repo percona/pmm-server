@@ -28,10 +28,8 @@
     - name: Packages                   | Install OS tools
       yum:
         name:
-          - yum-utils
-          - yum-cron
-          - yum-changelog
           - python2-pip
+          - rsync
 
     - name: Create users for non-docker images          | Create users
       user:
@@ -108,18 +106,6 @@
       include_role:
         name: supervisord-init
 
-    - name: Configure yum              | Configure yum-cron
-      replace:
-        dest: /etc/yum/yum-cron-hourly.conf
-        regexp: 'update_cmd = default'
-        replace: 'update_cmd = minimal-security'
-
-    - name: Configure yum              | Configure yum-cron
-      replace:
-        dest: /etc/yum/yum-cron.conf
-        regexp: 'update_cmd = default'
-        replace: 'update_cmd = minimal-security'
-
     - name: Install RPMs               | Install RPMs for PMM2 server
       yum:
         name:
@@ -133,7 +119,6 @@
           - pmm-update
           - dbaas-controller
           - dbaas-tools
-          - grafana-db-migrator
           - pmm-dump
         state: installed
         # line below is sed'ed by build-server-docker script
@@ -148,10 +133,6 @@
           - pmm2-client
         state: installed
         enablerepo: "{{ pmm_client_repo_name }}"
-
-    - name: Cron                      | Disable crond
-      when: ansible_virtualization_type != "docker"
-      service: name=crond state=stopped enabled=no
 
     - name: Disable pmm-agent service | Disable pmm-agent
       when: ansible_virtualization_type != "docker"
