@@ -15,9 +15,9 @@ if [ ! -f $DIST_FILE ]; then
     echo "Init Postgres"
     su postgres -c "/usr/pgsql-11/bin/initdb -D /srv/postgres"
     echo "Temporary start postgres and enable pg_stat_statements"
-    su postgres -c "/usr/pgsql-11/bin/pg_ctl start -D /srv/postgres11"
+    su postgres -c "/usr/pgsql-11/bin/pg_ctl start -D /srv/postgres"
     su postgres -c "psql postgres postgres -c 'CREATE EXTENSION pg_stat_statements SCHEMA public'"
-    su postgres -c "/usr/pgsql-11/bin/pg_ctl stop -D /srv/postgres11"
+    su postgres -c "/usr/pgsql-11/bin/pg_ctl stop -D /srv/postgres"
 fi
 
 if [ -n "$PMM_ADMIN_PASSWORD" ]; then
