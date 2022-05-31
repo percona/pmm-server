@@ -19,7 +19,7 @@ fetch:
 		-o ${PACKER_CACHE_DIR}/id_rsa_vagrant
 	chmod 600 ${PACKER_CACHE_DIR}/id_rsa_vagrant
 	test -f ${PACKER_CACHE_DIR}/${CENTOS_ISO}/CentOS7.ova \
-		|| wget --progress=dot:giga https://app.vagrantup.com/generic/boxes/rhel9/versions/4.0.0/providers/virtualbox.box \
+		|| wget --progress=dot:giga https://app.vagrantup.com/centos/boxes/7/versions/${CENTOS_ISO}/providers/virtualbox.box \
 		-O ${PACKER_CACHE_DIR}/${CENTOS_ISO}/CentOS7.ova
 	test -f ${PACKER_CACHE_DIR}/${CENTOS_ISO}/box.ovf \
 		|| tar -C ${PACKER_CACHE_DIR}/${CENTOS_ISO} -xf ${PACKER_CACHE_DIR}/${CENTOS_ISO}/CentOS7.ova
