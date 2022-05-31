@@ -1,7 +1,7 @@
 ---
 - name: Wait until disk is ready
   wait_for:
-    path: /dev/xvdb
+    path: /dev/sdb
 
 - name: Create Volume Group
   lvg:

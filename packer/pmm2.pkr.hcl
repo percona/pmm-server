@@ -51,7 +51,7 @@ source "amazon-ebs" "image" {
   launch_block_device_mappings {
     delete_on_termination = false
     device_name           = "/dev/xvdb"
-    volume_size           = 100
+    volume_size           = 50
     volume_type           = "gp3"
   }
 
@@ -76,66 +76,15 @@ source "amazon-ebs" "image" {
   }
 }
 
-source "virtualbox-ovf" "image" {
-  export_opts          = [
-    "--ovf10",
-    "--manifest",
-    "--vsys",
-    "0",
-    "--product",
-    "Percona Monitoring and Management",
-    "--producturl",
-    "https://www.percona.com/software/database-tools/percona-monitoring-and-management",
-    "--vendor", "Percona",
-    "--vendorurl", "https://www.percona.com",
-    "--version", "${legacy_isotime("2006-01-02")}",
-    "--description", "Percona Monitoring and Management (PMM) is an open-source platform for managing and monitoring MySQL and MongoDB performance"]
-  format               = "ovf"
-  guest_additions_mode = "disable"
-  headless             = true
-  output_directory     = "pmm2-virtualbox-ovf"
-  shutdown_command     = "rm -rf ~/.ssh/authorized_keys; cat /dev/zero > zero.fill; sync; sleep 1; sync; rm -f zero.fill; sudo shutdown -P now"
-  source_path          = ".cache/2004.01/box.ovf"
-  ssh_private_key_file = ".cache/id_rsa_vagrant"
-  ssh_pty              = true
-  ssh_username         = "vagrant"
-  vboxmanage           = [
-    ["modifyvm", "{{ .Name }}",
-      "--memory", "4096"],
-    ["modifyvm", "{{ .Name }}",
-      "--audio", "none"],
-    ["createhd",
-      "--format", "VMDK",
-      "--filename", "/tmp/{{ .Name }}-disk2.vmdk",
-      "--variant", "STREAM",
-      "--size", "409600"],
-    ["storagectl", "{{ .Name }}",
-      "--name", "SCSI Controller",
-      "--add", "scsi",
-      "--controller", "LSILogic"],
-    ["storageattach", "{{ .Name }}",
-      "--storagectl", "SCSI Controller",
-      "--port", "1",
-      "--type", "hdd",
-      "--medium", "/tmp/{{ .Name }}-disk2.vmdk"]]
-  vm_name              = "PMM2-Server-${legacy_isotime("2006-01-02-1504")}"
-}
-
-
 build {
   name = "pmm2"
   sources = [
-    "source.amazon-ebs.image",
-    "source.virtualbox-ovf.image"
+    "source.amazon-ebs.image"
   ]
-  provisioner "shell" {
-      inline = ["sudo yum -y install epel-release", "sudo yum -y install ansible"]
-  }
-  provisioner "ansible-local" {
+  provisioner "ansible" {
     extra_arguments = [
-        "-v",
-       # "--extra-vars",
-       # "pmm_server_image_name=${var.pmm_server_image_name} pmm2_server_repo=${var.pmm2_server_repo} pmm_client_repo_name=${var.pmm_client_repo_name} pmm_client_repos=${var.pmm_client_repos}"
+        "--extra-vars",
+        "pmm_server_image_name=${var.pmm_server_image_name}"
     ]
     playbook_file = "./packer/ansible/pmm2.yml"
   }

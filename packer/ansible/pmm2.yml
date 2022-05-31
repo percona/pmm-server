@@ -1,17 +1,15 @@
 ---
 - name: Create PMM2 image
-  hosts: localhost
+  hosts: default
   become: true
-  gather_facts: no
-#  roles:
-#    - lvm-init
+  roles:
+    - lvm-init
   tasks:
     - name: Install packages
       package:
         name:
           - docker
           - python3-pip
-          - python-pip
           - python3
           - lvm2
           - jq
