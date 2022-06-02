@@ -1,0 +1,17 @@
+groups:
+  - name: test subquery
+    rules:
+      - record: node_cpu_average
+        expr: cpu_percent_percent_average
+      - record: node_network_transmit_bytes_total
+        expr: network_bytes_egress_bytes_average
+      - record: node_network_receive_bytes_total
+        expr: network_bytes_ingress_bytes_average
+      - record: node_filesystem_size_bytes
+        expr: storage_limit_bytes_average
+      - record: azure_storage_used_bytes_average
+        expr: storage_used_bytes_average
+      - record: azure_storage_percent_average
+        expr: storage_percent_percent_average
+      - record: azure_memory_percent_average
+        expr: memory_percent_percent_average
