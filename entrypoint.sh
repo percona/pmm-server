@@ -7,6 +7,7 @@ if [ ! -f $DIST_FILE ]; then
     echo "File $DIST_FILE doesn't exist. Initizlize /srv..."
     echo docker > $DIST_FILE
     mkdir -p /srv/{clickhouse,grafana,logs,postgres,prometheus,nginx,victoriametrics}
+    echo "Copy plugins and VERSION file"
     cp /usr/share/percona-dashboards/VERSION /srv/grafana/PERCONA_DASHBOARDS_VERSION
     cp -r /usr/share/percona-dashboards/panels/ /srv/grafana/plugins
     chown -R grafana:grafana /srv/grafana
@@ -25,6 +26,7 @@ fi
 if [ -n "$PMM_ADMIN_PASSWORD" ]; then
     echo "PMM_ADMIN_PASSWORD variable was set. Change password"
     /usr/local/sbin/change-admin-password $PMM_ADMIN_PASSWORD
+    chown -R grafana:grafana /srv/grafana
 fi
 
 # pmm-managed-init validates environment variables.
