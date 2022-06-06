@@ -7,7 +7,7 @@ if [ ! -f $DIST_FILE ]; then
     echo "File $DIST_FILE doesn't exist. Initizlize /srv..."
     echo docker > $DIST_FILE
     mkdir -p /srv/{clickhouse,grafana,logs,postgres,prometheus,nginx,victoriametrics}
-    cp /usr/share/percona-dashboards/VERSION /srv/grafana/VERSION
+    cp /usr/share/percona-dashboards/VERSION /srv/grafana/PERCONA_DASHBOARDS_VERSION
     cp -r /usr/share/percona-dashboards/panels/ /srv/grafana/plugins
     chown -R grafana:grafana /srv/grafana
     chown pmm:pmm /srv/{victoriametrics,prometheus,logs}
