@@ -7,7 +7,9 @@ if [ ! -f $DIST_FILE ]; then
     echo "File $DIST_FILE doesn't exist. Initizlize /srv..."
     echo docker > $DIST_FILE
     mkdir -p /srv/{clickhouse,grafana,logs,postgres,prometheus,nginx,victoriametrics}
-    chown grafana:grafana /srv/grafana
+    cp /usr/share/percona-dashboards/VERSION /srv/grafana/VERSION
+    cp -r /usr/share/percona-dashboards/panels/ /srv/grafana/plugins
+    chown -R grafana:grafana /srv/grafana
     chown pmm:pmm /srv/{victoriametrics,prometheus,logs}
     chown postgres:postgres /srv/postgres
     echo "Generate self-signed certificates for nginx"
