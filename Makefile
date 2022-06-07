@@ -1,5 +1,5 @@
 export PACKER_CACHE_DIR := .cache
-export PACKER_VERSION := 1.8.0
+export PACKER_VERSION := 1.8.1
 export CENTOS_ISO := 2004.01
 
 build-installation-wizard:
@@ -29,19 +29,6 @@ deps:
 	curl https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip -o ${PACKER_CACHE_DIR}/packer.zip
 	unzip -o ${PACKER_CACHE_DIR}/packer.zip -d ~/bin
 
-pmm-ovf: fetch
-	packer build -only virtualbox-ovf packer/pmm.json
-
-pmm-ami:
-	packer build -only amazon-ebs packer/pmm.json
-
-pmm-gcp:
-	packer build -only googlecompute packer/pmm.json
-
-pmm-az:
-	az storage container delete --account-name percona --name images
-	packer build -only azure-arm packer/pmm.json
-
 pmm2-ovf: fetch
 	packer build -only virtualbox-ovf packer/pmm2.json
 
@@ -50,12 +37,6 @@ pmm2-digitalocean:
 
 pmm2-azure:
 	packer build -only azure-arm packer/pmm2.json
-
-docker-ovf: fetch
-	packer build -only virtualbox-ovf packer/docker.json
-
-centos-ami:
-	packer build packer/centos-ami.json
 
 pmm2-ami:
 	docker run --rm -v ${HOME}/.aws:/root/.aws -v `pwd`:/build -w /build hashicorp/packer:${PACKER_VERSION} \
