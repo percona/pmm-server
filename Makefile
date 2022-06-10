@@ -3,7 +3,7 @@ export PACKER_VERSION := 1.8.1
 export CENTOS_ISO := 2004.01
 
 build-installation-wizard:
-	cd installation-wizard && npm ci && npm run build
+	cd installation-wizard && npm install --production && npm run build
 
 clean:
 	rm -rf .kitchen/ Gemfile.lock ansible/{Ansiblefile.lock,tmp} *.ova *-virtualbox-ovf
