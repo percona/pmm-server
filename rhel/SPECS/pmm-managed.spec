@@ -15,8 +15,6 @@
 # the line below is sed'ed by build/bin/build-server-rpm to set a correct version
 %define full_pmm_version 2.0.0
 
-%global install_golang 0
-
 Name:		%{repo}
 Version:	%{version}
 Release:	%{rpm_release}
@@ -25,10 +23,6 @@ Summary:	Percona Monitoring and Management management daemon
 License:	AGPLv3
 URL:		https://%{provider}
 Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-
-%if %{install_golang}
-BuildRequires:   golang >= 1.14.0
-%endif
 
 %description
 pmm-managed manages configuration of PMM server components (VictoriaMetrics,
