@@ -9,7 +9,7 @@
 %global commit          8f3d007617941033867aea6a134c48b39142427f
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 %define build_timestamp %(date -u +"%y%m%d%H%M")
-%define release         17
+%define release         18
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 # the line below is sed'ed by build/bin/build-server-rpm to set a correct version
