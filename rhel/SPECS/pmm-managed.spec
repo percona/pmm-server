@@ -31,7 +31,7 @@ See PMM docs for more information.
 
 
 %prep
-%setup -q -n pmm-managed-%{commit}
+%setup -q -n pmm-%{commit}
 mkdir -p src/github.com/percona
 ln -s $(pwd) src/%{provider}
 
