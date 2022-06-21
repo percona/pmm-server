@@ -4,7 +4,7 @@
 # do not strip debug symbols
 %global debug_package   %{nil}
 
-%global repo            pmm-managed
+%global repo            pmm
 %global provider        github.com/percona/%{repo}
 %global commit          8f3d007617941033867aea6a134c48b39142427f
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
@@ -15,8 +15,6 @@
 # the line below is sed'ed by build/bin/build-server-rpm to set a correct version
 %define full_pmm_version 2.0.0
 
-%global install_golang 0
-
 Name:		%{repo}
 Version:	%{version}
 Release:	%{rpm_release}
@@ -25,10 +23,6 @@ Summary:	Percona Monitoring and Management management daemon
 License:	AGPLv3
 URL:		https://%{provider}
 Source0:	https://%{provider}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
-
-%if %{install_golang}
-BuildRequires:   golang >= 1.14.0
-%endif
 
 %description
 pmm-managed manages configuration of PMM server components (VictoriaMetrics,
@@ -48,7 +42,7 @@ export PMM_RELEASE_VERSION=%{full_pmm_version}
 export PMM_RELEASE_FULLCOMMIT=%{commit}
 export PMM_RELEASE_BRANCH=""
 
-cd src/github.com/percona/pmm-managed
+cd src/github.com/percona/pmm/managed
 make release
 
 
@@ -69,6 +63,9 @@ install -p -m 0755 bin/pmm-managed-starlark %{buildroot}%{_sbindir}/pmm-managed-
 
 
 %changelog
+* Fri Jun 17 2022 Anton Bystrov <anton.bystrov@simbirsoft.com> - 2.0.0-17
+- PMM-10206 merge pmm-managed to monorepo pmm
+
 * Thu Jul  2 2020 Mykyta Solomko <mykyta.solomko@percona.com> - 2.0.0-17
 - PMM-5645 built using Golang 1.14
 
