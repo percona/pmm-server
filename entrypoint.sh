@@ -21,11 +21,6 @@ if [ ! -f $DIST_FILE ]; then
     su postgres -c "/usr/pgsql-11/bin/pg_ctl start -D /srv/postgres"
     su postgres -c "psql postgres postgres -c 'CREATE EXTENSION pg_stat_statements SCHEMA public'"
     su postgres -c "/usr/pgsql-11/bin/pg_ctl stop -D /srv/postgres"
-    if [ -n "$PMM_ADMIN_PASSWORD" ]; then
-        echo "PMM_ADMIN_PASSWORD variable was set. Change password"
-        /usr/local/sbin/change-admin-password $PMM_ADMIN_PASSWORD
-        chown -R grafana:grafana /srv/grafana
-    fi
 fi
 
 # pmm-managed-init validates environment variables.
