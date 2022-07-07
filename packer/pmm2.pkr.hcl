@@ -101,7 +101,8 @@ build {
     extra_arguments = [
         "-v",
         "-b",
-        "--become-user root",
+        "--become-user",
+        "root",
         "--extra-vars",
         "pmm_server_image_name=${var.pmm_server_image_name}"
     ]
