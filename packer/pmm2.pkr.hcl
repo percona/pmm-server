@@ -33,7 +33,7 @@ variable "pmm_client_repo_name" {
 }
 
 source "virtualbox-ovf" "image" {
-  export_opts          = ["--ovf10", "--manifest", "--vsys", "0", "--product", "Percona Monitoring and Management", "--producturl", "https://www.percona.com/software/database-tools/percona-monitoring-and-management", "--vendor", "Percona", "--vendorurl", "https://www.percona.com", "--version", "${legacy_isotime("2006-01-02")}", "--description", "Percona Monitoring and Management (PMM) is an open-source platform for managing and monitoring MySQL and MongoDB performance"]
+  export_opts          = ["--ovf10", "--manifest", "--vsys", "0", "--product", "Percona Monitoring and Management", "--producturl", "https://www.percona.com/software/database-tools/percona-monitoring-and-management", "--vendor", "Percona", "--vendorurl", "https://www.percona.com", "--version", "${formatdate("YYYY-MM-DD", timestamp())}", "--description", "Percona Monitoring and Management (PMM) is an open-source platform for managing and monitoring MySQL and MongoDB performance"]
   format               = "ovf"
   guest_additions_mode = "disable"
   headless             = true
@@ -44,7 +44,7 @@ source "virtualbox-ovf" "image" {
   ssh_pty              = true
   ssh_username         = "vagrant"
   vboxmanage           = [["modifyvm", "{{ .Name }}", "--memory", "4096"], ["modifyvm", "{{ .Name }}", "--audio", "none"], ["createhd", "--format", "VMDK", "--filename", "/tmp/{{ .Name }}-disk2.vmdk", "--variant", "STREAM", "--size", "409600"], ["storagectl", "{{ .Name }}", "--name", "SCSI Controller", "--add", "scsi", "--controller", "LSILogic"], ["storageattach", "{{ .Name }}", "--storagectl", "SCSI Controller", "--port", "1", "--type", "hdd", "--medium", "/tmp/{{ .Name }}-disk2.vmdk"]]
-  vm_name              = "PMM2-Server-${formatdate("YYYY-MM-DD hhmm", timestamp())}"
+  vm_name              = "PMM2-Server-${formatdate("YYYY-MM-DD", timestamp())}"
 }
 
 source "amazon-ebs" "image" {
@@ -101,6 +101,7 @@ build {
     extra_arguments = [
         "-v",
         "-b",
+        "--become-user root"
         "--extra-vars",
         "pmm_server_image_name=${var.pmm_server_image_name}"
     ]
