@@ -1,7 +1,8 @@
 ---
 - name: Create PMM2 image
   hosts: default
-  become: true
+  become: yes
+  become_user: root
   roles:
     - lvm-init
   tasks:
