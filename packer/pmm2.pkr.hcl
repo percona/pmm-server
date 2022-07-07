@@ -99,6 +99,8 @@ build {
   ]
   provisioner "ansible" {
     extra_arguments = [
+        "-v",
+        "-b",
         "--extra-vars",
         "pmm_server_image_name=${var.pmm_server_image_name}"
     ]
