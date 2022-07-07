@@ -30,7 +30,7 @@ deps:
 	unzip -o ${PACKER_CACHE_DIR}/packer.zip -d ~/bin
 
 pmm2-ovf: fetch
-	packer build -only virtualbox-ovf packer/pmm2.json
+	packer build -only pmm2.virtualbox-ovf.image packer/pmm2.pkr.hcl
 
 pmm2-digitalocean:
 	packer build -only digitalocean -var 'single_disk=true' packer/pmm2.json

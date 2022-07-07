@@ -1,0 +1,52 @@
+---
+- name: Wait until disk is ready
+  wait_for:
+    path: /dev/sdb
+
+- name: Create Volume Group
+  lvg:
+    vg: DataVG
+    pvs: /dev/sdb
+
+- name: Create Thin Pool
+  register: thin_pool
+  failed_when: "thin_pool is failed and 'Sorry, no shrinking of DataLV to 0 permitted' not in thin_pool.msg"
+  lvol:
+    lv: DataLV
+    vg: DataVG
+    size: 100%FREE
+    opts: --thinpool ThinPool -V 1G
+
+- name: Format LVM
+  filesystem:
+    fstype: xfs
+    dev: /dev/DataVG/DataLV
+    opts: -L DATA
+
+- name: Mount
+  mount:
+    name: "/srv"
+    src: LABEL=DATA
+    fstype: xfs
+    opts: defaults
+    state: mounted
+
+- name: Create dirs                | Create dirs
+  file: path={{ item }} state=directory
+  with_items:
+    - /var/lib/cloud/scripts/per-boot
+
+- name: Data partition             | Auto resize LVM
+  template:
+    src: resize-xfs-lvm
+    dest: /var/lib/cloud/scripts/per-boot/resize-xfs
+    mode: 0755
+
+- name: Cron tasks                 | Add resize task to cron
+  cron:
+    name: "resize data partition"
+    minute: "*/5"
+    user: root
+    job: "/var/lib/cloud/scripts/per-boot/resize-xfs"
+    cron_file: resizeXfs
+
