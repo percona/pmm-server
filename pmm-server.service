@@ -1,0 +1,31 @@
+[Unit]
+Description=pmm-server
+Wants=network-online.target
+After=network-online.target
+After=nss-user-lookup.target nss-lookup.target
+After=time-sync.target
+
+[Service]
+Type=simple
+User=pmm-server
+Group=pmm
+
+# set environment for this unit
+Environment=PMM_PUBLIC_PORT=8443
+Environment=PMM_VOLUME_NAME=%N
+Environment=PMM_TAG=2.27.0
+Environment=PMM_IMAGE=docker.io/percona/pmm-server
+Environment=PMM_ENV_FILE=%E/pmm-server/pmm-server.env
+
+# optional env file that could overide previous env settings for this unit
+EnvironmentFile=-%E/pmm-server/env
+
+ExecStartPre=/usr/bin/bash -c '/usr/bin/podman stop -t 10 %N; /usr/bin/podman rm -f %N || true'
+ExecStart=/usr/bin/podman run --rm --name %N -p ${PMM_PUBLIC_PORT}:443/tcp --ulimit=host --volume=${PMM_VOLUME_NAME}:/srv --env-file=${PMM_ENV_FILE} ${PMM_IMAGE}:${PMM_TAG}
+ExecStop=/usr/bin/podman stop -t 10 %N
+ExecStopPost=/usr/bin/podman stop -t 10 `%N`
+Restart=on-failure
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target
