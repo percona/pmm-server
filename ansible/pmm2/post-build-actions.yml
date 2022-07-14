@@ -10,7 +10,6 @@
 
   tasks:
     # pmm-managed checks that if /srv/pmm-distribution exist, it contains "docker", "ovf", or "ami" (all lowercase)
-
     - name: Detect distribution        | Create '/srv/pmm-distribution' file for Docker
       when: ansible_virtualization_type == "docker"
       copy:
