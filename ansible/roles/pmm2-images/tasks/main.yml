@@ -31,6 +31,23 @@
           - python2-pip
           - rsync
 
+    - name: Upgrade pip
+      get_url:
+        url: https://bootstrap.pypa.io/pip/2.7/get-pip.py
+        dest: /tmp/get-pip.py
+
+    - name: Upgrade pip
+      command: python /tmp/get-pip.py
+
+    - name: Upgrade Python deps
+      pip:
+        name:
+          - cryptography==3.3.2
+          - paramiko==2.11.0
+          - jinja2==2.11.3
+          - urllib3==1.26.9
+          - httplib2==0.20.4
+
     - name: Create users for non-docker images          | Create users
       user:
         name: "pmm"
