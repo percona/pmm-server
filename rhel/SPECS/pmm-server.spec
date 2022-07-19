@@ -7,7 +7,7 @@
 %global pmm_provider    github.com/percona/%{pmm_repo}
 %global pmm_commit      @@pmm_commit@@
 %global pmm_shortcommit %(c=%{pmm_commit}; echo ${c:0:7})
-%define release         30
+%define release         31
 %define rpm_release     %{release}.%{build_timestamp}.%{shortcommit}%{?dist}
 
 Name:		%{repo}
@@ -42,9 +42,6 @@ install -d %{buildroot}%{_datadir}/percona-dashboards
 
 mv alertmanager.yml %{buildroot}%{_sysconfdir}/alertmanager.yml
 
-install -d %{buildroot}%{_sysconfdir}/supervisord.d
-mv supervisord.conf %{buildroot}%{_sysconfdir}/supervisord.d/pmm.ini
-
 install -d %{buildroot}%{_datadir}/%{name}
 cp -pav ./entrypoint.sh %{buildroot}%{_datadir}/%{name}/entrypoint.sh
 cp -pav ./installation-wizard/build %{buildroot}%{_datadir}/%{name}/installation-wizard-page
@@ -55,12 +52,14 @@ rm -rf %{pmm_repo}-%{pmm_commit}
 %files
 %license LICENSE
 %doc README.md CHANGELOG.md
-%{_sysconfdir}/supervisord.d
 %{_sysconfdir}/alertmanager.yml
 %{_datadir}/%{name}
 
 
 %changelog
+* Mon May 31 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.29.0-2
+- PMM-10027 Remove supervisor config from package
+
 * Mon May 16 2022 Nikita Beletskii <nikita.beletskii@percona.com> - 2.29.0-1
 - PMM-10027 remove useless packages
 

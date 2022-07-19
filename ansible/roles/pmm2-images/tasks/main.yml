@@ -18,6 +18,12 @@
         gpgcheck: no
         enabled: no
 
+    # we use it for pmm-client (TODO we'll need switch to pmm-client client repo)
+    - name: Packages                   | Install percona-release rpm
+      yum:
+        name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+        state: installed
+
     - name: Packages                   | Update OS
       yum:
         name: '*'
@@ -65,12 +71,6 @@
             - { name: pmm-agent, uid: 996, comment: "pmm-agent", shell: "/bin/false", home: "/usr/local/percona/", group: pmm-agent }
       when: ansible_virtualization_type == "docker"
 
-    - name: Add user to group         | Add the user 'postgres' to group 'pmm'
-      user:
-        name: postgres
-        groups: pmm
-        append: yes
-
     - name: Create directories        | Create dirs
       file: path={{ item }} state=directory owner=pmm group=pmm
       with_items:
@@ -85,15 +85,6 @@
         owner: pmm
         group: pmm
         mode: '0775'
-
-    - name: PostgresDB                | Create Postgres log file
-      file:
-        path: /srv/logs/postgresql.log
-        state: touch
-        force: yes
-        group: postgres
-        owner: postgres
-        mode: 0644
 
     - name: Create dirs                | Create dirs
       when: ansible_virtualization_type == "docker"
@@ -138,23 +129,9 @@
       when: ansible_virtualization_type != "docker"
       service: name=pmm-agent state=stopped enabled=no
 
-    - name: Supervisord               | Remove supervisord block from pmm.ini
-      when: ansible_virtualization_type != "docker"
-      ini_file:
-        path: /etc/supervisord.d/pmm.ini
-        section: supervisord
-        state: absent
-
     - name: Create tmp dirs           | Create tmp dirs
       when: ansible_virtualization_type != "docker"
       command: /usr/bin/systemd-tmpfiles --create --remove --boot --exclude-prefix=/dev
-
-    - name: Disable pmm-update-perform-init for build time
-      ini_file:
-        path: /etc/supervisord.d/pmm.ini
-        section: program:pmm-update-perform-init
-        option: autostart
-        value: "false"
 
     - name: Copy grafana.ini file for the first run
       copy:
